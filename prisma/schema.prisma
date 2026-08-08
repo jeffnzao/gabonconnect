@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -10,4 +5,135 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // url / directUrl sont définis dans prisma.config.ts (système Prisma 7)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum AssociationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Continent {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+  code String @unique
+
+  countries Country[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("continents")
+}
+
+model Country {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+  code String @unique
+
+  continentId String
+  continent   Continent @relation(fields: [continentId], references: [id], onDelete: Restrict)
+
+  cities City[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([continentId])
+  @@map("countries")
+}
+
+model City {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  latitude  Float
+  longitude Float
+
+  profiles     Profile[]
+  associations Association[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([countryId])
+  @@map("cities")
+}
+
+model User {
+  id    String @id
+  email String @unique
+  role  Role   @default(USER)
+
+  profile Profile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Profile {
+  id String @id @default(uuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName  String
+  lastName   String
+  bio        String?
+  profession String?
+  photo      String?
+
+  visibility ProfileVisibility @default(PUBLIC)
+
+  cityId String?
+  city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cityId])
+  @@index([visibility])
+  @@map("profiles")
+}
+
+model Association {
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
+  description String?
+  logo        String?
+  website     String?
+  email       String?
+  phone       String?
+
+  cityId String?
+  city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
+
+  status AssociationStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cityId])
+  @@index([status])
+  @@map("associations")
 }
