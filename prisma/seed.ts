@@ -15,13 +15,15 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // ── 1. CONTINENTS ──────────────────────────────────────────────
+  // Slugs normalisés en anglais (voir prisma/scripts/rename-continent-slugs.ts
+  // pour la migration des données déjà en base avec les anciens slugs FR).
   const continentsData = [
-    { name: "Afrique", slug: "afrique", code: "AF" },
+    { name: "Afrique", slug: "africa", code: "AF" },
     { name: "Europe", slug: "europe", code: "EU" },
-    { name: "Amérique du Nord", slug: "amerique-du-nord", code: "NA" },
-    { name: "Amérique du Sud", slug: "amerique-du-sud", code: "SA" },
-    { name: "Asie", slug: "asie", code: "AS" },
-    { name: "Océanie", slug: "oceanie", code: "OC" },
+    { name: "Amérique du Nord", slug: "north-america", code: "NA" },
+    { name: "Amérique du Sud", slug: "south-america", code: "SA" },
+    { name: "Asie", slug: "asia", code: "AS" },
+    { name: "Océanie", slug: "oceania", code: "OC" },
   ];
 
   const continents: Record<string, { id: string }> = {};
@@ -36,16 +38,16 @@ async function main() {
 
   // ── 2. PAYS ─────────────────────────────────────────────────────
   const countriesData = [
-    { name: "Gabon", slug: "gabon", code: "GA", continent: "afrique" },
-    { name: "Sénégal", slug: "senegal", code: "SN", continent: "afrique" },
-    { name: "Côte d'Ivoire", slug: "cote-d-ivoire", code: "CI", continent: "afrique" },
-    { name: "Maroc", slug: "maroc", code: "MA", continent: "afrique" },
+    { name: "Gabon", slug: "gabon", code: "GA", continent: "africa" },
+    { name: "Sénégal", slug: "senegal", code: "SN", continent: "africa" },
+    { name: "Côte d'Ivoire", slug: "cote-d-ivoire", code: "CI", continent: "africa" },
+    { name: "Maroc", slug: "maroc", code: "MA", continent: "africa" },
     { name: "France", slug: "france", code: "FR", continent: "europe" },
     { name: "Belgique", slug: "belgique", code: "BE", continent: "europe" },
     { name: "Royaume-Uni", slug: "royaume-uni", code: "GB", continent: "europe" },
     { name: "Allemagne", slug: "allemagne", code: "DE", continent: "europe" },
-    { name: "Canada", slug: "canada", code: "CA", continent: "amerique-du-nord" },
-    { name: "États-Unis", slug: "etats-unis", code: "US", continent: "amerique-du-nord" },
+    { name: "Canada", slug: "canada", code: "CA", continent: "north-america" },
+    { name: "États-Unis", slug: "etats-unis", code: "US", continent: "north-america" },
   ];
 
   const countries: Record<string, { id: string }> = {};
