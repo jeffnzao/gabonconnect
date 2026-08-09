@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Globe2 } from "lucide-react";
+import { SITE_NAME, SITE_VERSION } from "@/config/site";
 
 const LINKS = [
   { label: "About", href: "#" },
@@ -13,9 +14,9 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-10 sm:flex-row sm:justify-between">
         <div className="flex items-center gap-2 text-white">
           <Globe2 className="h-5 w-5 text-emerald-400" aria-hidden />
-          <span className="text-sm font-semibold">GabonConnect</span>
+          <span className="text-sm font-semibold">{SITE_NAME}</span>
           <span className="rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide text-slate-400">
-            Version 0.1 MVP
+            Version {SITE_VERSION}
           </span>
         </div>
 
@@ -32,7 +33,7 @@ export default function Footer() {
         </nav>
 
         <p className="text-xs text-slate-500">
-          © {new Date().getFullYear()} GabonConnect — La 10ᵉ province du
+          © {new Date().getFullYear()} {SITE_NAME} — La 10ᵉ province du
           Gabon.
         </p>
       </div>

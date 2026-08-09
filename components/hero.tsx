@@ -1,4 +1,5 @@
 import { ArrowRight, Globe2 } from "lucide-react";
+import { SITE_NAME, SITE_VERSION } from "@/config/site";
 
 export default function Hero() {
   return (
@@ -14,7 +15,7 @@ export default function Hero() {
       <div className="relative mx-auto flex max-w-5xl flex-col items-center px-6 pb-24 pt-28 text-center sm:pb-32 sm:pt-36">
         <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-slate-200 backdrop-blur">
           <Globe2 className="h-4 w-4 text-emerald-400" aria-hidden />
-          GabonConnect · MVP 0.1
+          {SITE_NAME} · MVP {SITE_VERSION}
         </span>
 
         <h1 className="mt-8 text-balance text-4xl font-semibold tracking-tight text-white sm:text-6xl">
@@ -23,7 +24,7 @@ export default function Hero() {
 
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-slate-400 sm:text-xl">
           Des dizaines de milliers de Gabonais vivent hors du pays — en
-          Afrique, en Europe, en Amérique et au-delà. GabonConnect rassemble
+          Afrique, en Europe, en Amérique et au-delà. {SITE_NAME} rassemble
           cette diaspora mondiale sur une seule plateforme : trouvez-vous,
           organisez-vous, avancez ensemble.
         </p>
