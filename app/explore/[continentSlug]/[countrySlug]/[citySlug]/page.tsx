@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Users, HeartHandshake } from "lucide-react";
 import Breadcrumb from "@/components/explore/breadcrumb";
@@ -80,13 +81,22 @@ export default async function CityPage(
         </section>
 
         <section aria-labelledby="city-members-heading" className="mb-16">
-          <h2
-            id="city-members-heading"
-            className="flex items-center gap-2 text-xl font-semibold text-slate-900"
-          >
-            <Users className="h-5 w-5 text-emerald-600" aria-hidden />
-            Gabonais à {city.name}
-          </h2>
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2
+              id="city-members-heading"
+              className="flex items-center gap-2 text-xl font-semibold text-slate-900"
+            >
+              <Users className="h-5 w-5 text-emerald-600" aria-hidden />
+              Gabonese in {city.name}
+            </h2>
+
+            <Link
+              href={`/members?continent=${continentSlug}&country=${countrySlug}&city=${citySlug}`}
+              className="inline-flex items-center rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
+            >
+              View all members
+            </Link>
+          </div>
 
           {city.profiles.length === 0 ? (
             <p className="mt-6 text-sm text-slate-500">

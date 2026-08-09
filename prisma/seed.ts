@@ -29,32 +29,36 @@ async function main() {
   const continents: Record<string, { id: string }> = {};
   for (const c of continentsData) {
     const created = await prisma.continent.upsert({
-      where: { slug: c.slug },
-      update: {},
+      where: { code: c.code },
+      update: { name: c.name, slug: c.slug },
       create: c,
     });
-    continents[c.slug] = created;
+    continents[c.code] = created;
   }
 
   // ── 2. PAYS ─────────────────────────────────────────────────────
   const countriesData = [
-    { name: "Gabon", slug: "gabon", code: "GA", continent: "africa" },
-    { name: "Sénégal", slug: "senegal", code: "SN", continent: "africa" },
-    { name: "Côte d'Ivoire", slug: "cote-d-ivoire", code: "CI", continent: "africa" },
-    { name: "Maroc", slug: "maroc", code: "MA", continent: "africa" },
-    { name: "France", slug: "france", code: "FR", continent: "europe" },
-    { name: "Belgique", slug: "belgique", code: "BE", continent: "europe" },
-    { name: "Royaume-Uni", slug: "royaume-uni", code: "GB", continent: "europe" },
-    { name: "Allemagne", slug: "allemagne", code: "DE", continent: "europe" },
-    { name: "Canada", slug: "canada", code: "CA", continent: "north-america" },
-    { name: "États-Unis", slug: "etats-unis", code: "US", continent: "north-america" },
+    { name: "Gabon", slug: "gabon", code: "GA", continent: "AF" },
+    { name: "Sénégal", slug: "senegal", code: "SN", continent: "AF" },
+    { name: "Côte d'Ivoire", slug: "cote-d-ivoire", code: "CI", continent: "AF" },
+    { name: "Maroc", slug: "maroc", code: "MA", continent: "AF" },
+    { name: "France", slug: "france", code: "FR", continent: "EU" },
+    { name: "Belgique", slug: "belgique", code: "BE", continent: "EU" },
+    { name: "Royaume-Uni", slug: "royaume-uni", code: "GB", continent: "EU" },
+    { name: "Allemagne", slug: "allemagne", code: "DE", continent: "EU" },
+    { name: "Canada", slug: "canada", code: "CA", continent: "NA" },
+    { name: "États-Unis", slug: "etats-unis", code: "US", continent: "NA" },
   ];
 
   const countries: Record<string, { id: string }> = {};
   for (const c of countriesData) {
     const created = await prisma.country.upsert({
-      where: { slug: c.slug },
-      update: {},
+      where: { code: c.code },
+      update: {
+        name: c.name,
+        slug: c.slug,
+        continentId: continents[c.continent].id,
+      },
       create: {
         name: c.name,
         slug: c.slug,

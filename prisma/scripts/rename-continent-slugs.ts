@@ -15,10 +15,16 @@
 // Usage :
 //   npx tsx prisma/scripts/rename-continent-slugs.ts
 
+import "dotenv/config";
 import { PrismaClient } from "../../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DIRECT_URL or DATABASE_URL must be defined in the environment.");
+}
+
+const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 // Ancien slug (FR, historique) -> nouveau slug (EN, celui utilisé par les
