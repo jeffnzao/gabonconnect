@@ -4,31 +4,41 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface PaginationProps {
   page: number;
   totalPages: number;
-  q?: string;
+  search?: string;
   continentSlug?: string;
   countrySlug?: string;
   citySlug?: string;
+  profession?: string;
 }
 
 function buildHref(
   targetPage: number,
-  { q, continentSlug, countrySlug, citySlug }: Omit<PaginationProps, "page" | "totalPages">,
+  { search, continentSlug, countrySlug, citySlug, profession }: Omit<PaginationProps, "page" | "totalPages">,
 ) {
   const params = new URLSearchParams();
-  if (q) params.set("q", q);
+  if (search) params.set("search", search);
   if (continentSlug) params.set("continent", continentSlug);
   if (countrySlug) params.set("country", countrySlug);
   if (citySlug) params.set("city", citySlug);
+  if (profession) params.set("profession", profession);
   if (targetPage > 1) params.set("page", String(targetPage));
 
   const queryString = params.toString();
   return queryString ? `/members?${queryString}` : "/members";
 }
 
-export default function Pagination({ page, totalPages, q, continentSlug, countrySlug, citySlug }: PaginationProps) {
+export default function Pagination({
+  page,
+  totalPages,
+  search,
+  continentSlug,
+  countrySlug,
+  citySlug,
+  profession,
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const filters = { q, continentSlug, countrySlug, citySlug };
+  const filters = { search, continentSlug, countrySlug, citySlug, profession };
   const hasPrevious = page > 1;
   const hasNext = page < totalPages;
 

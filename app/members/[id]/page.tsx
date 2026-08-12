@@ -7,17 +7,19 @@ import { getMemberById, type MemberDetail } from "@/lib/members";
 
 export const dynamic = "force-dynamic";
 
-function buildDescription(member: MemberDetail): string {
+function buildDescription(member: MemberDetail): string | undefined {
   if (member.profession && member.city) {
-    return `${member.profession} in ${member.city.name}, ${member.city.country.name} — GabonConnect`;
+    return `${member.firstName} ${member.lastName} — ${member.profession} in ${member.city.name}, ${member.city.country.name}.`;
   }
   if (member.profession) {
-    return `${member.profession} — GabonConnect`;
+    return `${member.firstName} ${member.lastName} — ${member.profession}.`;
   }
   if (member.bio) {
     return member.bio;
   }
-  return `${member.firstName} ${member.lastName} sur GabonConnect.`;
+  // Aucune donnée réelle disponible pour composer une description honnête
+  // (pas de profession, pas de ville, pas de bio) : on n'en invente pas.
+  return undefined;
 }
 
 function buildBreadcrumbItems(member: MemberDetail): BreadcrumbItem[] {
@@ -51,13 +53,17 @@ export async function generateMetadata(
   const { id } = await props.params;
   const member = await getMemberById(id);
 
+  // Profil inexistant OU privé : même metadata générique dans les deux cas
+  // — ne jamais laisser transparaître qu'un profil PRIVATE existe à cet id.
   if (!member) {
-    return { title: "Profil introuvable | GabonConnect" };
+    return { title: "Member not found | GabonConnect" };
   }
 
+  const description = buildDescription(member);
+
   return {
-    title: `${member.firstName} ${member.lastName} | GabonConnect`,
-    description: buildDescription(member),
+    title: `${member.firstName} ${member.lastName} · GabonConnect`,
+    ...(description ? { description } : {}),
   };
 }
 
@@ -115,36 +121,6 @@ export default async function MemberProfilePage(props: PageProps<"/members/[id]"
               )}
             </div>
           </div>
-
-          {member.city && (
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-              <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                Location
-              </span>
-              <nav aria-label="Location" className="flex items-center gap-1.5 text-sm">
-                <Link
-                  href={`/explore/${member.city.country.continent.slug}/${member.city.country.slug}/${member.city.slug}`}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-700"
-                >
-                  {member.city.name}
-                </Link>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-300" aria-hidden />
-                <Link
-                  href={`/explore/${member.city.country.continent.slug}/${member.city.country.slug}`}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-700"
-                >
-                  {member.city.country.name}
-                </Link>
-                <ChevronRight className="h-3.5 w-3.5 text-slate-300" aria-hidden />
-                <Link
-                  href={`/explore/${member.city.country.continent.slug}`}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-700"
-                >
-                  {member.city.country.continent.name}
-                </Link>
-              </nav>
-            </div>
-          )}
         </div>
       </section>
 
@@ -156,6 +132,49 @@ export default async function MemberProfilePage(props: PageProps<"/members/[id]"
           </p>
         </section>
       )}
+
+      {member.city && (
+        <section className="mx-auto w-full max-w-3xl border-t border-slate-100 px-6 py-12">
+          <h2 className="text-lg font-semibold text-slate-900">Location</h2>
+          <nav aria-label="Location" className="mt-3 flex flex-wrap items-center gap-1.5 text-sm">
+            <Link
+              href={`/explore/${member.city.country.continent.slug}/${member.city.country.slug}/${member.city.slug}`}
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-700"
+            >
+              {member.city.name}
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5 text-slate-300" aria-hidden />
+            <Link
+              href={`/explore/${member.city.country.continent.slug}/${member.city.country.slug}`}
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-700"
+            >
+              {member.city.country.name}
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5 text-slate-300" aria-hidden />
+            <Link
+              href={`/explore/${member.city.country.continent.slug}`}
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-700"
+            >
+              {member.city.country.continent.name}
+            </Link>
+          </nav>
+        </section>
+      )}
+
+      {member.profession && (
+        <section className="mx-auto w-full max-w-3xl border-t border-slate-100 px-6 py-12">
+          <h2 className="text-lg font-semibold text-slate-900">Professional</h2>
+          <p className="mt-3 flex items-center gap-1.5 leading-relaxed text-slate-600">
+            <Briefcase className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+            {member.profession}
+          </p>
+        </section>
+      )}
+
+      {/* Association : aucune relation Profile → Association n'existe dans le
+          schéma Prisma actuel (Association n'a qu'une relation vers City).
+          Conformément à la Task 006 §9/§15, rien n'est affiché ici — une
+          section ne doit pas être inventée. */}
     </div>
   );
 }

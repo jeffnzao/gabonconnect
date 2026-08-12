@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserRound, MapPin } from "lucide-react";
+import { UserRound, MapPin, Globe2 } from "lucide-react";
 import type { MemberListItem } from "@/lib/members";
 
 interface MemberCardProps {
@@ -40,6 +40,12 @@ export default function MemberCard({ member }: MemberCardProps) {
         <p className="flex items-center gap-1.5 text-xs text-slate-500">
           <MapPin className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
           {member.city.name}, {member.city.country.name}
+        </p>
+      )}
+      {member.city && (
+        <p className="flex items-center gap-1.5 text-xs text-slate-400">
+          <Globe2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
+          {member.city.country.continent.name}
         </p>
       )}
     </Link>

@@ -5,13 +5,14 @@ import MemberSearch from "@/components/members/member-search";
 import MemberFilters from "@/components/members/member-filters";
 import MemberCard from "@/components/members/member-card";
 import Pagination from "@/components/members/pagination";
-import { getMembers, getPublicMemberCount, getMemberFilterOptions } from "@/lib/members";
+import { getMembers, getMemberFilterOptions } from "@/lib/members";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Gabonese Diaspora Directory | GabonConnect",
-  description: "Discover Gabonese people, professionals and communities across the world.",
+  title: "Gabonese Members | GabonConnect",
+  description:
+    "Discover Gabonese people around the world and connect with the diaspora.",
 };
 
 function firstValue(value: string | string[] | undefined): string | undefined {
@@ -22,20 +23,20 @@ function firstValue(value: string | string[] | undefined): string | undefined {
 export default async function MembersPage(props: PageProps<"/members">) {
   const rawParams = await props.searchParams;
 
-  const q = firstValue(rawParams.q);
+  const search = firstValue(rawParams.search);
   const continentSlug = firstValue(rawParams.continent);
   const countrySlug = firstValue(rawParams.country);
   const citySlug = firstValue(rawParams.city);
+  const profession = firstValue(rawParams.profession);
   const pageParam = firstValue(rawParams.page);
   const page = pageParam ? Math.max(1, Number.parseInt(pageParam, 10) || 1) : 1;
 
-  const [publicMemberCount, { members, totalCount, totalPages }, filterOptions] = await Promise.all([
-    getPublicMemberCount(),
-    getMembers({ q, continentSlug, countrySlug, citySlug, page }),
+  const [{ members, totalCount, totalPages }, filterOptions] = await Promise.all([
+    getMembers({ search, continentSlug, countrySlug, citySlug, profession, page }),
     getMemberFilterOptions(continentSlug, countrySlug),
   ]);
 
-  const hasActiveFilters = Boolean(q || continentSlug || countrySlug || citySlug);
+  const hasActiveFilters = Boolean(search || continentSlug || countrySlug || citySlug || profession);
 
   return (
     <div className="flex flex-1 flex-col bg-slate-50">
@@ -43,19 +44,25 @@ export default async function MembersPage(props: PageProps<"/members">) {
         <div className="mx-auto max-w-6xl px-6 py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              Gabonese around the world
+              Gabonese Members
             </h1>
             <p className="mt-4 text-lg text-slate-500">
-              Discover Gabonese people, professionals and communities across the world.
+              Discover Gabonese people around the world and connect with the diaspora.
             </p>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-medium text-emerald-700">
               <Users className="h-4 w-4" aria-hidden />
-              {publicMemberCount} public members
+              {totalCount} member{totalCount === 1 ? "" : "s"} found
             </p>
           </div>
 
           <div className="mx-auto mt-8 flex max-w-xl justify-center">
-            <MemberSearch defaultValue={q} continentSlug={continentSlug} countrySlug={countrySlug} citySlug={citySlug} />
+            <MemberSearch
+              defaultValue={search}
+              continentSlug={continentSlug}
+              countrySlug={countrySlug}
+              citySlug={citySlug}
+              profession={profession}
+            />
           </div>
 
           <div className="mt-6 flex justify-center">
@@ -63,10 +70,11 @@ export default async function MembersPage(props: PageProps<"/members">) {
               continents={filterOptions.continents}
               countries={filterOptions.countries}
               cities={filterOptions.cities}
-              q={q}
+              search={search}
               continentSlug={continentSlug}
               countrySlug={countrySlug}
               citySlug={citySlug}
+              profession={profession}
             />
           </div>
         </div>
@@ -97,7 +105,15 @@ export default async function MembersPage(props: PageProps<"/members">) {
                 <MemberCard key={member.id} member={member} />
               ))}
             </div>
-            <Pagination page={page} totalPages={totalPages} q={q} continentSlug={continentSlug} countrySlug={countrySlug} citySlug={citySlug} />
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              search={search}
+              continentSlug={continentSlug}
+              countrySlug={countrySlug}
+              citySlug={citySlug}
+              profession={profession}
+            />
           </>
         )}
       </section>

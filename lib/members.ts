@@ -22,7 +22,7 @@ export interface MemberLocation {
   };
 }
 
-const LOCATION_SELECT = {
+export const LOCATION_SELECT = {
   name: true,
   slug: true,
   country: {
@@ -35,10 +35,11 @@ const LOCATION_SELECT = {
 } as const;
 
 export interface MemberFilters {
-  q?: string;
+  search?: string;
   continentSlug?: string;
   countrySlug?: string;
   citySlug?: string;
+  profession?: string;
   page?: number;
 }
 
@@ -62,13 +63,21 @@ export interface MemberListResult {
 function buildMemberWhere(filters: MemberFilters): Prisma.ProfileWhereInput {
   const where: Prisma.ProfileWhereInput = { visibility: ProfileVisibility.PUBLIC };
 
-  const q = filters.q?.trim();
-  if (q) {
+  const search = filters.search?.trim();
+  if (search) {
+    // Prénom, nom, profession, et — quand la localisation fait déjà
+    // partie des données disponibles — le nom de ville (ex: "Paris").
     where.OR = [
-      { firstName: { contains: q, mode: "insensitive" } },
-      { lastName: { contains: q, mode: "insensitive" } },
-      { profession: { contains: q, mode: "insensitive" } },
+      { firstName: { contains: search, mode: "insensitive" } },
+      { lastName: { contains: search, mode: "insensitive" } },
+      { profession: { contains: search, mode: "insensitive" } },
+      { city: { name: { contains: search, mode: "insensitive" } } },
     ];
+  }
+
+  const profession = filters.profession?.trim();
+  if (profession) {
+    where.profession = { contains: profession, mode: "insensitive" };
   }
 
   if (filters.citySlug) {

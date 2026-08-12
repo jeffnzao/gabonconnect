@@ -28,13 +28,17 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
               ) : (
                 <span
                   aria-current={isLast ? "page" : undefined}
-                  className={isLast ? "font-medium text-slate-900" : ""}
+                  className={
+                    isLast
+                      ? "block max-w-[45vw] truncate font-medium text-slate-900 sm:max-w-none"
+                      : ""
+                  }
                 >
                   {item.label}
                 </span>
               )}
               {!isLast && (
-                <ChevronRight className="h-3.5 w-3.5 text-slate-300" aria-hidden />
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-300" aria-hidden />
               )}
             </li>
           );

@@ -7,16 +7,18 @@ interface MemberFiltersProps {
   continents: FilterOption[];
   countries: FilterOption[];
   cities: FilterOption[];
-  q?: string;
+  search?: string;
   continentSlug?: string;
   countrySlug?: string;
   citySlug?: string;
+  profession?: string;
 }
 
 interface NextFilters {
   continent?: string;
   country?: string;
   city?: string;
+  profession?: string;
 }
 
 const selectClassName =
@@ -26,31 +28,34 @@ export default function MemberFilters({
   continents,
   countries,
   cities,
-  q,
+  search,
   continentSlug,
   countrySlug,
   citySlug,
+  profession,
 }: MemberFiltersProps) {
   const router = useRouter();
 
   function navigate(next: NextFilters) {
     const params = new URLSearchParams();
-    if (q) params.set("q", q);
+    if (search) params.set("search", search);
 
     const continent = "continent" in next ? next.continent : continentSlug;
     const country = "country" in next ? next.country : countrySlug;
     const city = "city" in next ? next.city : citySlug;
+    const nextProfession = "profession" in next ? next.profession : profession;
 
     if (continent) params.set("continent", continent);
     if (country) params.set("country", country);
     if (city) params.set("city", city);
+    if (nextProfession) params.set("profession", nextProfession);
 
     const queryString = params.toString();
     router.push(queryString ? `/members?${queryString}` : "/members");
   }
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap items-center gap-3">
       <select
         aria-label="Filter by continent"
         value={continentSlug ?? ""}
@@ -96,6 +101,23 @@ export default function MemberFilters({
           </option>
         ))}
       </select>
+
+      <input
+        type="text"
+        aria-label="Filter by profession"
+        defaultValue={profession ?? ""}
+        placeholder="Profession"
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            navigate({ profession: event.currentTarget.value.trim() || undefined });
+          }
+        }}
+        onBlur={(event) =>
+          navigate({ profession: event.currentTarget.value.trim() || undefined })
+        }
+        className={`${selectClassName} w-40`}
+      />
     </div>
   );
 }

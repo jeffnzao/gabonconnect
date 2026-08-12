@@ -5,6 +5,7 @@ interface MemberSearchProps {
   continentSlug?: string;
   countrySlug?: string;
   citySlug?: string;
+  profession?: string;
 }
 
 export default function MemberSearch({
@@ -12,6 +13,7 @@ export default function MemberSearch({
   continentSlug,
   countrySlug,
   citySlug,
+  profession,
 }: MemberSearchProps) {
   return (
     <form
@@ -22,14 +24,15 @@ export default function MemberSearch({
       <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
       <input
         type="text"
-        name="q"
+        name="search"
         defaultValue={defaultValue}
-        placeholder="Rechercher par prénom, nom ou profession…"
+        placeholder="Search by first name, last name or profession…"
         className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
       />
       {continentSlug && <input type="hidden" name="continent" value={continentSlug} />}
       {countrySlug && <input type="hidden" name="country" value={countrySlug} />}
       {citySlug && <input type="hidden" name="city" value={citySlug} />}
+      {profession && <input type="hidden" name="profession" value={profession} />}
       <button
         type="submit"
         className="shrink-0 rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-slate-950 transition-colors hover:bg-emerald-400"

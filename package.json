@@ -1,13 +1,13 @@
 {
   "name": "gabonconnect",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx lib/auth.test.ts && tsx lib/security-guards.test.ts"
+    "test": "tsx lib/auth.test.ts && tsx lib/security-guards.test.ts && tsx lib/members.test.ts && tsx lib/member-profile.test.ts && tsx lib/profile-management.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
