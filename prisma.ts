@@ -1,7 +1,7 @@
 // Client Prisma singleton.
 // Prisma 7 requiert un "driver adapter" pour les bases SQL : plus de
 // binaire moteur natif, on passe par le driver Node "pg" directement.
-import { PrismaClient } from "@/app/generated/prisma";
+import { PrismaClient } from "@/app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {

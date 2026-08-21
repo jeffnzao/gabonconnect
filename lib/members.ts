@@ -22,6 +22,7 @@ export interface MemberLocation {
   };
 }
 
+// 🟢 Déclaré et exporté UNE SEULE FOIS pour corriger l'erreur de build
 export const LOCATION_SELECT = {
   name: true,
   slug: true,
@@ -29,7 +30,12 @@ export const LOCATION_SELECT = {
     select: {
       name: true,
       slug: true,
-      continent: { select: { name: true, slug: true } },
+      continent: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
     },
   },
 } as const;
@@ -65,8 +71,6 @@ function buildMemberWhere(filters: MemberFilters): Prisma.ProfileWhereInput {
 
   const search = filters.search?.trim();
   if (search) {
-    // Prénom, nom, profession, et — quand la localisation fait déjà
-    // partie des données disponibles — le nom de ville (ex: "Paris").
     where.OR = [
       { firstName: { contains: search, mode: "insensitive" } },
       { lastName: { contains: search, mode: "insensitive" } },

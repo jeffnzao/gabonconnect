@@ -3,10 +3,11 @@ generator client {
   output   = "../app/generated/prisma"
 }
 
-datasource db {
+ datasource db {
   provider = "postgresql"
-  // url / directUrl sont définis dans prisma.config.ts (système Prisma 7)
-}
+   // url / directUrl sont définis dans prisma.config.ts (système Prisma 7)
+} 
+
 
 enum Role {
   USER
@@ -107,6 +108,8 @@ model Profile {
   cityId String?
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
 
+  associations AssociationMember[] 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -130,10 +133,29 @@ model Association {
 
   status AssociationStatus @default(PENDING)
 
+  members AssociationMember[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([cityId])
   @@index([status])
   @@map("associations")
+}
+
+model AssociationMember {
+  id String @id @default(uuid())
+
+  associationId String
+  association   Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([associationId, profileId])
+  @@index([associationId])
+  @@index([profileId])
+  @@map("association_members")
 }

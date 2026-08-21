@@ -18,7 +18,7 @@ export default function HeaderNav({ isAuthenticated }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = isAuthenticated
-    ? [...BASE_LINKS, { label: "My profile", href: "/profile" }]
+    ? [...BASE_LINKS, { label: "Dashboard", href: "/dashboard" }, { label: "My profile", href: "/profile" }]
     : [...BASE_LINKS, { label: "Join", href: "/join" }, { label: "Login", href: "/login" }];
 
   return (
