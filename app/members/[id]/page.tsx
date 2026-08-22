@@ -4,8 +4,16 @@ import Link from "next/link";
 import { UserRound, MapPin, Briefcase, ChevronRight } from "lucide-react";
 import Breadcrumb, { type BreadcrumbItem } from "@/components/explore/breadcrumb";
 import { getMemberById, type MemberDetail } from "@/lib/members";
+import { getConnectionState } from "@/lib/connections";
+import { ConnectButton } from "@/components/members/connect-button";
+import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
+
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 function buildDescription(member: MemberDetail): string | undefined {
   if (member.profession && member.city) {
@@ -17,8 +25,6 @@ function buildDescription(member: MemberDetail): string | undefined {
   if (member.bio) {
     return member.bio;
   }
-  // Aucune donnée réelle disponible pour composer une description honnête
-  // (pas de profession, pas de ville, pas de bio) : on n'en invente pas.
   return undefined;
 }
 
@@ -48,13 +54,11 @@ function buildBreadcrumbItems(member: MemberDetail): BreadcrumbItem[] {
 }
 
 export async function generateMetadata(
-  props: PageProps<"/members/[id]">,
+  props: PageProps,
 ): Promise<Metadata> {
   const { id } = await props.params;
   const member = await getMemberById(id);
 
-  // Profil inexistant OU privé : même metadata générique dans les deux cas
-  // — ne jamais laisser transparaître qu'un profil PRIVATE existe à cet id.
   if (!member) {
     return { title: "Member not found | GabonConnect" };
   }
@@ -67,7 +71,7 @@ export async function generateMetadata(
   };
 }
 
-export default async function MemberProfilePage(props: PageProps<"/members/[id]">) {
+export default async function MemberProfilePage(props: PageProps) {
   const { id } = await props.params;
   const member = await getMemberById(id);
 
@@ -75,7 +79,21 @@ export default async function MemberProfilePage(props: PageProps<"/members/[id]"
     notFound();
   }
 
+  // 1. Récupération de l'utilisateur connecté et de son statut de connexion
+  const user = await getCurrentUser();
+  let viewerProfileId: string | null = null;
+
+  if (user) {
+    const viewerProfile = await prisma.profile.findUnique({
+      where: { userId: user.id },
+      select: { id: true },
+    });
+    viewerProfileId = viewerProfile?.id ?? null;
+  }
+
+  const connectionState = await getConnectionState(viewerProfileId, member.id);
   const fullName = `${member.firstName} ${member.lastName}`;
+  const isSelf = viewerProfileId === member.id;
 
   return (
     <div className="flex flex-1 flex-col bg-slate-50">
@@ -87,39 +105,52 @@ export default async function MemberProfilePage(props: PageProps<"/members/[id]"
         <div className="mt-6 h-28 bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-300 sm:h-36" />
 
         <div className="mx-auto max-w-3xl px-6 pb-10">
-          <div className="-mt-12 flex flex-col items-center gap-4 text-center sm:-mt-16 sm:flex-row sm:items-end sm:text-left">
-            {member.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={member.photo}
-                alt={fullName}
-                className="h-28 w-28 shrink-0 rounded-full object-cover ring-4 ring-white shadow-lg sm:h-32 sm:w-32"
-              />
-            ) : (
-              <span className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-4 ring-white shadow-lg sm:h-32 sm:w-32">
-                <UserRound className="h-12 w-12" aria-hidden />
-              </span>
-            )}
-
-            <div className="pb-1">
-              <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-                {fullName}
-              </h1>
-
-              {member.profession && (
-                <p className="mt-1 flex items-center justify-center gap-1.5 text-slate-500 sm:justify-start">
-                  <Briefcase className="h-4 w-4" aria-hidden />
-                  {member.profession}
-                </p>
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="-mt-12 flex flex-col items-center gap-4 text-center sm:-mt-16 sm:flex-row sm:items-end sm:text-left">
+              {member.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={member.photo}
+                  alt={fullName}
+                  className="h-28 w-28 shrink-0 rounded-full object-cover ring-4 ring-white shadow-lg sm:h-32 sm:w-32"
+                />
+              ) : (
+                <span className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-4 ring-white shadow-lg sm:h-32 sm:w-32">
+                  <UserRound className="h-12 w-12" aria-hidden />
+                </span>
               )}
 
-              {member.city && (
-                <p className="mt-1 flex items-center justify-center gap-1.5 text-slate-500 sm:justify-start">
-                  <MapPin className="h-4 w-4" aria-hidden />
-                  {member.city.name}, {member.city.country.name}
-                </p>
-              )}
+              <div className="pb-1">
+                <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+                  {fullName}
+                </h1>
+
+                {member.profession && (
+                  <p className="mt-1 flex items-center justify-center gap-1.5 text-slate-500 sm:justify-start">
+                    <Briefcase className="h-4 w-4" aria-hidden />
+                    {member.profession}
+                  </p>
+                )}
+
+                {member.city && (
+                  <p className="mt-1 flex items-center justify-center gap-1.5 text-slate-500 sm:justify-start">
+                    <MapPin className="h-4 w-4" aria-hidden />
+                    {member.city.name}, {member.city.country.name}
+                  </p>
+                )}
+              </div>
             </div>
+
+            {/* Le bouton de connexion s'affiche ici (masqué si l'utilisateur consulte son propre profil) */}
+            {!isSelf && (
+              <div className="pb-1">
+                <ConnectButton
+                  targetProfileId={member.id}
+                  isAuthenticated={Boolean(user)}
+                  state={connectionState}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -170,11 +201,6 @@ export default async function MemberProfilePage(props: PageProps<"/members/[id]"
           </p>
         </section>
       )}
-
-      {/* Association : aucune relation Profile → Association n'existe dans le
-          schéma Prisma actuel (Association n'a qu'une relation vers City).
-          Conformément à la Task 006 §9/§15, rien n'est affiché ici — une
-          section ne doit pas être inventée. */}
     </div>
   );
 }

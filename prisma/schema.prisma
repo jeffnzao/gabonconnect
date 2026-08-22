@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js" // <-- CORRIGÉ ICI
   output   = "../app/generated/prisma"
 }
 
@@ -7,6 +7,8 @@ generator client {
   provider = "postgresql"
    // url / directUrl sont définis dans prisma.config.ts (système Prisma 7)
 } 
+
+
 
 
 enum Role {
@@ -103,13 +105,15 @@ model Profile {
   profession String?
   photo      String?
 
+  connectionsSent     Connection[] @relation("ConnectionRequester")
+  connectionsReceived Connection[] @relation("ConnectionReceiver")
+
   visibility ProfileVisibility @default(PUBLIC)
 
   cityId String?
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
 
   associations AssociationMember[] 
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -158,4 +162,26 @@ model AssociationMember {
   @@index([associationId])
   @@index([profileId])
   @@map("association_members")
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+model Connection {
+  id          String           @id @default(uuid())
+  requesterId String
+  requester   Profile          @relation("ConnectionRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiverId  String
+  receiver    Profile          @relation("ConnectionReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  status      ConnectionStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([receiverId])
+  @@index([requesterId])
+  @@map("connections")
 }
