@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "test": "tsx lib/auth.test.ts && tsx lib/security-guards.test.ts && tsx lib/members.test.ts && tsx lib/member-profile.test.ts && tsx lib/profile-management.test.ts"
   },
   "dependencies": {
