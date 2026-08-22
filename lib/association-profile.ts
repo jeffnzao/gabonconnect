@@ -79,13 +79,11 @@ export const getAssociationBySlug = cache(
         });
       } else {
         // Defensive fallback when the generated client accessor is missing.
-        // eslint-disable-next-line no-console
         console.warn("[lib/association-profile] prisma.associationMember.count unavailable, returning 0");
       }
     } catch (err) {
       // Catch Prisma runtime errors (e.g. P2021 TableDoesNotExist) and avoid
       // crashing the server in development. Log for diagnosis and continue.
-      // eslint-disable-next-line no-console
       console.warn("[lib/association-profile] failed to count association members:", err);
       memberCount = 0;
     }

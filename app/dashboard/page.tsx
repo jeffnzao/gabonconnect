@@ -103,7 +103,7 @@ export default async function DashboardPage() {
         </h2>
         {connections.length === 0 ? (
           <p className="text-muted-foreground">
-            Vous n'avez pas encore de connexion active.
+            Vous n&apos;avez pas encore de connexion active.
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">

@@ -91,7 +91,6 @@ export async function getDashboardData(userId: string): Promise<DashboardData | 
   } catch (err) {
     // Défensive : loggue et continue avec une liste vide. Retirer après
     // avoir appliqué la migration qui crée `association_members`.
-    // eslint-disable-next-line no-console
     console.warn("Could not load association memberships:", err);
     associations = [];
   }

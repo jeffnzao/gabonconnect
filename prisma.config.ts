@@ -9,9 +9,8 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    //url: env("DIRECT_URL"),
     url: env("DATABASE_URL"),
-  // @ts-expect-error directUrl est valide au runtime CLI mais absent du type TS
+    // @ts-expect-error directUrl est valide au runtime CLI mais absent du type TS
     directUrl: env("DIRECT_URL"),
-},
+  },
 });
