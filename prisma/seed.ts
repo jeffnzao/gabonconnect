@@ -7,10 +7,9 @@
 // on génère des UUID aléatoires pour simuler des comptes de démonstration.
 
 import { randomUUID } from "node:crypto";
-//import { PrismaClient, ProfileVisibility, AssociationStatus, Role } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 // seed.ts
-import { PrismaClient, ProfileVisibility, AssociationStatus, Role } from "../app/generated/prisma/client";
+import { PrismaClient, ProfileVisibility, AssociationStatus, Role } from "../app/generated/prisma";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });

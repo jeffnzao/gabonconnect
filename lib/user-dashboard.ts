@@ -10,7 +10,7 @@
 import { prisma } from "@/lib/prisma";
 import { LOCATION_SELECT, type MemberLocation } from "@/lib/members";
 import type { AssociationListItem } from "@/lib/associations";
-import { AssociationStatus, ProfileVisibility } from "@/app/generated/prisma/client";
+import { AssociationStatus, ProfileVisibility } from "@/app/generated/prisma";
 
 export interface DashboardProfile {
   id: string;

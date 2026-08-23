@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { ensureUser } from "@/lib/auth";
-import { AssociationStatus } from "@/app/generated/prisma/client";
+import { AssociationStatus } from "@/app/generated/prisma";
 
 export interface MembershipState {
   joined: boolean;

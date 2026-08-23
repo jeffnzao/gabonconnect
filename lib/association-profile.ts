@@ -3,7 +3,7 @@
 
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
-import { AssociationStatus, ProfileVisibility } from "@/app/generated/prisma/client";
+import { AssociationStatus, ProfileVisibility } from "@/app/generated/prisma";
 import { LOCATION_SELECT, type MemberLocation, type MemberListItem } from "@/lib/members";
 
 

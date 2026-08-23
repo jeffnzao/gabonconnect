@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { ensureUser } from "@/lib/auth";
-import { ProfileVisibility } from "@/app/generated/prisma/client";
+import { ProfileVisibility } from "@/app/generated/prisma";
 
 function emptyToUndefined(value: FormDataEntryValue | null): string | undefined {
   const str = String(value ?? "").trim();

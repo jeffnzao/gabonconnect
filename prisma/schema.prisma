@@ -87,6 +87,11 @@ model User {
 
   profile Profile?
 
+  importBatchesCreated  ImportBatch[]  @relation("ImportBatchCreator")
+  importBatchesReviewed ImportBatch[]  @relation("ImportBatchReviewer")
+  importRecordsImported ImportRecord[] @relation("ImportRecordImporter")
+  importRecordsReviewed ImportRecord[] @relation("ImportRecordReviewer")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -171,6 +176,25 @@ enum ConnectionStatus {
   CANCELLED
 }
 
+enum ImportBatchStatus {
+  DRAFT
+  VALIDATED
+  REJECTED
+  IMPORTED
+}
+
+enum ImportRecordStatus {
+  IMPORTED
+  VALIDATED
+  REJECTED
+}
+
+enum ImportEntityType {
+  ASSOCIATION
+  COMPANY
+  PERSONALITY
+}
+
 model Connection {
   id          String           @id @default(uuid())
   requesterId String
@@ -184,4 +208,52 @@ model Connection {
   @@index([receiverId])
   @@index([requesterId])
   @@map("connections")
+}
+
+model ImportBatch {
+  id           String            @id @default(uuid())
+  source       String
+  sourceType   String
+  sourceUrl    String?
+  status       ImportBatchStatus @default(DRAFT)
+  createdById  String
+  createdBy    User              @relation("ImportBatchCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reviewedById String?
+  reviewedBy   User?             @relation("ImportBatchReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime          @default(now())
+  reviewedAt   DateTime?
+
+  records ImportRecord[]
+
+  @@index([status])
+  @@index([createdById])
+  @@map("import_batches")
+}
+
+model ImportRecord {
+  id                String             @id @default(uuid())
+  batchId           String
+  batch             ImportBatch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  entityType        ImportEntityType
+  rowNumber         Int
+  externalId        String?
+  sourceExternalKey String?
+  normalizedName    String
+  dedupeKey         String
+  payload           Json
+  status            ImportRecordStatus  @default(IMPORTED)
+  importedAt        DateTime            @default(now())
+  importedById      String
+  importedBy        User                @relation("ImportRecordImporter", fields: [importedById], references: [id], onDelete: Restrict)
+  reviewedAt        DateTime?
+  reviewedById      String?
+  reviewedBy        User?               @relation("ImportRecordReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  rejectionReason   String?
+
+  @@unique([batchId, rowNumber])
+  @@unique([entityType, dedupeKey])
+  @@unique([sourceExternalKey])
+  @@index([batchId, status])
+  @@index([status])
+  @@map("import_records")
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PartyPopper, ArrowRight } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ProfileVisibility } from "@/app/generated/prisma/client";
+import { ProfileVisibility } from "@/app/generated/prisma";
 
 export const dynamic = "force-dynamic";
 

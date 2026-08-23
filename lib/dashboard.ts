@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import {
   ProfileVisibility,
   AssociationStatus,
-} from "@/app/generated/prisma/client";
+} from "@/app/generated/prisma";
 
 export interface GlobalStats {
   continents: number;

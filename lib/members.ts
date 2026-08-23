@@ -8,7 +8,7 @@
 
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
-import { ProfileVisibility, Prisma } from "@/app/generated/prisma/client";
+import { ProfileVisibility, Prisma } from "@/app/generated/prisma";
 
 const PAGE_SIZE = 12;
 

@@ -25,7 +25,7 @@ import {
   ConnectionStatus,
   ProfileVisibility,
   Prisma,
-} from "@/app/generated/prisma/client";
+} from "@/app/generated/prisma";
 import { resolveSendRequestOutcome } from "@/lib/connections";
 
 async function getCurrentProfileId(): Promise<string | null> {

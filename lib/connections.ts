@@ -11,7 +11,7 @@
 // casse le build. Voir lib/connections-actions.ts pour les mutations.
 
 import { prisma } from "@/lib/prisma";
-import { ConnectionStatus } from "@/app/generated/prisma/client";
+import { ConnectionStatus } from "@/app/generated/prisma";
 import { LOCATION_SELECT, type MemberLocation } from "@/lib/members";
 
 export const COOLDOWN_DAYS = 7;

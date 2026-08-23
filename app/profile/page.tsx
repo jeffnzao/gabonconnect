@@ -7,7 +7,7 @@ import MemberCard from "@/components/members/member-card";
 import { getCurrentUser } from "@/lib/auth";
 import { signOutAction } from "@/lib/auth-actions";
 import { prisma } from "@/lib/prisma";
-import { ProfileVisibility } from "@/app/generated/prisma/client";
+import { ProfileVisibility } from "@/app/generated/prisma";
 import { LOCATION_SELECT, type MemberListItem } from "@/lib/members";
 import { updateProfileAction } from "./actions";
 
