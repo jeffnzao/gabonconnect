@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import {
   listImportRecordsForReview,
+  publishImportRecordFromForm,
   reviewImportRecordFromForm,
 } from "@/lib/import-actions";
 
@@ -31,7 +32,7 @@ export default async function ImportReviewPage() {
         <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Source</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Reviewed</th><th className="px-4 py-3">Actions</th></tr>
+              <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Source</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Reviewed</th><th className="px-4 py-3">Published</th><th className="px-4 py-3">Actions</th></tr>
             </thead>
             <tbody>
               {records.map((record) => (
@@ -41,6 +42,7 @@ export default async function ImportReviewPage() {
                   <td className="px-4 py-3 text-slate-600">{record.batch.source}</td>
                   <td className="px-4 py-3 text-slate-600">{record.status}</td>
                   <td className="px-4 py-3 text-slate-500">{record.reviewedAt?.toLocaleDateString("en-US") ?? "Pending"}</td>
+                  <td className="px-4 py-3 text-slate-500">{record.publishedAt?.toLocaleDateString("en-US") ?? "Not published"}</td>
                   <td className="px-4 py-3">
                     {record.status === "IMPORTED" && (
                       <div className="flex flex-col gap-2">
@@ -57,6 +59,13 @@ export default async function ImportReviewPage() {
                         </form>
                       </div>
                     )}
+                    {record.status === "VALIDATED" && !record.publishedAt && !record.publishedEntityId && (
+                      <form action={publishImportRecordFromForm}>
+                        <input type="hidden" name="recordId" value={record.id} />
+                        <button type="submit" className="text-sm font-semibold text-emerald-700 hover:text-emerald-800">Publish</button>
+                      </form>
+                    )}
+                    {record.publishedAt && <span className="text-xs text-slate-500">Published</span>}
                   </td>
                 </tr>
               ))}

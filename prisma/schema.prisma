@@ -91,6 +91,7 @@ model User {
   importBatchesReviewed ImportBatch[]  @relation("ImportBatchReviewer")
   importRecordsImported ImportRecord[] @relation("ImportRecordImporter")
   importRecordsReviewed ImportRecord[] @relation("ImportRecordReviewer")
+  importRecordsPublished ImportRecord[] @relation("ImportRecordPublisher")
   articles              Article[]       @relation("ArticleAuthor")
   announcementsOwned    Announcement[]  @relation("AnnouncementOwner")
   shopsOwned            Shop[]          @relation("ShopOwner")
@@ -291,12 +292,17 @@ model ImportRecord {
   reviewedById      String?
   reviewedBy        User?               @relation("ImportRecordReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
   rejectionReason   String?
+  publishedAt       DateTime?
+  publishedById     String?
+  publishedBy       User?               @relation("ImportRecordPublisher", fields: [publishedById], references: [id], onDelete: SetNull)
+  publishedEntityId String?
 
   @@unique([batchId, rowNumber])
   @@unique([entityType, dedupeKey])
   @@unique([sourceExternalKey])
   @@index([batchId, status])
   @@index([status])
+  @@index([publishedEntityId])
   @@map("import_records")
 }
 

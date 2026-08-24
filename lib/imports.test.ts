@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
 import {
   buildImportDedupeKey,
+  canPublishImportRecord,
   canReviewImportRecord,
   isAdminRole,
   isImportRecordPubliclyEligible,
   isReviewStatus,
+  isSupportedPublicationEntity,
   normalizeImportName,
+  parseAssociationImportPayload,
   validateImportRecordDraft,
 } from "./imports";
 
@@ -42,6 +45,30 @@ assert.equal(isReviewStatus("REJECTED"), true);
 assert.equal(isReviewStatus("IMPORTED"), false);
 assert.equal(isAdminRole("USER"), false);
 assert.equal(isAdminRole("ADMIN"), true);
+assert.equal(isSupportedPublicationEntity("ASSOCIATION"), true);
+assert.equal(isSupportedPublicationEntity("COMPANY"), false);
+assert.equal(isSupportedPublicationEntity("PERSONALITY"), false);
+assert.equal(canPublishImportRecord("IMPORTED", null, null, "ASSOCIATION"), false);
+assert.equal(canPublishImportRecord("REJECTED", null, null, "ASSOCIATION"), false);
+assert.equal(canPublishImportRecord("VALIDATED", null, null, "ASSOCIATION"), true);
+assert.equal(canPublishImportRecord("VALIDATED", new Date(), null, "ASSOCIATION"), false);
+assert.equal(canPublishImportRecord("VALIDATED", null, "association-1", "ASSOCIATION"), false);
+assert.equal(canPublishImportRecord("VALIDATED", null, null, "COMPANY"), false);
+
+assert.deepEqual(
+  parseAssociationImportPayload({ name: " Association Gabon ", slug: "association-gabon", email: "a@example.com", status: "REJECTED" }),
+  {
+    name: "Association Gabon",
+    slug: "association-gabon",
+    description: undefined,
+    logo: undefined,
+    website: undefined,
+    email: "a@example.com",
+    phone: undefined,
+    cityId: undefined,
+  },
+);
+assert.throws(() => parseAssociationImportPayload({ name: "Association Gabon" }), /requires a name and slug/);
 
 assert.throws(
   () =>

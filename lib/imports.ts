@@ -1,6 +1,17 @@
 export type ImportEntityType = "ASSOCIATION" | "COMPANY" | "PERSONALITY";
 export type ImportRecordStatus = "IMPORTED" | "VALIDATED" | "REJECTED";
 
+export interface AssociationImportPayload {
+  name: string;
+  slug: string;
+  description?: string;
+  logo?: string;
+  website?: string;
+  email?: string;
+  phone?: string;
+  cityId?: string;
+}
+
 export interface ImportRecordDraft {
   entityType: ImportEntityType;
   name: string;
@@ -84,4 +95,52 @@ export function canReviewImportRecord(status: ImportRecordStatus): boolean {
 
 export function isAdminRole(role: string): role is "ADMIN" {
   return role === "ADMIN";
+}
+
+export function isSupportedPublicationEntity(entityType: ImportEntityType): boolean {
+  return entityType === "ASSOCIATION";
+}
+
+export function canPublishImportRecord(
+  status: ImportRecordStatus,
+  publishedAt: Date | null,
+  publishedEntityId: string | null,
+  entityType: ImportEntityType,
+): boolean {
+  return (
+    status === "VALIDATED" &&
+    publishedAt === null &&
+    publishedEntityId === null &&
+    isSupportedPublicationEntity(entityType)
+  );
+}
+
+export function parseAssociationImportPayload(payload: unknown): AssociationImportPayload {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    throw new Error("Association import payload must be an object.");
+  }
+
+  const input = payload as Record<string, unknown>;
+  const name = typeof input.name === "string" ? input.name.trim() : "";
+  const slug = typeof input.slug === "string" ? normalizeImportName(input.slug) : "";
+
+  if (!name || !slug) {
+    throw new Error("Association import payload requires a name and slug.");
+  }
+
+  const optionalString = (key: string): string | undefined => {
+    const value = input[key];
+    return typeof value === "string" && value.trim() ? value.trim() : undefined;
+  };
+
+  return {
+    name,
+    slug,
+    description: optionalString("description"),
+    logo: optionalString("logo"),
+    website: optionalString("website"),
+    email: optionalString("email"),
+    phone: optionalString("phone"),
+    cityId: optionalString("cityId"),
+  };
 }

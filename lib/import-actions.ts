@@ -1,13 +1,16 @@
 "use server";
 
-import { ImportEntityType, ImportRecordStatus, Prisma } from "@/app/generated/prisma";
+import { AssociationStatus, ImportEntityType, ImportRecordStatus, Prisma } from "@/app/generated/prisma";
 import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   type ImportRecordDraft,
   canReviewImportRecord,
   isAdminRole,
+  canPublishImportRecord,
+  isSupportedPublicationEntity,
   isReviewStatus,
+  parseAssociationImportPayload,
   validateImportRecordDraft,
 } from "@/lib/imports";
 
@@ -135,7 +138,93 @@ export async function listImportRecordsForReview() {
       rejectionReason: true,
       importedById: true,
       reviewedById: true,
+      publishedAt: true,
+      publishedById: true,
+      publishedEntityId: true,
       batch: { select: { source: true, sourceType: true, sourceUrl: true } },
     },
   });
+}
+
+export async function publishImportRecord(recordId: string) {
+  const user = await requireAdmin();
+
+  return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT "id" FROM "import_records" WHERE "id" = ${recordId} FOR UPDATE`;
+
+    const record = await tx.importRecord.findUnique({
+      where: { id: recordId },
+      select: {
+        id: true,
+        entityType: true,
+        status: true,
+        payload: true,
+        publishedAt: true,
+        publishedEntityId: true,
+        batch: { select: { id: true, source: true, sourceUrl: true } },
+      },
+    });
+
+    if (!record) throw new Error("Import record not found.");
+    if (record.status !== ImportRecordStatus.VALIDATED) {
+      throw new Error("Only validated import records can be published.");
+    }
+    if (record.publishedAt || record.publishedEntityId) {
+      throw new Error("Import record has already been published.");
+    }
+    if (!isSupportedPublicationEntity(record.entityType)) {
+      throw new Error(`Import entity type ${record.entityType} is not supported for publication.`);
+    }
+
+    if (!canPublishImportRecord(record.status, record.publishedAt, record.publishedEntityId, record.entityType)) {
+      throw new Error("Import record is not eligible for publication.");
+    }
+
+    const payload = parseAssociationImportPayload(record.payload);
+    const existing = await tx.association.findUnique({
+      where: { slug: payload.slug },
+      select: { id: true, status: true },
+    });
+
+    let associationId: string;
+    if (existing) {
+      if (existing.status !== AssociationStatus.APPROVED) {
+        throw new Error("An association with this slug already exists and is not approved.");
+      }
+      associationId = existing.id;
+    } else {
+      const association = await tx.association.create({
+        data: {
+          name: payload.name,
+          slug: payload.slug,
+          description: payload.description,
+          logo: payload.logo,
+          website: payload.website,
+          email: payload.email,
+          phone: payload.phone,
+          cityId: payload.cityId,
+          status: AssociationStatus.APPROVED,
+        },
+        select: { id: true },
+      });
+      associationId = association.id;
+    }
+
+    await tx.importRecord.update({
+      where: { id: record.id },
+      data: {
+        publishedAt: new Date(),
+        publishedById: user.id,
+        publishedEntityId: associationId,
+      },
+    });
+
+    return { associationId, source: record.batch.source, sourceUrl: record.batch.sourceUrl };
+  });
+}
+
+export async function publishImportRecordFromForm(formData: FormData) {
+  const recordId = String(formData.get("recordId") ?? "").trim();
+  if (!recordId) throw new Error("Import record id is required.");
+  await publishImportRecord(recordId);
 }
