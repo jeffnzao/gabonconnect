@@ -9,8 +9,16 @@ import { getCityBySlug } from "@/lib/explore";
 
 export const dynamic = "force-dynamic";
 
+interface CityPageProps {
+  params: Promise<{
+    continentSlug: string;
+    countrySlug: string;
+    citySlug: string;
+  }>;
+}
+
 export async function generateMetadata(
-  props: PageProps<"/explore/[continentSlug]/[countrySlug]/[citySlug]">,
+  props: CityPageProps,
 ): Promise<Metadata> {
   const { continentSlug, countrySlug, citySlug } = await props.params;
   const city = await getCityBySlug(continentSlug, countrySlug, citySlug);
@@ -26,7 +34,7 @@ export async function generateMetadata(
 }
 
 export default async function CityPage(
-  props: PageProps<"/explore/[continentSlug]/[countrySlug]/[citySlug]">,
+  props: CityPageProps,
 ) {
   const { continentSlug, countrySlug, citySlug } = await props.params;
   const city = await getCityBySlug(continentSlug, countrySlug, citySlug);

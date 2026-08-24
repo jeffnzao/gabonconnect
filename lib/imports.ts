@@ -74,6 +74,14 @@ export function isImportRecordPubliclyEligible(status: ImportRecordStatus): bool
   return status === "VALIDATED";
 }
 
+export function isReviewStatus(value: string): value is "VALIDATED" | "REJECTED" {
+  return value === "VALIDATED" || value === "REJECTED";
+}
+
+export function canReviewImportRecord(status: ImportRecordStatus): boolean {
+  return status === "IMPORTED";
+}
+
 export function isAdminRole(role: string): role is "ADMIN" {
   return role === "ADMIN";
 }

@@ -5,7 +5,9 @@ import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   type ImportRecordDraft,
+  canReviewImportRecord,
   isAdminRole,
+  isReviewStatus,
   validateImportRecordDraft,
 } from "@/lib/imports";
 
@@ -72,10 +74,21 @@ export async function createImportRecord(batchId: string, draft: ImportRecordDra
 
 export async function reviewImportRecord(
   recordId: string,
-  status: Extract<ImportRecordStatus, "VALIDATED" | "REJECTED">,
+  status: string,
   rejectionReason?: string,
 ) {
   const user = await requireAdmin();
+  if (!isReviewStatus(status)) {
+    throw new Error("Invalid import review status.");
+  }
+
+  const record = await prisma.importRecord.findUnique({
+    where: { id: recordId },
+    select: { status: true },
+  });
+  if (!record || !canReviewImportRecord(record.status)) {
+    throw new Error("Only imported records can be reviewed.");
+  }
 
   if (status === ImportRecordStatus.REJECTED && !rejectionReason?.trim()) {
     throw new Error("A rejected import record requires a reason.");
@@ -88,6 +101,41 @@ export async function reviewImportRecord(
       reviewedAt: new Date(),
       reviewedById: user.id,
       rejectionReason: status === ImportRecordStatus.REJECTED ? rejectionReason!.trim() : null,
+    },
+  });
+}
+
+export async function reviewImportRecordFromForm(formData: FormData) {
+  const recordId = String(formData.get("recordId") ?? "").trim();
+  const status = String(formData.get("status") ?? "");
+  const rejectionReason = String(formData.get("rejectionReason") ?? "");
+  if (!recordId) throw new Error("Import record id is required.");
+
+  await reviewImportRecord(recordId, status, rejectionReason);
+}
+
+export async function listImportRecordsForReview() {
+  await requireAdmin();
+
+  return prisma.importRecord.findMany({
+    where: { status: { in: ["IMPORTED", "REJECTED", "VALIDATED"] } },
+    orderBy: [{ status: "asc" }, { importedAt: "desc" }],
+    select: {
+      id: true,
+      batchId: true,
+      entityType: true,
+      rowNumber: true,
+      externalId: true,
+      normalizedName: true,
+      dedupeKey: true,
+      payload: true,
+      status: true,
+      importedAt: true,
+      reviewedAt: true,
+      rejectionReason: true,
+      importedById: true,
+      reviewedById: true,
+      batch: { select: { source: true, sourceType: true, sourceUrl: true } },
     },
   });
 }

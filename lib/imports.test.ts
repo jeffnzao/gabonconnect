@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import {
   buildImportDedupeKey,
+  canReviewImportRecord,
   isAdminRole,
   isImportRecordPubliclyEligible,
+  isReviewStatus,
   normalizeImportName,
   validateImportRecordDraft,
 } from "./imports";
@@ -32,6 +34,12 @@ assert.equal(
 assert.equal(isImportRecordPubliclyEligible("IMPORTED"), false);
 assert.equal(isImportRecordPubliclyEligible("REJECTED"), false);
 assert.equal(isImportRecordPubliclyEligible("VALIDATED"), true);
+assert.equal(canReviewImportRecord("IMPORTED"), true);
+assert.equal(canReviewImportRecord("VALIDATED"), false);
+assert.equal(canReviewImportRecord("REJECTED"), false);
+assert.equal(isReviewStatus("VALIDATED"), true);
+assert.equal(isReviewStatus("REJECTED"), true);
+assert.equal(isReviewStatus("IMPORTED"), false);
 assert.equal(isAdminRole("USER"), false);
 assert.equal(isAdminRole("ADMIN"), true);
 
