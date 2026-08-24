@@ -5,21 +5,18 @@ import Link from "next/link";
 import { Globe2, Menu, X } from "lucide-react";
 import { signOutAction } from "@/lib/auth-actions";
 
-const BASE_LINKS = [
-  { label: "Explore", href: "/explore" },
-  { label: "Members", href: "/members" },
-];
+export interface HeaderNavLink {
+  label: string;
+  href: string;
+}
 
 interface HeaderNavProps {
   isAuthenticated: boolean;
+  navLinks: HeaderNavLink[];
 }
 
-export default function HeaderNav({ isAuthenticated }: HeaderNavProps) {
+export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navLinks = isAuthenticated
-    ? [...BASE_LINKS, { label: "Dashboard", href: "/dashboard" }, { label: "My profile", href: "/profile" }]
-    : [...BASE_LINKS, { label: "Join", href: "/join" }, { label: "Login", href: "/login" }];
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur">

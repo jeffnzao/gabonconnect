@@ -9,6 +9,15 @@ const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
 
+export function isMissingTableError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "P2021"
+  );
+}
+
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== "production") {

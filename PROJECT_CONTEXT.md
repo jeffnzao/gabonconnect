@@ -238,6 +238,27 @@ Ne jamais pousser sans que l'utilisateur le demande explicitement.
 | 004D | Login / My Profile | ✅ |
 | 005 | Profile editing | 🔄 EN COURS |
 | 006 | TBD | ⏳ |
+
+## Task 012 — Controlled import foundation
+
+Task 012 est terminée côté code : `ImportBatch` et `ImportRecord` fournissent
+la provenance, la validation, le dédoublonnage déterministe et le contrôle
+ADMIN des imports. La migration reste à appliquer et vérifier sur Supabase.
+
+## Task 013 — Marketplace, news, announcements & visibility foundation
+
+La fondation comprend :
+
+- `Article` avec publication contrôlée (`DRAFT`, `PUBLISHED`, `ARCHIVED`).
+- `Announcement` avec activation, pause, période de validité et ciblage
+	contextuel par association ou territoire public.
+- `Shop` et `Product` pour un catalogue sans paiement ni commande.
+- `UserConsent` pour les préférences publicitaires et de communication.
+- Server Actions protégées par session et propriété/admin.
+- RLS activée sur les nouvelles tables via une migration dédiée.
+
+Aucun paiement, abonnement, monétisation, tracking individuel, import
+automatique ou interface admin complète n'a été implémenté dans Task 013.
 | 007 | Association profile | ✅ |
 | 008 | Association membership | 🔄 / À vérifier |
 
