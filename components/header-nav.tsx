@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Globe2, Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Globe2, Menu, Search, X } from "lucide-react";
 import { signOutAction } from "@/lib/auth-actions";
 
 export interface HeaderNavLink {
@@ -17,10 +18,20 @@ interface HeaderNavProps {
 
 export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmed = searchQuery.trim();
+    if (!trimmed) return;
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <Link
           href="/"
           className="flex items-center gap-2 text-slate-900"
@@ -30,7 +41,19 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
           <span className="text-sm font-semibold">GabonConnect</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 sm:flex">
+        <form onSubmit={handleSearchSubmit} className="hidden flex-1 max-w-md items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 md:flex">
+          <Search className="h-4 w-4 text-slate-400" aria-hidden />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search people, associations, events..."
+            className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+            aria-label="Global search"
+          />
+        </form>
+
+        <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -78,38 +101,52 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
       </div>
 
       {isMenuOpen && (
-        <nav className="flex flex-col gap-1 border-t border-slate-100 bg-white px-6 py-4 sm:hidden">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="border-t border-slate-100 bg-white px-6 py-4 sm:hidden">
+          <form onSubmit={handleSearchSubmit} className="mb-3 flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+            <Search className="h-4 w-4 text-slate-400" aria-hidden />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search..."
+              className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+              aria-label="Global search"
+            />
+          </form>
 
-          {isAuthenticated ? (
-            <form action={signOutAction}>
-              <button
-                type="submit"
+          <nav className="flex flex-col gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-700"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
               >
-                Logout
-              </button>
-            </form>
-          ) : (
-            <Link
-              href="/join"
-              onClick={() => setIsMenuOpen(false)}
-              className="mt-2 inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-slate-950"
-            >
-              Join GabonConnect
-            </Link>
-          )}
-        </nav>
+                {link.label}
+              </Link>
+            ))}
+
+            {isAuthenticated ? (
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-700"
+                >
+                  Logout
+                </button>
+              </form>
+            ) : (
+              <Link
+                href="/join"
+                onClick={() => setIsMenuOpen(false)}
+                className="mt-2 inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-slate-950"
+              >
+                Join GabonConnect
+              </Link>
+            )}
+          </nav>
+        </div>
       )}
     </header>
   );
