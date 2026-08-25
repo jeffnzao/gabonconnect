@@ -103,6 +103,9 @@ model User {
   posts                 Post[]                 @relation("PostAuthor")
   postLikes             PostLike[]
   postComments          PostComment[]         @relation("PostCommentAuthor")
+  conversationsAsFirst  Conversation[]       @relation("ConversationParticipant1")
+  conversationsAsSecond Conversation[]       @relation("ConversationParticipant2")
+  sentMessages          Message[]             @relation("MessageSender")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -126,6 +129,8 @@ model Profile {
   connectionsReceived Connection[] @relation("ConnectionReceiver")
 
   visibility ProfileVisibility @default(PUBLIC)
+  status     UserStatus        @default(OFFLINE)
+  showStatus Boolean           @default(true)
 
   cityId String?
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
@@ -290,6 +295,14 @@ enum PostType {
   ANNOUNCEMENT
   EVENT_SHARE
   OPPORTUNITY_SHARE
+}
+
+enum UserStatus {
+  ONLINE
+  AWAY
+  BUSY
+  OFFLINE
+  INCOGNITO
 }
 
 model Connection {
@@ -600,4 +613,36 @@ model PostComment {
   @@index([postId, createdAt])
   @@index([authorId])
   @@map("post_comments")
+}
+
+model Conversation {
+  id             String   @id @default(cuid())
+  participant1Id String
+  participant1   User     @relation("ConversationParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2Id String
+  participant2   User     @relation("ConversationParticipant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  messages Message[]
+
+  @@unique([participant1Id, participant2Id])
+  @@index([participant1Id, updatedAt])
+  @@index([participant2Id, updatedAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  content        String       @db.Text
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+  @@index([senderId, isRead])
+  @@map("messages")
 }

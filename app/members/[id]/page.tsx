@@ -8,6 +8,7 @@ import { getConnectionState } from "@/lib/connections";
 import { ConnectButton } from "@/components/members/connect-button";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getOrCreateConversationForUser } from "@/lib/messaging-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +92,13 @@ export default async function MemberProfilePage(props: PageProps) {
     viewerProfileId = viewerProfile?.id ?? null;
   }
 
+  const contactTarget = user
+    ? await prisma.profile.findUnique({
+        where: { id: member.id },
+        select: { userId: true },
+      })
+    : null;
+
   const connectionState = await getConnectionState(viewerProfileId, member.id);
   const fullName = `${member.firstName} ${member.lastName}`;
   const isSelf = viewerProfileId === member.id;
@@ -125,6 +133,13 @@ export default async function MemberProfilePage(props: PageProps) {
                   {fullName}
                 </h1>
 
+                {member.status && (
+                  <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+                    {member.status === "ONLINE" ? "Online" : member.status === "AWAY" ? "Away" : member.status === "BUSY" ? "Busy" : member.status === "INCOGNITO" ? "Incognito" : "Offline"}
+                  </p>
+                )}
+
                 {member.profession && (
                   <p className="mt-1 flex items-center justify-center gap-1.5 text-slate-500 sm:justify-start">
                     <Briefcase className="h-4 w-4" aria-hidden />
@@ -149,6 +164,15 @@ export default async function MemberProfilePage(props: PageProps) {
                   isAuthenticated={Boolean(user)}
                   state={connectionState}
                 />
+                {user ? (
+                  contactTarget && (
+                    <form action={getOrCreateConversationForUser.bind(null, contactTarget.userId)} className="mt-2">
+                      <button type="submit" className="inline-flex items-center justify-center rounded-full border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700">Envoyer un message</button>
+                    </form>
+                  )
+                ) : (
+                  <Link href={`/login?redirectTo=/members/${member.id}`} className="mt-2 inline-flex items-center justify-center rounded-full border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700">Se connecter pour contacter</Link>
+                )}
               </div>
             )}
           </div>

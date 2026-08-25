@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx lib/auth.test.ts && tsx lib/security-guards.test.ts && tsx lib/members.test.ts && tsx lib/member-profile.test.ts && tsx lib/profile-management.test.ts && tsx lib/imports.test.ts && tsx lib/phase13.test.ts && tsx lib/events.test.ts && tsx lib/opportunities.test.ts && tsx lib/feed.test.ts"
+    "test": "tsx lib/auth.test.ts && tsx lib/security-guards.test.ts && tsx lib/members.test.ts && tsx lib/member-profile.test.ts && tsx lib/profile-management.test.ts && tsx lib/imports.test.ts && tsx lib/phase13.test.ts && tsx lib/events.test.ts && tsx lib/opportunities.test.ts && tsx lib/feed.test.ts && tsx lib/messaging.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

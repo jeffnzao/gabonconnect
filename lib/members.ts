@@ -140,6 +140,7 @@ export interface MemberDetail {
   profession: string | null;
   photo: string | null;
   city: MemberLocation | null;
+  status: "ONLINE" | "AWAY" | "BUSY" | "OFFLINE" | "INCOGNITO" | null;
 }
 
 export const getMemberById = cache(async (id: string): Promise<MemberDetail | null> => {
@@ -153,6 +154,8 @@ export const getMemberById = cache(async (id: string): Promise<MemberDetail | nu
       profession: true,
       photo: true,
       visibility: true,
+      status: true,
+      showStatus: true,
       city: { select: LOCATION_SELECT },
     },
   });
@@ -169,6 +172,7 @@ export const getMemberById = cache(async (id: string): Promise<MemberDetail | nu
     profession: profile.profession,
     photo: profile.photo,
     city: profile.city,
+    status: profile.showStatus ? profile.status : null,
   };
 });
 
