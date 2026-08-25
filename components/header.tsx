@@ -6,6 +6,7 @@ const BASE_LINKS = [
   { label: "Members", href: "/members" },
   { label: "News", href: "/news" },
   { label: "Shops", href: "/shops" },
+  { label: "Events", href: "/events" },
 ];
 
 // Server Component : seule cette partie a besoin de connaître l'état de

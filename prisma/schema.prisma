@@ -96,6 +96,8 @@ model User {
   announcementsOwned    Announcement[]  @relation("AnnouncementOwner")
   shopsOwned            Shop[]          @relation("ShopOwner")
   consents              UserConsent[]
+  eventsCreated         Event[]        @relation("EventCreator")
+  eventParticipations   EventParticipant[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -149,6 +151,7 @@ model Association {
 
   members AssociationMember[]
   shops   Shop[]
+  events  Event[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -236,6 +239,23 @@ enum ProductStatus {
 enum ConsentType {
   ADVERTISING
   COMMUNICATIONS
+}
+
+enum EventOrganizerType {
+  ASSOCIATION
+  USER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum EventParticipantStatus {
+  GOING
+  MAYBE
+  DECLINED
 }
 
 model Connection {
@@ -410,4 +430,47 @@ model UserConsent {
   @@unique([userId, type])
   @@index([type, granted])
   @@map("user_consents")
+}
+
+model Event {
+  id              String              @id @default(cuid())
+  title           String
+  slug            String              @unique
+  description     String              @db.Text
+  startDate       DateTime
+  endDate         DateTime?
+  location        String
+  isVirtual       Boolean             @default(false)
+  virtualUrl      String?
+  organizerType   EventOrganizerType
+  associationId   String?
+  association     Association?        @relation(fields: [associationId], references: [id], onDelete: SetNull)
+  createdById     String
+  createdBy       User                @relation("EventCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  maxParticipants Int?
+  status          EventStatus         @default(PUBLISHED)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  participants EventParticipant[]
+
+  @@index([status, startDate])
+  @@index([associationId, startDate])
+  @@index([createdById])
+  @@map("events")
+}
+
+model EventParticipant {
+  id        String                  @id @default(cuid())
+  eventId   String
+  event     Event                   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    EventParticipantStatus  @default(GOING)
+  createdAt DateTime                @default(now())
+
+  @@unique([eventId, userId])
+  @@index([eventId, status])
+  @@index([userId])
+  @@map("event_participants")
 }

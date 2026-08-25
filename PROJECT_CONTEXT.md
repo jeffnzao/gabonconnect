@@ -239,6 +239,19 @@ Ne jamais pousser sans que l'utilisateur le demande explicitement.
 | 005 | Profile editing | 🔄 EN COURS |
 | 006 | TBD | ⏳ |
 
+## Task 010 — Events & Community Activities
+
+La fondation événements comprend :
+
+- `Event` pour les événements publiés, virtuels ou physiques, organisés par
+	un utilisateur ou une association.
+- `EventParticipant` avec une inscription unique par utilisateur et événement.
+- lecture publique des événements publiés et participation authentifiée.
+- création d'événements réservée aux utilisateurs connectés ; un événement
+	associatif nécessite une adhésion à l'association concernée.
+
+Aucun paiement, ticketing, notification ou calendrier externe n'a été ajouté.
+
 ## Task 012 — Controlled import foundation
 
 Task 012 est terminée côté code : `ImportBatch` et `ImportRecord` fournissent
