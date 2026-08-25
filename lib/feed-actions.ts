@@ -72,6 +72,24 @@ export async function addPostComment(postId: string, content: string) {
   return comment;
 }
 
+export async function updatePost(postId: string, input: unknown) {
+  const user = await requireUser();
+  const post = await prisma.post.findUnique({ where: { id: postId }, select: { authorId: true } });
+  if (!post) throw new Error("Post not found.");
+  if (post.authorId !== user.id) throw new Error("You do not have permission to edit this post.");
+
+  const data = z.object({ content: z.string().trim().min(1).max(5000) }).parse(input);
+  const updated = await prisma.post.update({
+    where: { id: postId },
+    data: { content: data.content },
+    select: { id: true, content: true },
+  });
+
+  revalidatePath("/feed");
+  revalidatePath("/dashboard");
+  return updated;
+}
+
 export async function deletePost(postId: string) {
   const user = await requireUser();
   const post = await prisma.post.findUnique({ where: { id: postId }, select: { authorId: true } });
