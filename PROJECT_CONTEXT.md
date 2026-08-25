@@ -272,6 +272,22 @@ La fondation comprend :
 
 Aucun paiement, abonnement, monétisation, tracking individuel, import
 automatique ou interface admin complète n'a été implémenté dans Task 013.
+
+## Task 010 — Events & Community Activities
+
+La fondation événements comprend `Event` et `EventParticipant`, avec lecture
+des événements `PUBLISHED`, participation authentifiée et contrôle
+d'appartenance pour les événements associatifs.
+
+## Task 011 — Opportunities
+
+La fondation opportunités comprend `Opportunity` et
+`OpportunityApplication`, avec types d'opportunités, filtres publics sur les
+opportunités `PUBLISHED`, création authentifiée, contrôle d'appartenance aux
+associations approuvées et candidature unique par utilisateur.
+
+Aucun paiement, abonnement, notification ou workflow de recrutement n'a été
+implémenté dans cette fondation.
 | 007 | Association profile | ✅ |
 | 008 | Association membership | 🔄 / À vérifier |
 

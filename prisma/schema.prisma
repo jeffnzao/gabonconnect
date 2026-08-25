@@ -98,6 +98,8 @@ model User {
   consents              UserConsent[]
   eventsCreated         Event[]        @relation("EventCreator")
   eventParticipations   EventParticipant[]
+  opportunitiesCreated  Opportunity[]     @relation("OpportunityCreator")
+  opportunityApplications OpportunityApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -152,6 +154,7 @@ model Association {
   members AssociationMember[]
   shops   Shop[]
   events  Event[]
+  opportunities Opportunity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -256,6 +259,21 @@ enum EventParticipantStatus {
   GOING
   MAYBE
   DECLINED
+}
+
+enum OpportunityType {
+  JOB
+  INTERNSHIP
+  VOLUNTEERING
+  PROJECT_CALL
+  MUTUAL_AID
+}
+
+enum OpportunityStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  ARCHIVED
 }
 
 model Connection {
@@ -473,4 +491,47 @@ model EventParticipant {
   @@index([eventId, status])
   @@index([userId])
   @@map("event_participants")
+}
+
+model Opportunity {
+  id             String          @id @default(cuid())
+  title          String
+  slug           String          @unique
+  description    String          @db.Text
+  type           OpportunityType
+  location       String
+  isRemote       Boolean         @default(false)
+  companyName    String?
+  applicationUrl String?
+  contactEmail   String?
+  associationId  String?
+  association    Association?   @relation(fields: [associationId], references: [id], onDelete: SetNull)
+  createdById    String
+  createdBy      User            @relation("OpportunityCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  status         OpportunityStatus @default(PUBLISHED)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  applications OpportunityApplication[]
+
+  @@index([status, createdAt])
+  @@index([type, status])
+  @@index([associationId])
+  @@index([createdById])
+  @@map("opportunities")
+}
+
+model OpportunityApplication {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  applicantId   String
+  applicant     User        @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  message       String?     @db.Text
+  createdAt     DateTime    @default(now())
+
+  @@unique([opportunityId, applicantId])
+  @@index([opportunityId])
+  @@index([applicantId])
+  @@map("opportunity_applications")
 }
