@@ -40,6 +40,13 @@ export function canApplyToOpportunity(status: OpportunityStatus): boolean {
   return status === OpportunityStatus.PUBLISHED;
 }
 
+export function canCreateAssociationOpportunity(
+  associationStatus: "APPROVED" | "PENDING" | "REJECTED" | null,
+  hasMembership: boolean,
+): boolean {
+  return associationStatus === "APPROVED" && hasMembership;
+}
+
 export const getOpportunities = cache(async (filters: OpportunityFilters = {}) => {
   try {
     return await prisma.opportunity.findMany({

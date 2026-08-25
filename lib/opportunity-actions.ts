@@ -4,7 +4,7 @@ import { AssociationStatus, OpportunityStatus, OpportunityType, Prisma } from "@
 import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/phase13";
-import { canApplyToOpportunity } from "@/lib/opportunities";
+import { canApplyToOpportunity, canCreateAssociationOpportunity } from "@/lib/opportunities";
 import { z } from "zod";
 
 const opportunitySchema = z.object({
@@ -36,9 +36,11 @@ export async function createOpportunity(input: unknown) {
     const profile = await prisma.profile.findUnique({ where: { userId: user.id }, select: { id: true } });
     if (!profile) throw new Error("Complete your profile before creating an association opportunity.");
     const association = await prisma.association.findUnique({ where: { id: data.associationId }, select: { status: true } });
-    if (!association || association.status !== AssociationStatus.APPROVED) throw new Error("Only approved associations can publish opportunities.");
+    if (!association) throw new Error("Association not found.");
     const membership = await prisma.associationMember.findUnique({ where: { associationId_profileId: { associationId: data.associationId, profileId: profile.id } }, select: { id: true } });
-    if (!membership) throw new Error("You must be an association member to publish this opportunity.");
+    if (!canCreateAssociationOpportunity(association.status, Boolean(membership))) {
+      throw new Error(association.status !== AssociationStatus.APPROVED ? "Only approved associations can publish opportunities." : "You must be an association member to publish this opportunity.");
+    }
   }
 
   return prisma.opportunity.create({
