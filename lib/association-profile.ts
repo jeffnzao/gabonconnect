@@ -18,10 +18,10 @@ export interface AssociationProfileDetail {
   website: string | null;
   email: string | null;
   phone: string | null;
+  isVerified?: boolean;
   createdAt: Date;
   city: MemberLocation | null;
   memberPreview: MemberListItem[];
-  // Ajout des infos d'adhésion
   memberCount: number;
   isJoined: boolean;
 }
@@ -42,6 +42,7 @@ export const getAssociationBySlug = cache(
         website: true,
         email: true,
         phone: true,
+        isVerified: true,
         createdAt: true,
         status: true,
         city: { select: { id: true, ...LOCATION_SELECT } },
@@ -112,6 +113,7 @@ export const getAssociationBySlug = cache(
       website: association.website,
       email: association.email,
       phone: association.phone,
+      isVerified: association.isVerified,
       createdAt: association.createdAt,
       city: association.city
         ? {

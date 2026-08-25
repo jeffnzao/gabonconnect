@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HeartHandshake, MapPin } from "lucide-react";
+import { CheckCircle2, HeartHandshake, MapPin } from "lucide-react";
 import type { AssociationListItem } from "@/lib/associations";
 
 interface AssociationCardProps {
@@ -28,7 +28,15 @@ export default function AssociationCard({ association }: AssociationCardProps) {
           </span>
         )}
 
-        <p className="text-sm font-semibold text-slate-900">{association.name}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-semibold text-slate-900">{association.name}</p>
+          {association.isVerified && (
+            <span title="Verified association" className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+              <CheckCircle2 className="h-3 w-3" aria-hidden />
+              Verified
+            </span>
+          )}
+        </div>
       </div>
 
       {association.description && (

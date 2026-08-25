@@ -55,6 +55,7 @@ export interface MemberListItem {
   lastName: string;
   profession: string | null;
   photo: string | null;
+  isVerified?: boolean;
   city: MemberLocation | null;
 }
 
@@ -112,6 +113,7 @@ export const getMembers = cache(
           lastName: true,
           profession: true,
           photo: true,
+          isVerified: true,
           city: { select: LOCATION_SELECT },
         },
       }),
@@ -139,6 +141,7 @@ export interface MemberDetail {
   bio: string | null;
   profession: string | null;
   photo: string | null;
+  isVerified?: boolean;
   city: MemberLocation | null;
   status: "ONLINE" | "AWAY" | "BUSY" | "OFFLINE" | "INCOGNITO" | null;
 }
@@ -153,6 +156,7 @@ export const getMemberById = cache(async (id: string): Promise<MemberDetail | nu
       bio: true,
       profession: true,
       photo: true,
+      isVerified: true,
       visibility: true,
       status: true,
       showStatus: true,
@@ -171,6 +175,7 @@ export const getMemberById = cache(async (id: string): Promise<MemberDetail | nu
     bio: profile.bio,
     profession: profile.profession,
     photo: profile.photo,
+    isVerified: profile.isVerified,
     city: profile.city,
     status: profile.showStatus ? profile.status : null,
   };

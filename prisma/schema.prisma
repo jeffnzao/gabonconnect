@@ -27,6 +27,13 @@ enum AssociationStatus {
   REJECTED
 }
 
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -132,6 +139,11 @@ model Profile {
   status     UserStatus        @default(OFFLINE)
   showStatus Boolean           @default(true)
 
+  isVerified        Boolean            @default(false)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  verifiedAt        DateTime?
+  verificationNotes String?
+
   cityId String?
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
 
@@ -158,6 +170,11 @@ model Association {
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
 
   status AssociationStatus @default(PENDING)
+
+  isVerified        Boolean            @default(false)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  verifiedAt        DateTime?
+  verificationNotes String?
 
   members AssociationMember[]
   shops   Shop[]

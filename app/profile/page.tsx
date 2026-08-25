@@ -56,6 +56,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
       profession: true,
       bio: true,
       photo: true,
+      isVerified: true,
       visibility: true,
       city: { select: LOCATION_SELECT },
     },
@@ -84,6 +85,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
     lastName: profile.lastName,
     profession: profile.profession,
     photo: profile.photo,
+    isVerified: profile.isVerified,
     city: profile.city,
   };
 

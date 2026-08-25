@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserRound, MapPin, Globe2 } from "lucide-react";
+import { CheckCircle2, UserRound, MapPin, Globe2 } from "lucide-react";
 import type { MemberListItem } from "@/lib/members";
 
 interface MemberCardProps {
@@ -29,7 +29,15 @@ export default function MemberCard({ member }: MemberCardProps) {
         )}
 
         <div>
-          <p className="text-sm font-semibold text-slate-900">{fullName}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold text-slate-900">{fullName}</p>
+            {member.isVerified && (
+              <span title="Verified profile" className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                <CheckCircle2 className="h-3 w-3" aria-hidden />
+                Verified
+              </span>
+            )}
+          </div>
           {member.profession && (
             <p className="text-xs text-slate-500">{member.profession}</p>
           )}

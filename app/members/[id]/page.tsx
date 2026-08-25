@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { UserRound, MapPin, Briefcase, ChevronRight } from "lucide-react";
+import { UserRound, MapPin, Briefcase, ChevronRight, CheckCircle2 } from "lucide-react";
 import Breadcrumb, { type BreadcrumbItem } from "@/components/explore/breadcrumb";
 import { getMemberById, type MemberDetail } from "@/lib/members";
 import { getConnectionState } from "@/lib/connections";
@@ -129,9 +129,17 @@ export default async function MemberProfilePage(props: PageProps) {
               )}
 
               <div className="pb-1">
-                <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-                  {fullName}
-                </h1>
+                <div className="flex items-center justify-center gap-2 sm:justify-start">
+                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+                    {fullName}
+                  </h1>
+                  {member.isVerified && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                      <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                      Verified
+                    </span>
+                  )}
+                </div>
 
                 {member.status && (
                   <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">

@@ -57,6 +57,7 @@ export interface AssociationListItem {
   name: string;
   description: string | null;
   logo: string | null;
+  isVerified?: boolean;
   city: AssociationLocation | null;
 }
 
@@ -93,6 +94,7 @@ const ASSOCIATION_SELECT = {
   name: true,
   description: true,
   logo: true,
+  isVerified: true,
   city: { select: LOCATION_SELECT },
 } satisfies Prisma.AssociationSelect;
 
