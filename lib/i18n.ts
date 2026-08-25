@@ -5,5 +5,7 @@ export type { Locale, Messages } from "@/lib/i18n-config";
 
 export async function getLocale(): Promise<Locale> {
   const value = (await cookies()).get(LOCALE_COOKIE)?.value;
-  return isLocale(value) ? value : DEFAULT_LOCALE;
+  const configuredDefault = process.env.I18N_DEFAULT_LOCALE;
+  const fallback = isLocale(configuredDefault) ? configuredDefault : DEFAULT_LOCALE;
+  return isLocale(value) ? value : fallback;
 }
