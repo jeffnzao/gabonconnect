@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { AssociationStatus, EventOrganizerType, EventParticipantStatus, EventStatus } from "@/app/generated/prisma";
 import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -53,7 +54,7 @@ export async function createEvent(input: unknown) {
     throw new Error("User events cannot include an association.");
   }
 
-  return prisma.event.create({
+  const createdEvent = await prisma.event.create({
     data: {
       ...data,
       organizerType: EventOrganizerType[data.organizerType],
@@ -63,6 +64,11 @@ export async function createEvent(input: unknown) {
       createdById: user.id,
     },
   });
+
+  revalidatePath("/events");
+  revalidatePath("/events/[slug]");
+
+  return createdEvent;
 }
 
 export async function toggleEventParticipation(
@@ -85,6 +91,11 @@ export async function toggleEventParticipation(
       create: { eventId, userId: user.id, status: EventParticipantStatus[nextStatus] },
       update: { status: EventParticipantStatus[nextStatus] },
     });
+
+    revalidatePath("/events");
+    revalidatePath("/events/[slug]");
+    revalidatePath("/dashboard");
+
     return nextStatus;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Could not update event participation.");

@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { ensureUser } from "@/lib/auth";
 import { verifyResourceOwnership, verifyAssociationMembership } from "@/lib/dashboard";
 import { prisma } from "@/lib/prisma";
@@ -25,18 +26,28 @@ export async function deleteUserEvent(eventId: string) {
   const user = await requireUser();
   const isOwner = await verifyResourceOwnership(eventId, user.id, "event");
   if (!isOwner) throw new Error("You do not have permission to delete this event.");
-  return prisma.event.delete({ where: { id: eventId } });
+  const result = await prisma.event.delete({ where: { id: eventId } });
+  revalidatePath("/events");
+  revalidatePath("/events/[slug]");
+  revalidatePath("/dashboard");
+  return result;
 }
 
 export async function cancelUserEvent(eventId: string) {
   const user = await requireUser();
   const isOwner = await verifyResourceOwnership(eventId, user.id, "event");
   if (!isOwner) throw new Error("You do not have permission to cancel this event.");
-  return prisma.event.update({
+  const result = await prisma.event.update({
     where: { id: eventId },
     data: { status: EventStatus.CANCELLED },
     select: { id: true, status: true },
   });
+
+  revalidatePath("/events");
+  revalidatePath("/events/[slug]");
+  revalidatePath("/dashboard");
+
+  return result;
 }
 
 export async function deleteUserOpportunity(opportunityId: string) {
