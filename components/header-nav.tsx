@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Globe2, Menu, Search, X } from "lucide-react";
 import { signOutAction } from "@/lib/auth-actions";
+import LanguageSwitcher from "@/components/language-switcher";
+import type { Locale, Messages } from "@/lib/i18n";
 
 export interface HeaderNavLink {
   label: string;
@@ -14,9 +16,11 @@ export interface HeaderNavLink {
 interface HeaderNavProps {
   isAuthenticated: boolean;
   navLinks: HeaderNavLink[];
+  locale: Locale;
+  labels: Messages;
 }
 
-export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps) {
+export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
@@ -47,9 +51,9 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
             type="search"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search people, associations, events..."
+            placeholder={labels.common.searchPlaceholder}
             className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
-            aria-label="Global search"
+            aria-label={labels.common.search}
           />
         </form>
 
@@ -72,7 +76,7 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
                 type="submit"
                 className="inline-flex items-center rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900"
               >
-                Logout
+                {labels.navigation.logout}
               </button>
             </form>
           ) : (
@@ -80,16 +84,18 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
               href="/join"
               className="inline-flex items-center rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
             >
-              Join GabonConnect
+              {labels.navigation.joinCta}
             </Link>
           )}
         </div>
+
+        <LanguageSwitcher locale={locale} labels={labels.common} />
 
         <button
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
           className="inline-flex items-center justify-center rounded-full p-2 text-slate-600 transition-colors hover:bg-slate-100 sm:hidden"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={isMenuOpen ? labels.common.menuClose : labels.common.menuOpen}
           aria-expanded={isMenuOpen}
         >
           {isMenuOpen ? (
@@ -108,9 +114,9 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search..."
+              placeholder={labels.common.search}
               className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
-              aria-label="Global search"
+              aria-label={labels.common.search}
             />
           </form>
 
@@ -133,7 +139,7 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
                   onClick={() => setIsMenuOpen(false)}
                   className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-700"
                 >
-                  Logout
+                  {labels.navigation.logout}
                 </button>
               </form>
             ) : (
@@ -142,7 +148,7 @@ export default function HeaderNav({ isAuthenticated, navLinks }: HeaderNavProps)
                 onClick={() => setIsMenuOpen(false)}
                 className="mt-2 inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-slate-950"
               >
-                Join GabonConnect
+                {labels.navigation.joinCta}
               </Link>
             )}
           </nav>

@@ -1,0 +1,48 @@
+{
+  "navigation": {
+    "explore": "Explore",
+    "members": "Members",
+    "news": "News",
+    "shops": "Shops",
+    "events": "Events",
+    "opportunities": "Opportunities",
+    "feed": "Feed",
+    "dashboard": "Dashboard",
+    "profile": "My profile",
+    "join": "Join",
+    "login": "Login",
+    "logout": "Logout",
+    "joinCta": "Join GabonConnect"
+  },
+  "common": {
+    "home": "Home",
+    "search": "Search",
+    "searchPlaceholder": "Search people, associations, events...",
+    "language": "Language",
+    "french": "French",
+    "english": "English",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "about": "About",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "version": "Version",
+    "tagline": "The 10th province of Gabon."
+  },
+  "status": {
+    "success": "Operation successful",
+    "error": "Something went wrong",
+    "loading": "Loading...",
+    "online": "Online",
+    "away": "Away",
+    "busy": "Busy",
+    "offline": "Offline"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "next": "Next",
+    "back": "Back"
+  }
+}

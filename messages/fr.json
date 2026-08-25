@@ -1,0 +1,48 @@
+{
+  "navigation": {
+    "explore": "Explorer",
+    "members": "Membres",
+    "news": "Actualites",
+    "shops": "Boutiques",
+    "events": "Evenements",
+    "opportunities": "Opportunites",
+    "feed": "Fil d'actualite",
+    "dashboard": "Tableau de bord",
+    "profile": "Mon profil",
+    "join": "Rejoindre",
+    "login": "Connexion",
+    "logout": "Se deconnecter",
+    "joinCta": "Rejoindre GabonConnect"
+  },
+  "common": {
+    "home": "Accueil",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher des personnes, associations, evenements...",
+    "language": "Langue",
+    "french": "Francais",
+    "english": "Anglais",
+    "menuOpen": "Ouvrir le menu",
+    "menuClose": "Fermer le menu",
+    "about": "A propos",
+    "privacy": "Confidentialite",
+    "contact": "Contact",
+    "version": "Version",
+    "tagline": "La 10e province du Gabon."
+  },
+  "status": {
+    "success": "Operation reussie",
+    "error": "Une erreur est survenue",
+    "loading": "Chargement...",
+    "online": "En ligne",
+    "away": "Absent",
+    "busy": "Occupe",
+    "offline": "Hors ligne"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "next": "Suivant",
+    "back": "Retour"
+  }
+}
