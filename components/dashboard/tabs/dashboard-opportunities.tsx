@@ -4,16 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import type { UserDashboardData } from "@/lib/dashboard";
 import { deleteUserOpportunity, closeUserOpportunity } from "@/lib/dashboard-actions";
+import { useMessages } from "@/components/i18n-provider";
 
 interface DashboardOpportunitiesProps {
   opportunities: UserDashboardData["opportunities"];
 }
 
 export default function DashboardOpportunities({ opportunities }: DashboardOpportunitiesProps) {
+  const messages = useMessages();
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const handleDelete = async (opportunityId: string) => {
-    if (!confirm("Êtes-vous s&apos;ur de vouloir supprimer cette annonce ?")) return;
+    if (!confirm(messages.dashboard.deleteOpportunity + "?")) return;
     setDeleting(opportunityId);
     try {
       await deleteUserOpportunity(opportunityId);
@@ -25,7 +27,7 @@ export default function DashboardOpportunities({ opportunities }: DashboardOppor
   };
 
   const handleClose = async (opportunityId: string) => {
-    if (!confirm("Êtes-vous s&apos;ur de vouloir fermer cette annonce ?")) return;
+    if (!confirm(messages.dashboard.closeOpportunity + "?")) return;
     setDeleting(opportunityId);
     try {
       await closeUserOpportunity(opportunityId);
@@ -39,9 +41,9 @@ export default function DashboardOpportunities({ opportunities }: DashboardOppor
   if (opportunities.length === 0) {
     return (
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
-        <p className="text-slate-600">Vous n&apos;avez pas post\u00e9 d&apos;annonce.</p>
+        <p className="text-slate-600">{messages.dashboard.noPostedOpportunities}</p>
         <Link href="/opportunities" className="mt-4 inline-block text-emerald-600 hover:text-emerald-700 font-medium">
-          Explorer les annonces →
+          {messages.dashboard.exploreOpportunities} →
         </Link>
       </div>
     );
@@ -69,14 +71,14 @@ export default function DashboardOpportunities({ opportunities }: DashboardOppor
               disabled={deleting === opp.id}
               className="px-3 py-1 text-sm rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50"
             >
-              Fermer
+              {messages.dashboard.closeOpportunity}
             </button>
             <button
               onClick={() => handleDelete(opp.id)}
               disabled={deleting === opp.id}
               className="px-3 py-1 text-sm rounded-md bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50"
             >
-              Supprimer
+              {messages.dashboard.deleteOpportunity}
             </button>
           </div>
         </div>

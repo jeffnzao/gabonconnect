@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { UserStatus } from "@/app/generated/prisma";
 import { updateUserPresenceStatus, hideUserPresence, showUserPresence } from "@/lib/dashboard-actions";
+import { useMessages } from "@/components/i18n-provider";
 
 interface DashboardHeaderProps {
   data: {
@@ -42,6 +43,7 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ data }: DashboardHeaderProps) {
+  const messages = useMessages();
   const [status, setStatus] = useState<UserStatus>(data.profile.status as UserStatus);
   const [showStatus, setShowStatus] = useState(data.profile.showStatus);
   const [updating, setUpdating] = useState(false);
@@ -112,7 +114,7 @@ export default function DashboardHeader({ data }: DashboardHeaderProps) {
                   disabled={updating}
                   className="text-sm text-slate-500 hover:text-slate-700 disabled:opacity-50"
                 >
-                  {showStatus ? "Masquer mon statut" : "Afficher mon statut"}
+                  {showStatus ? messages.dashboard.hideStatus : messages.dashboard.showStatus}
                 </button>
               </div>
             </div>
@@ -139,19 +141,19 @@ export default function DashboardHeader({ data }: DashboardHeaderProps) {
         <div className="mt-8 grid grid-cols-4 gap-4">
           <div className="rounded-lg bg-slate-50 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{data.stats.eventsCount}</div>
-            <div className="text-sm text-slate-600">Événements</div>
+            <div className="text-sm text-slate-600">{messages.navigation.events}</div>
           </div>
           <div className="rounded-lg bg-slate-50 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{data.stats.opportunitiesCount}</div>
-            <div className="text-sm text-slate-600">Annonces</div>
+            <div className="text-sm text-slate-600">{messages.navigation.opportunities}</div>
           </div>
           <div className="rounded-lg bg-slate-50 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{data.stats.postsCount}</div>
-            <div className="text-sm text-slate-600">Publications</div>
+            <div className="text-sm text-slate-600">{messages.dashboard.publications}</div>
           </div>
           <div className="rounded-lg bg-slate-50 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{data.stats.associationCount}</div>
-            <div className="text-sm text-slate-600">Associations</div>
+            <div className="text-sm text-slate-600">{messages.dashboard.associations}</div>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import DashboardEvents from "./tabs/dashboard-events";
 import DashboardOpportunities from "./tabs/dashboard-opportunities";
 import DashboardAssociation from "./tabs/dashboard-association";
 import DashboardPosts from "./tabs/dashboard-posts";
+import { useMessages } from "@/components/i18n-provider";
 
 interface DashboardTabsProps {
   data: UserDashboardData;
@@ -15,14 +16,15 @@ interface DashboardTabsProps {
 type TabType = "overview" | "events" | "opportunities" | "association" | "posts";
 
 export default function DashboardTabs({ data }: DashboardTabsProps) {
+  const messages = useMessages();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   const tabs = [
-    { id: "overview" as const, label: "Aperçu", icon: "📊" },
-    { id: "events" as const, label: "Mes Événements", icon: "📅", badge: data.stats.eventsCount },
-    { id: "opportunities" as const, label: "Mes Annonces", icon: "🎯", badge: data.stats.opportunitiesCount },
-    { id: "association" as const, label: "Mon Association", icon: "🏢", badge: data.stats.associationCount, disabled: !data.association },
-    { id: "posts" as const, label: "Mes Publications", icon: "📝", badge: data.stats.postsCount },
+    { id: "overview" as const, label: messages.dashboard.overview, icon: "📊" },
+    { id: "events" as const, label: messages.dashboard.events, icon: "📅", badge: data.stats.eventsCount },
+    { id: "opportunities" as const, label: messages.dashboard.opportunities, icon: "🎯", badge: data.stats.opportunitiesCount },
+    { id: "association" as const, label: messages.dashboard.association, icon: "🏢", badge: data.stats.associationCount, disabled: !data.association },
+    { id: "posts" as const, label: messages.dashboard.posts, icon: "📝", badge: data.stats.postsCount },
   ];
 
   return (

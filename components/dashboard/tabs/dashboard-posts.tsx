@@ -4,16 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import type { UserDashboardData } from "@/lib/dashboard";
 import { deleteUserPost } from "@/lib/dashboard-actions";
+import { useMessages } from "@/components/i18n-provider";
 
 interface DashboardPostsProps {
   posts: UserDashboardData["posts"];
 }
 
 export default function DashboardPosts({ posts }: DashboardPostsProps) {
+  const messages = useMessages();
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const handleDelete = async (postId: string) => {
-    if (!confirm("Êtes-vous s&apos;ur de vouloir supprimer cette publication ?")) return;
+    if (!confirm(messages.dashboard.deletePost + "?")) return;
     setDeleting(postId);
     try {
       await deleteUserPost(postId);
@@ -27,9 +29,9 @@ export default function DashboardPosts({ posts }: DashboardPostsProps) {
   if (posts.length === 0) {
     return (
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
-        <p className="text-slate-600">Vous n&apos;avez pas publi\u00e9 d&apos;article.</p>
+        <p className="text-slate-600">{messages.dashboard.noPosts}</p>
         <Link href="/feed" className="mt-4 inline-block text-emerald-600 hover:text-emerald-700 font-medium">
-          Aller au feed →
+          {messages.dashboard.goToFeed} →
         </Link>
       </div>
     );
@@ -53,7 +55,7 @@ export default function DashboardPosts({ posts }: DashboardPostsProps) {
             disabled={deleting === post.id}
             className="ml-4 flex-shrink-0 px-3 py-1 text-sm rounded-md bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50"
           >
-            Supprimer
+            {messages.dashboard.deletePost}
           </button>
         </div>
       ))}

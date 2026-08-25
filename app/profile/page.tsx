@@ -10,6 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { ProfileVisibility } from "@/app/generated/prisma";
 import { LOCATION_SELECT, type MemberListItem } from "@/lib/members";
 import { updateProfileAction } from "./actions";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ function initialsOf(firstName: string, lastName: string): string {
 }
 
 export default async function MyProfilePage({ searchParams }: MyProfilePageProps) {
+  const messages = getMessages(await getLocale());
   // Route protégée : pas de session Supabase → connexion.
   const user = await getCurrentUser();
 
@@ -93,7 +95,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
     <div className="flex flex-1 flex-col bg-slate-50">
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto max-w-5xl px-6 py-10">
-          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "My profile" }]} />
+          <Breadcrumb items={[{ label: messages.common.home, href: "/" }, { label: messages.profile.title }]} />
 
           <div className="mt-6 flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
             {profile.photo ? (
@@ -121,7 +123,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                   className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
                 >
                   <Pencil className="h-3.5 w-3.5" aria-hidden />
-                  Edit profile
+                  {messages.profile.edit}
                 </a>
 
                 {isPublic && (
@@ -129,7 +131,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                     href={`/members/${profile.id}`}
                     className="inline-flex items-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-600"
                   >
-                    View public profile
+                    {messages.profile.viewPublic}
                   </Link>
                 )}
 
@@ -139,7 +141,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                     className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900"
                   >
                     <LogOut className="h-3.5 w-3.5" aria-hidden />
-                    Logout
+                    {messages.navigation.logout}
                   </button>
                 </form>
               </div>
@@ -153,18 +155,18 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
         <div className="flex flex-col gap-6">
           <section className="rounded-2xl border border-slate-200 bg-white p-6">
             <h2 className="text-base font-semibold text-slate-900">
-              Personal information
+              {messages.profile.personalInfo}
             </h2>
             <dl className="mt-4 flex flex-col gap-3 text-sm">
               <div>
                 <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  First name
+                  {messages.auth.firstName}
                 </dt>
                 <dd className="mt-0.5 text-slate-700">{profile.firstName}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  Last name
+                  {messages.auth.lastName}
                 </dt>
                 <dd className="mt-0.5 text-slate-700">{profile.lastName}</dd>
               </div>
@@ -176,10 +178,10 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  Profession
+                  {messages.auth.profession}
                 </dt>
                 <dd className="mt-0.5 text-slate-700">
-                  {profile.profession || <span className="text-slate-400">Not set</span>}
+                  {profile.profession || <span className="text-slate-400">{messages.profile.notSet}</span>}
                 </dd>
               </div>
               <div>
@@ -187,7 +189,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                   Bio
                 </dt>
                 <dd className="mt-0.5 whitespace-pre-line text-slate-700">
-                  {profile.bio || <span className="text-slate-400">Not set</span>}
+                  {profile.bio || <span className="text-slate-400">{messages.profile.notSet}</span>}
                 </dd>
               </div>
             </dl>
@@ -197,7 +199,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
             <section className="rounded-2xl border border-slate-200 bg-white p-6">
               <h2 className="text-base font-semibold text-slate-900">Location</h2>
               <p className="mt-1 text-xs text-slate-400">
-                Not editable in this version.
+                {messages.profile.notEditable}
               </p>
               <dl className="mt-4 flex flex-col gap-3 text-sm">
                 <div className="flex items-center gap-2">
@@ -215,7 +217,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
           )}
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="text-base font-semibold text-slate-900">Visibility</h2>
+            <h2 className="text-base font-semibold text-slate-900">{messages.auth.visibility}</h2>
             <p className="mt-2 inline-flex items-center gap-2 text-sm font-medium">
               <span
                 className={
@@ -224,7 +226,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                     : "rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-600"
                 }
               >
-                {isPublic ? "Public" : "Private"}
+                {isPublic ? messages.profile.public : messages.profile.private}
               </span>
             </p>
             <p className="mt-2 text-sm text-slate-500">
@@ -239,11 +241,11 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
             id="edit-profile"
             className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6"
           >
-            <h2 className="text-base font-semibold text-slate-900">Edit profile</h2>
+            <h2 className="text-base font-semibold text-slate-900">{messages.profile.edit}</h2>
 
             {saved && (
               <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                Your profile has been updated.
+                {messages.profile.updated}
               </p>
             )}
 
