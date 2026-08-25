@@ -6,6 +6,7 @@ import MemberFilters from "@/components/members/member-filters";
 import MemberCard from "@/components/members/member-card";
 import Pagination from "@/components/members/pagination";
 import { getMembers, getMemberFilterOptions } from "@/lib/members";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ function firstValue(value: string | string[] | undefined): string | undefined {
 }
 
 export default async function MembersPage(props: PageProps<"/members">) {
+  const messages = getMessages(await getLocale());
   const rawParams = await props.searchParams;
 
   const search = firstValue(rawParams.search);
@@ -44,10 +46,10 @@ export default async function MembersPage(props: PageProps<"/members">) {
         <div className="mx-auto max-w-6xl px-6 py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              Gabonese Members
+              {messages.directories.members}
             </h1>
             <p className="mt-4 text-lg text-slate-500">
-              Discover Gabonese people around the world and connect with the diaspora.
+              {messages.directories.membersIntro}
             </p>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-medium text-emerald-700">
               <Users className="h-4 w-4" aria-hidden />
@@ -83,7 +85,7 @@ export default async function MembersPage(props: PageProps<"/members">) {
       <section className="mx-auto w-full max-w-6xl px-6 py-16">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-slate-900">
-            {hasActiveFilters ? "Results" : "All members"}
+            {hasActiveFilters ? messages.common.search : messages.directories.members}
           </h2>
           <p className="text-sm text-slate-500">
             {totalCount} member{totalCount === 1 ? "" : "s"} found
@@ -92,7 +94,7 @@ export default async function MembersPage(props: PageProps<"/members">) {
 
         {members.length === 0 ? (
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center">
-            <p className="text-base font-medium text-slate-700">No public members found.</p>
+            <p className="text-base font-medium text-slate-700">{messages.directories.noMembers}</p>
             <p className="text-sm text-slate-500">Be the first to join GabonConnect.</p>
             <Link href="/join" className="mt-2 inline-flex items-center rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400">
               Join GabonConnect

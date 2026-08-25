@@ -4,6 +4,7 @@ import Breadcrumb from "@/components/explore/breadcrumb";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createProfileAction } from "./actions";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ function first(value: string | string[] | undefined): string | undefined {
 }
 
 export default async function JoinProfilePage({ searchParams }: JoinProfilePageProps) {
+  const messages = getMessages(await getLocale());
   // Route protégée : pas de session Supabase → retour à la création de compte.
   const user = await getCurrentUser();
 
@@ -75,13 +77,13 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
           />
 
           <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-emerald-600">
-            Step 2 of 2
+            {messages.auth.stepTwo}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
-            Build your profile
+            {messages.auth.buildProfile}
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            This is what other members of the diaspora will see about you.
+            {messages.auth.profileIntro}
           </p>
         </div>
       </section>
@@ -103,7 +105,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="firstName" className="text-sm font-medium text-slate-700">
-                First name
+                {messages.auth.firstName}
               </label>
               <input
                 id="firstName"
@@ -118,7 +120,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="lastName" className="text-sm font-medium text-slate-700">
-                Last name
+                {messages.auth.lastName}
               </label>
               <input
                 id="lastName"
@@ -134,7 +136,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="profession" className="text-sm font-medium text-slate-700">
-              Profession <span className="font-normal text-slate-400">(optional)</span>
+              {messages.auth.profession} <span className="font-normal text-slate-400">(optional)</span>
             </label>
             <input
               id="profession"
@@ -149,7 +151,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="countryId" className="text-sm font-medium text-slate-700">
-                Country
+                {messages.auth.country}
               </label>
               <select
                 id="countryId"
@@ -171,7 +173,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="cityId" className="text-sm font-medium text-slate-700">
-                City
+                {messages.auth.city}
               </label>
               <select
                 id="cityId"
@@ -214,7 +216,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
           </div>
 
           <fieldset className="flex flex-col gap-3">
-            <legend className="text-sm font-medium text-slate-700">Visibility</legend>
+            <legend className="text-sm font-medium text-slate-700">{messages.auth.visibility}</legend>
 
             <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50">
               <input

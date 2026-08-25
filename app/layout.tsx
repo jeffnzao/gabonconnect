@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { getLocale } from "@/lib/i18n";
+import { I18nProvider } from "@/components/i18n-provider";
+import { getLocale, getMessages } from "@/lib/i18n";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -72,9 +73,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Header locale={locale} />
-        <main className="flex flex-1 flex-col">{children}</main>
-        <Footer locale={locale} />
+        <I18nProvider locale={locale} messages={getMessages(locale)}>
+          <Header locale={locale} />
+          <main className="flex flex-1 flex-col">{children}</main>
+          <Footer locale={locale} />
+        </I18nProvider>
       </body>
     </html>
   );

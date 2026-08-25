@@ -6,6 +6,7 @@ import AssociationCard from "@/components/associations/association-card";
 import AssociationFilters from "@/components/associations/association-filters";
 import AssociationEmptyState from "@/components/associations/association-empty-state";
 import { getAssociations, getAssociationFilterOptions } from "@/lib/associations";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,7 @@ function buildPageHref(
 }
 
 export default async function AssociationsPage({ searchParams }: AssociationsPageProps) {
+  const messages = getMessages(await getLocale());
   const sp = await searchParams;
 
   const search = first(sp.q);
@@ -58,14 +60,14 @@ export default async function AssociationsPage({ searchParams }: AssociationsPag
     <div className="flex flex-1 flex-col bg-slate-50">
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-10">
-          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Associations" }]} />
+          <Breadcrumb items={[{ label: messages.common.home, href: "/" }, { label: messages.navigation.members }]} />
 
           <div className="mx-auto mt-8 max-w-2xl text-center">
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              Associations Directory
+              {messages.directories.associations}
             </h1>
             <p className="mt-4 text-lg text-slate-500">
-              Discover Gabonese diaspora associations around the world.
+              {messages.directories.associationsIntro}
             </p>
             <p className="mt-3 text-sm font-medium text-emerald-700">
               {totalCount} association{totalCount === 1 ? "" : "s"} found

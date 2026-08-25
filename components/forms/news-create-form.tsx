@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { createNews } from "@/lib/task021";
+import { useMessages } from "@/components/i18n-provider";
 
 export default function NewsCreateForm() {
   const router = useRouter();
+  const messages = useMessages();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,7 +30,7 @@ export default function NewsCreateForm() {
 
       router.push(`/news/${result.slug}`);
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Unable to create the story.");
+      setError(submitError instanceof Error ? submitError.message : messages.status.error);
     } finally {
       setIsSubmitting(false);
     }
@@ -38,9 +40,9 @@ export default function NewsCreateForm() {
     <div className="flex flex-1 flex-col bg-slate-50">
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto w-full max-w-3xl px-6 py-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">Create</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">Publish a news story</h1>
-          <p className="mt-2 text-sm text-slate-500">Share a story, announcement, or update with the GabonConnect community.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">{messages.forms.create}</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">{messages.forms.newsTitle}</h1>
+          <p className="mt-2 text-sm text-slate-500">{messages.forms.newsIntro}</p>
         </div>
       </section>
 
@@ -54,7 +56,7 @@ export default function NewsCreateForm() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6">
           <div className="grid gap-5 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700 md:col-span-2">
-              Title
+              {messages.forms.title}
               <input
                 name="title"
                 type="text"
@@ -65,7 +67,7 @@ export default function NewsCreateForm() {
             </label>
 
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Slug (optional)
+              {messages.forms.slug}
               <input
                 name="slug"
                 type="text"
@@ -76,7 +78,7 @@ export default function NewsCreateForm() {
             </label>
 
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Image URL (optional)
+              {messages.forms.imageUrl}
               <input
                 name="imageUrl"
                 type="url"
@@ -87,7 +89,7 @@ export default function NewsCreateForm() {
           </div>
 
           <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-            Summary (optional)
+            {messages.forms.summary}
             <textarea
               name="summary"
               rows={3}
@@ -97,7 +99,7 @@ export default function NewsCreateForm() {
           </label>
 
           <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-            Content
+            {messages.forms.content}
             <textarea
               name="content"
               rows={10}
@@ -112,14 +114,14 @@ export default function NewsCreateForm() {
               onClick={() => router.push("/news")}
               className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-slate-300"
             >
-              Cancel
+              {messages.actions.cancel}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
               className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "Publishing..." : "Publish story"}
+              {isSubmitting ? messages.status.loading : messages.forms.submitNews}
             </button>
           </div>
         </form>

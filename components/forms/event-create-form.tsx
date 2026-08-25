@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { createEvent } from "@/lib/task021";
+import { useMessages } from "@/components/i18n-provider";
 
 export default function EventCreateForm() {
   const router = useRouter();
+  const messages = useMessages();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,7 +36,7 @@ export default function EventCreateForm() {
 
       router.push(`/events/${result.slug}`);
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Unable to create the event.");
+      setError(submitError instanceof Error ? submitError.message : messages.status.error);
     } finally {
       setIsSubmitting(false);
     }
@@ -44,9 +46,9 @@ export default function EventCreateForm() {
     <div className="flex flex-1 flex-col bg-slate-50">
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto w-full max-w-3xl px-6 py-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">Create</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">Create an event</h1>
-          <p className="mt-2 text-sm text-slate-500">Organize a gathering, webinar, or community moment.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">{messages.forms.create}</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">{messages.forms.eventTitle}</h1>
+          <p className="mt-2 text-sm text-slate-500">{messages.forms.eventIntro}</p>
         </div>
       </section>
 
@@ -60,7 +62,7 @@ export default function EventCreateForm() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6">
           <div className="grid gap-5 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700 md:col-span-2">
-              Event title
+              {messages.forms.title}
               <input
                 name="title"
                 type="text"
@@ -71,7 +73,7 @@ export default function EventCreateForm() {
             </label>
 
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Slug (optional)
+              {messages.forms.slug}
               <input
                 name="slug"
                 type="text"
@@ -82,21 +84,21 @@ export default function EventCreateForm() {
             </label>
 
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Organizer type
+              {messages.forms.organizerType}
               <select
                 name="organizerType"
                 defaultValue="USER"
                 className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
               >
-                <option value="USER">User</option>
-                <option value="ASSOCIATION">Association</option>
+                <option value="USER">{messages.forms.user}</option>
+                <option value="ASSOCIATION">{messages.forms.association}</option>
               </select>
             </label>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Start date & time
+              {messages.forms.startDate}
               <input
                 name="startDate"
                 type="datetime-local"
@@ -106,7 +108,7 @@ export default function EventCreateForm() {
             </label>
 
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              End date & time (optional)
+              {messages.forms.endDate}
               <input
                 name="endDate"
                 type="datetime-local"
@@ -117,7 +119,7 @@ export default function EventCreateForm() {
 
           <div className="grid gap-5 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Location
+              {messages.forms.location}
               <input
                 name="location"
                 type="text"
@@ -128,7 +130,7 @@ export default function EventCreateForm() {
             </label>
 
             <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-              Max participants (optional)
+              {messages.forms.maxParticipants}
               <input
                 name="maxParticipants"
                 type="number"
@@ -140,11 +142,11 @@ export default function EventCreateForm() {
 
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
             <input type="checkbox" name="isVirtual" value="true" className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
-            This is a virtual event
+            {messages.forms.virtualEvent}
           </label>
 
           <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-            Virtual URL (if applicable)
+            {messages.forms.virtualUrl}
             <input
               name="virtualUrl"
               type="url"
@@ -154,7 +156,7 @@ export default function EventCreateForm() {
           </label>
 
           <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-            Association ID (for association events)
+            {messages.forms.associationId}
             <input
               name="associationId"
               type="text"
@@ -164,7 +166,7 @@ export default function EventCreateForm() {
           </label>
 
           <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
-            Description
+            {messages.forms.description}
             <textarea
               name="description"
               rows={8}
@@ -179,14 +181,14 @@ export default function EventCreateForm() {
               onClick={() => router.push("/events")}
               className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-slate-300"
             >
-              Cancel
+              {messages.actions.cancel}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
               className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "Saving..." : "Create event"}
+              {isSubmitting ? messages.status.loading : messages.forms.submitEvent}
             </button>
           </div>
         </form>

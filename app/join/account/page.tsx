@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import Breadcrumb from "@/components/explore/breadcrumb";
 import { signUpAction } from "./actions";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ function first(value: string | string[] | undefined): string | undefined {
 }
 
 export default async function JoinAccountPage({ searchParams }: JoinAccountPageProps) {
+  const messages = getMessages(await getLocale());
   const sp = await searchParams;
   const email = first(sp.email) ?? "";
   const errorCode = first(sp.error);
@@ -39,17 +41,17 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
         <div className="mx-auto max-w-md px-6 py-10">
           <Breadcrumb
             items={[
-              { label: "Home", href: "/" },
-              { label: "Join", href: "/join" },
-              { label: "Account" },
+              { label: messages.common.home, href: "/" },
+              { label: messages.navigation.join, href: "/join" },
+              { label: messages.auth.account },
             ]}
           />
 
           <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-emerald-600">
-            Step 1 of 2
+            {messages.auth.stepOne}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
-            Create your account
+            {messages.auth.createAccount}
           </h1>
         </div>
       </section>
@@ -60,16 +62,16 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
               <MailCheck className="h-6 w-6" aria-hidden />
             </span>
-            <h2 className="text-lg font-semibold text-slate-900">Check your email</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{messages.auth.checkEmail}</h2>
             <p className="text-sm leading-relaxed text-slate-500">
-              We sent a confirmation link to{" "}
+              {messages.auth.confirmationSent}{" "}
               <span className="font-medium text-slate-700">{email}</span>. Click it
               to confirm your account and continue building your profile.
             </p>
             <p className="text-xs text-slate-400">
               Didn&apos;t get it? Check your spam folder, or{" "}
               <Link href="/join/account" className="text-emerald-600 hover:text-emerald-700">
-                try again
+                {messages.auth.tryAgain}
               </Link>
               .
             </p>
@@ -91,7 +93,7 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
             >
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="email" className="text-sm font-medium text-slate-700">
-                  Email
+                  {messages.auth.email}
                 </label>
                 <input
                   id="email"
@@ -107,7 +109,7 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
 
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="password" className="text-sm font-medium text-slate-700">
-                  Password
+                  {messages.auth.password}
                 </label>
                 <input
                   id="password"
@@ -126,7 +128,7 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
                   htmlFor="confirmPassword"
                   className="text-sm font-medium text-slate-700"
                 >
-                  Confirm password
+                  {messages.auth.confirmPassword}
                 </label>
                 <input
                   id="confirmPassword"
@@ -135,7 +137,7 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  placeholder="Re-enter your password"
+                  placeholder={messages.auth.confirmPasswordPlaceholder}
                   className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
                 />
               </div>
@@ -144,7 +146,7 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
                 type="submit"
                 className="mt-2 inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
               >
-                Create account
+                {messages.auth.createAccountButton}
               </button>
             </form>
           </>

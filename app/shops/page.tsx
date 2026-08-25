@@ -2,22 +2,24 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumb from "@/components/explore/breadcrumb";
 import { getPublishedShops } from "@/lib/shops";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const metadata: Metadata = { title: "Shops | GabonConnect" };
 
 export default async function ShopsPage() {
+  const messages = getMessages(await getLocale());
   const shops = await getPublishedShops();
   return (
     <div className="flex flex-1 flex-col bg-slate-50">
       <section className="border-b border-slate-100 bg-white">
         <div className="mx-auto w-full max-w-6xl px-6 py-10">
-          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Shops" }]} />
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-slate-900">Shops</h1>
-          <p className="mt-2 text-sm text-slate-500">Discover products and services from the community.</p>
+          <Breadcrumb items={[{ label: messages.common.home, href: "/" }, { label: messages.navigation.shops }]} />
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-slate-900">{messages.directories.shops}</h1>
+          <p className="mt-2 text-sm text-slate-500">{messages.directories.shopsIntro}</p>
         </div>
       </section>
       <section className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
-        {shops.length === 0 ? <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500">No published shops yet.</p> : (
+        {shops.length === 0 ? <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500">{messages.directories.noShops}</p> : (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {shops.map((shop) => (
               <article key={shop.id} className="rounded-2xl border border-slate-200 bg-white p-6">
