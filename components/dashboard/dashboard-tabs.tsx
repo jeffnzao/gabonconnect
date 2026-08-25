@@ -10,12 +10,11 @@ import DashboardPosts from "./tabs/dashboard-posts";
 
 interface DashboardTabsProps {
   data: UserDashboardData;
-  userId: string;
 }
 
 type TabType = "overview" | "events" | "opportunities" | "association" | "posts";
 
-export default function DashboardTabs({ data, userId }: DashboardTabsProps) {
+export default function DashboardTabs({ data }: DashboardTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   const tabs = [

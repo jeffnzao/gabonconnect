@@ -4,6 +4,8 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,9 +17,49 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GabonConnect — The 10th Province of Gabon",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "GabonConnect | The 10th Province of Gabon",
+    template: "%s | GabonConnect",
+  },
   description:
-    "GabonConnect connecte la diaspora gabonaise à travers le monde : profils, associations et opportunités.",
+    "Discover and connect Gabonese professionals, associations, and communities around the world with GabonConnect.",
+  applicationName: "GabonConnect",
+  keywords: [
+    "Gabon",
+    "GabonConnect",
+    "diaspora",
+    "associations",
+    "community",
+    "networking",
+    "profiles",
+    "Gabonese",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "GabonConnect",
+    title: "GabonConnect | The 10th Province of Gabon",
+    description:
+      "A trusted platform connecting Gabonese people, communities, and organizations across the globe.",
+    images: [{ url: "/globe.svg", width: 512, height: 512, alt: "GabonConnect" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GabonConnect | The 10th Province of Gabon",
+    description:
+      "A trusted platform connecting Gabonese people, communities, and organizations across the globe.",
+    images: ["/globe.svg"],
+  },
+  icons: {
+    icon: [{ url: "/globe.svg", type: "image/svg+xml" }],
+    shortcut: "/globe.svg",
+    apple: "/globe.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

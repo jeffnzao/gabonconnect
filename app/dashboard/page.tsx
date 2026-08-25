@@ -18,7 +18,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-slate-50">
       <DashboardHeader data={dashboardData} />
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <DashboardTabs data={dashboardData} userId={user.id} />
+        <DashboardTabs data={dashboardData} />
       </div>
     </div>
   );

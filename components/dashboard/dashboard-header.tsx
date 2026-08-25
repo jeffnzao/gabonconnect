@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { UserStatus } from "@/app/generated/prisma";
 import { updateUserPresenceStatus, hideUserPresence, showUserPresence } from "@/lib/dashboard-actions";
@@ -89,9 +90,11 @@ export default function DashboardHeader({ data }: DashboardHeaderProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             {data.profile.photo && (
-              <img
+              <Image
                 src={data.profile.photo}
                 alt={`${data.profile.firstName} ${data.profile.lastName}`}
+                width={80}
+                height={80}
                 className="h-20 w-20 rounded-full object-cover"
               />
             )}

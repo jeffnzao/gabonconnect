@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx lib/auth.test.ts && tsx lib/security-guards.test.ts && tsx lib/members.test.ts && tsx lib/member-profile.test.ts && tsx lib/profile-management.test.ts && tsx lib/imports.test.ts && tsx lib/phase13.test.ts && tsx lib/events.test.ts && tsx lib/opportunities.test.ts && tsx lib/feed.test.ts && tsx lib/messaging.test.ts && tsx lib/dashboard.test.ts && tsx lib/verification.test.ts && tsx lib/search.test.ts"
+    "test": "tsx --env-file=.env.test lib/auth.test.ts && tsx --env-file=.env.test lib/security-guards.test.ts && tsx --env-file=.env.test lib/members.test.ts && tsx --env-file=.env.test lib/member-profile.test.ts && tsx --env-file=.env.test lib/profile-management.test.ts && tsx --env-file=.env.test lib/imports.test.ts && tsx --env-file=.env.test lib/phase13.test.ts && tsx --env-file=.env.test lib/events.test.ts && tsx --env-file=.env.test lib/opportunities.test.ts && tsx --env-file=.env.test lib/feed.test.ts && tsx --env-file=.env.test lib/messaging.test.ts && tsx --env-file=.env.test lib/dashboard.test.ts && tsx --env-file=.env.test lib/verification.test.ts && tsx --env-file=.env.test lib/search.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
