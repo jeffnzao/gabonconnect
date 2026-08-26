@@ -105,7 +105,8 @@ export async function createNews(input: unknown) {
       summary: data.summary?.trim() || undefined,
       content: data.content,
       imageUrl: data.imageUrl?.trim() || undefined,
-      status: ArticleStatus.DRAFT,
+      status: ArticleStatus.PUBLISHED,
+      publishedAt: new Date(),
     },
   });
 
@@ -131,7 +132,7 @@ export async function createShop(input: unknown) {
       slug,
       description: data.description?.trim() || undefined,
       associationId: data.associationId || undefined,
-      status: ShopStatus.DRAFT,
+      status: ShopStatus.PUBLISHED,
     },
   });
 

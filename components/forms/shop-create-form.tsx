@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { LoaderCircle } from "lucide-react";
 
 import { createShop } from "@/lib/task021";
 import { useMessages } from "@/components/i18n-provider";
@@ -108,8 +109,10 @@ export default function ShopCreateForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+              aria-busy={isSubmitting}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
             >
+              {isSubmitting && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden />}
               {isSubmitting ? messages.status.loading : messages.forms.submitShop}
             </button>
           </div>
