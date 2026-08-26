@@ -5,8 +5,11 @@ import ContinentGrid from "@/components/continent-grid";
 import Features from "@/components/features";
 import { getGlobalStats, getContinentsOverview } from "@/lib/dashboard";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { PublicFeedbacks } from "@/components/public-feedbacks";
 
 export const dynamic = "force-dynamic";
+
+
 
 export default async function HomePage() {
   const messages = getMessages(await getLocale());
@@ -37,6 +40,13 @@ export default async function HomePage() {
 
       <ContinentGrid continents={continents} />
       <Features />
+      <section className="container mx-auto py-12">
+        <h2 className="text-2xl font-bold mb-4">Avis des visiteurs</h2>
+        <PublicFeedbacks />
+      </section>
     </div>
   );
 }
+
+
+

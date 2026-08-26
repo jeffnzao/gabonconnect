@@ -12,6 +12,7 @@ import { LOCATION_SELECT, type MemberListItem } from "@/lib/members";
 import { updateProfileAction } from "./actions";
 import { getLocale, getMessages } from "@/lib/i18n";
 
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
