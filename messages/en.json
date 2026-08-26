@@ -312,5 +312,19 @@
     "events": "Events",
     "opportunities": "Opportunities",
     "posts": "Posts"
+  },
+  "feedback": {
+    "banner": "Trying GabonConnect? Share your feedback with us.",
+    "open": "Give feedback",
+    "eyebrow": "Your feedback matters",
+    "title": "Help us improve GabonConnect",
+    "likes": "What you like",
+    "ideas": "What you would like to see next",
+    "dislikes": "What you do not like",
+    "bugs": "What is not working: bugs or blockers",
+    "submit": "Send feedback",
+    "sending": "Sending...",
+    "thanks": "Thank you for your feedback. It helps us improve.",
+    "error": "Your feedback could not be sent. Please try again."
   }
 }

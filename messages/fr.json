@@ -312,5 +312,19 @@
     "events": "Evenements",
     "opportunities": "Opportunites",
     "posts": "Publications"
+  },
+  "feedback": {
+    "banner": "Vous testez GabonConnect : partagez votre retour avec nous.",
+    "open": "Donner mon avis",
+    "eyebrow": "Votre avis compte",
+    "title": "Aidez-nous a ameliorer GabonConnect",
+    "likes": "Ce que vous aimez",
+    "ideas": "Ce que vous aimeriez voir en plus",
+    "dislikes": "Ce que vous n'aimez pas",
+    "bugs": "Ce qui ne passe pas : bugs ou blocages",
+    "submit": "Envoyer mon retour",
+    "sending": "Envoi...",
+    "thanks": "Merci pour votre retour. Il nous aide a avancer.",
+    "error": "Votre retour n'a pas pu etre envoye. Reessayez."
   }
 }

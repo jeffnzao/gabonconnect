@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { I18nProvider } from "@/components/i18n-provider";
+import FeedbackBanner from "@/components/feedback-banner";
 import { getLocale, getMessages } from "@/lib/i18n";
 import "./globals.css";
 
@@ -77,6 +78,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <Header locale={locale} />
           <main className="flex flex-1 flex-col">{children}</main>
           <Footer locale={locale} />
+          <FeedbackBanner locale={locale} />
         </I18nProvider>
       </body>
     </html>
