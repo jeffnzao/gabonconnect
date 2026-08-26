@@ -16,24 +16,8 @@ interface DashboardHeaderProps {
       showStatus: boolean;
     };
     stats: {
-      eventsCount: number;
-      opportunitiesCount: number;
-      postsCount: number;
-      associationCount: number;
-    };
-  };
-}
-
-interface DashboardHeaderProps {
-  data: {
-    profile: {
-      firstName: string;
-      lastName: string;
-      photo: string | null;
-      status: string;
-      showStatus: boolean;
-    };
-    stats: {
+      articlesCount: number;
+      shopsCount: number;
       eventsCount: number;
       opportunitiesCount: number;
       postsCount: number;
@@ -138,7 +122,15 @@ export default function DashboardHeader({ data }: DashboardHeaderProps) {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-4 gap-4">
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="rounded-lg bg-slate-50 p-4 text-center">
+            <div className="text-2xl font-bold text-emerald-600">{data.stats.articlesCount}</div>
+            <div className="text-sm text-slate-600">{messages.dashboard.articles}</div>
+          </div>
+          <div className="rounded-lg bg-slate-50 p-4 text-center">
+            <div className="text-2xl font-bold text-emerald-600">{data.stats.shopsCount}</div>
+            <div className="text-sm text-slate-600">{messages.dashboard.shops}</div>
+          </div>
           <div className="rounded-lg bg-slate-50 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{data.stats.eventsCount}</div>
             <div className="text-sm text-slate-600">{messages.navigation.events}</div>

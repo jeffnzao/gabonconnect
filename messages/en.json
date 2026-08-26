@@ -176,7 +176,17 @@
     "noPosts": "You have not published any content yet.",
     "exploreEvents": "Explore events",
     "exploreOpportunities": "Explore opportunities",
-    "goToFeed": "Go to feed"
+    "goToFeed": "Go to feed",
+    "articles": "My news",
+    "shops": "My shops",
+    "publish": "Publish",
+    "draft": "Draft",
+    "deleteArticle": "Delete news",
+    "deleteShop": "Delete shop",
+    "noArticles": "You have not created any news yet.",
+    "noShops": "You have not created any shops yet.",
+    "exploreNews": "Explore news",
+    "exploreShops": "Explore shops"
   },
   "profile": {
     "title": "My profile",

@@ -80,6 +80,8 @@ export interface UserDashboardData {
     showStatus: boolean;
   };
   stats: {
+    articlesCount: number;
+    shopsCount: number;
     eventsCount: number;
     opportunitiesCount: number;
     postsCount: number;
@@ -92,6 +94,19 @@ export interface UserDashboardData {
     status: string;
     startDate: Date;
     participantCount: number;
+  }>;
+  articles: Array<{
+    id: string;
+    title: string;
+    slug: string;
+    status: string;
+    publishedAt: Date | null;
+  }>;
+  shops: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    status: string;
   }>;
   opportunities: Array<{
     id: string;
@@ -132,7 +147,17 @@ export const getUserDashboardData = cache(async (userId: string): Promise<UserDa
 
   if (!profile) return null;
 
-  const [eventsCreated, opportunitiesCreated, postsCreated, associationMemberships] = await Promise.all([
+  const [articlesCreated, shopsCreated, eventsCreated, opportunitiesCreated, postsCreated, associationMemberships] = await Promise.all([
+    prisma.article.findMany({
+      where: { authorId: userId },
+      select: { id: true, title: true, slug: true, status: true, publishedAt: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.shop.findMany({
+      where: { ownerId: userId },
+      select: { id: true, name: true, slug: true, status: true },
+      orderBy: { createdAt: "desc" },
+    }),
     prisma.event.findMany({
       where: { createdById: userId },
       select: {
@@ -200,6 +225,8 @@ export const getUserDashboardData = cache(async (userId: string): Promise<UserDa
   return {
     profile,
     stats: {
+      articlesCount: articlesCreated.length,
+      shopsCount: shopsCreated.length,
       eventsCount: eventsCreated.length,
       opportunitiesCount: opportunitiesCreated.length,
       postsCount: postsCreated.length,
@@ -212,6 +239,19 @@ export const getUserDashboardData = cache(async (userId: string): Promise<UserDa
       status: e.status,
       startDate: e.startDate,
       participantCount: e._count.participants,
+    })),
+    articles: articlesCreated.map((article) => ({
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      status: article.status,
+      publishedAt: article.publishedAt,
+    })),
+    shops: shopsCreated.map((shop) => ({
+      id: shop.id,
+      name: shop.name,
+      slug: shop.slug,
+      status: shop.status,
     })),
     opportunities: opportunitiesCreated.map((o) => ({
       id: o.id,

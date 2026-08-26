@@ -176,7 +176,17 @@
     "noPosts": "Vous n'avez pas encore publie de contenu.",
     "exploreEvents": "Explorer les evenements",
     "exploreOpportunities": "Explorer les annonces",
-    "goToFeed": "Aller au fil"
+    "goToFeed": "Aller au fil",
+    "articles": "Mes actualites",
+    "shops": "Mes boutiques",
+    "publish": "Publier",
+    "draft": "Brouillon",
+    "deleteArticle": "Supprimer l'actualite",
+    "deleteShop": "Supprimer la boutique",
+    "noArticles": "Vous n'avez pas encore cree d'actualite.",
+    "noShops": "Vous n'avez pas encore cree de boutique.",
+    "exploreNews": "Explorer les actualites",
+    "exploreShops": "Explorer les boutiques"
   },
   "profile": {
     "title": "Mon profil",

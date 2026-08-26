@@ -7,13 +7,15 @@ import DashboardEvents from "./tabs/dashboard-events";
 import DashboardOpportunities from "./tabs/dashboard-opportunities";
 import DashboardAssociation from "./tabs/dashboard-association";
 import DashboardPosts from "./tabs/dashboard-posts";
+import DashboardArticles from "./tabs/dashboard-articles";
+import DashboardShops from "./tabs/dashboard-shops";
 import { useMessages } from "@/components/i18n-provider";
 
 interface DashboardTabsProps {
   data: UserDashboardData;
 }
 
-type TabType = "overview" | "events" | "opportunities" | "association" | "posts";
+type TabType = "overview" | "articles" | "shops" | "events" | "opportunities" | "association" | "posts";
 
 export default function DashboardTabs({ data }: DashboardTabsProps) {
   const messages = useMessages();
@@ -21,6 +23,8 @@ export default function DashboardTabs({ data }: DashboardTabsProps) {
 
   const tabs = [
     { id: "overview" as const, label: messages.dashboard.overview, icon: "📊" },
+    { id: "articles" as const, label: messages.dashboard.articles, icon: "📰", badge: data.stats.articlesCount },
+    { id: "shops" as const, label: messages.dashboard.shops, icon: "🏪", badge: data.stats.shopsCount },
     { id: "events" as const, label: messages.dashboard.events, icon: "📅", badge: data.stats.eventsCount },
     { id: "opportunities" as const, label: messages.dashboard.opportunities, icon: "🎯", badge: data.stats.opportunitiesCount },
     { id: "association" as const, label: messages.dashboard.association, icon: "🏢", badge: data.stats.associationCount, disabled: !data.association },
@@ -58,6 +62,8 @@ export default function DashboardTabs({ data }: DashboardTabsProps) {
 
       <div className="space-y-6">
         {activeTab === "overview" && <DashboardOverview data={data} />}
+        {activeTab === "articles" && <DashboardArticles articles={data.articles} />}
+        {activeTab === "shops" && <DashboardShops shops={data.shops} />}
         {activeTab === "events" && <DashboardEvents events={data.events} />}
         {activeTab === "opportunities" && <DashboardOpportunities opportunities={data.opportunities} />}
         {activeTab === "association" && data.association && <DashboardAssociation association={data.association} />}

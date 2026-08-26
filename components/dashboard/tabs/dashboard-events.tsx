@@ -66,6 +66,9 @@ export default function DashboardEvents({ events }: DashboardEventsProps) {
             </div>
           </div>
           <div className="flex gap-2">
+            <Link href={`/events/${event.slug}/edit`} className="rounded-md border border-slate-200 px-3 py-1 text-sm text-slate-700">
+              {messages.profile.edit}
+            </Link>
             <button
               onClick={() => handleCancel(event.id)}
               disabled={deleting === event.id}

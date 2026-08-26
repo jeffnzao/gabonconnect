@@ -66,6 +66,9 @@ export default function DashboardOpportunities({ opportunities }: DashboardOppor
             </div>
           </div>
           <div className="flex gap-2">
+            <Link href={`/opportunities/${opp.slug}/edit`} className="rounded-md border border-slate-200 px-3 py-1 text-sm text-slate-700">
+              {messages.profile.edit}
+            </Link>
             <button
               onClick={() => handleClose(opp.id)}
               disabled={deleting === opp.id}
