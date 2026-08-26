@@ -325,6 +325,14 @@
     "submit": "Envoyer mon retour",
     "sending": "Envoi...",
     "thanks": "Merci pour votre retour. Il nous aide a avancer.",
-    "error": "Votre retour n'a pas pu etre envoye. Reessayez."
+    "error": "Votre retour n'a pas pu etre envoye. Reessayez.",
+    "publicTitle": "Avis des visiteurs",
+    "loading": "Chargement des avis...",
+    "empty": "Aucun avis publie pour le moment. Soyez le premier a donner le votre !",
+    "unavailable": "Les avis ne sont pas disponibles pour le moment.",
+    "likesLabel": "Ce qui est apprecie",
+    "ideasLabel": "Idee",
+    "dislikesLabel": "A ameliorer",
+    "bugsLabel": "Bug signale"
   }
 }

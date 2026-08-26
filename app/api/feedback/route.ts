@@ -2,10 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 const feedbackSchema = z
   .object({
     likes: z.string().trim().max(2000).optional().default(""),
@@ -23,6 +19,12 @@ const feedbackSchema = z
 
 export async function POST(request: Request) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.json({ error: "Feedback storage is not configured." }, { status: 503 });
+    }
+
     const body = await request.json();
     const feedback = feedbackSchema.parse(body);
 
@@ -30,31 +32,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    console.info(
-      "[visitor-feedback]",
-      JSON.stringify({
-        receivedAt: new Date().toISOString(),
-        locale: feedback.locale,
-        likes: feedback.likes,
-        ideas: feedback.ideas,
-        dislikes: feedback.dislikes,
-        bugs: feedback.bugs,
-      })
-    );
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const { error } = await supabase.from("feedbacks").insert({
+      likes: feedback.likes || null,
+      ideas: feedback.ideas || null,
+      dislikes: feedback.dislikes || null,
+      bugs: feedback.bugs || null,
+      locale: feedback.locale,
+    });
 
-    // Insertion directe dans la table Supabase feedbacks
-    if (supabaseUrl && supabaseAnonKey) {
-      const { error } = await supabase.from("feedbacks").insert({
-        likes: feedback.likes || null,
-        ideas: feedback.ideas || null,
-        dislikes: feedback.dislikes || null,
-        bugs: feedback.bugs || null,
-        locale: feedback.locale,
-      });
-
-      if (error) {
-        console.error("[supabase-insert-error]", error);
-      }
+    if (error) {
+      console.error("[supabase-insert-error]", error.message);
+      return NextResponse.json({ error: "Unable to store feedback." }, { status: 502 });
     }
 
     return NextResponse.json({ success: true });
