@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { FilterOption } from "@/lib/members";
+import { useMessages } from "@/components/i18n-provider";
 
 interface MemberFiltersProps {
   continents: FilterOption[];
@@ -34,6 +35,7 @@ export default function MemberFilters({
   citySlug,
   profession,
 }: MemberFiltersProps) {
+  const messages = useMessages();
   const router = useRouter();
 
   function navigate(next: NextFilters) {
@@ -57,14 +59,14 @@ export default function MemberFilters({
   return (
     <div className="flex flex-wrap items-center gap-3">
       <select
-        aria-label="Filter by continent"
+        aria-label={messages.home.allContinents}
         value={continentSlug ?? ""}
         onChange={(event) =>
           navigate({ continent: event.target.value || undefined, country: undefined, city: undefined })
         }
         className={selectClassName}
       >
-        <option value="">All continents</option>
+        <option value="">{messages.home.allContinents}</option>
         {continents.map((continent) => (
           <option key={continent.slug} value={continent.slug}>
             {continent.name}
@@ -73,13 +75,13 @@ export default function MemberFilters({
       </select>
 
       <select
-        aria-label="Filter by country"
+        aria-label={messages.auth.country}
         value={countrySlug ?? ""}
         disabled={!continentSlug}
         onChange={(event) => navigate({ country: event.target.value || undefined, city: undefined })}
         className={selectClassName}
       >
-        <option value="">All countries</option>
+        <option value="">{messages.auth.country}</option>
         {countries.map((country) => (
           <option key={country.slug} value={country.slug}>
             {country.name}
@@ -88,13 +90,13 @@ export default function MemberFilters({
       </select>
 
       <select
-        aria-label="Filter by city"
+        aria-label={messages.auth.city}
         value={citySlug ?? ""}
         disabled={!countrySlug}
         onChange={(event) => navigate({ city: event.target.value || undefined })}
         className={selectClassName}
       >
-        <option value="">All cities</option>
+        <option value="">{messages.auth.city}</option>
         {cities.map((city) => (
           <option key={city.slug} value={city.slug}>
             {city.name}
@@ -104,9 +106,9 @@ export default function MemberFilters({
 
       <input
         type="text"
-        aria-label="Filter by profession"
+        aria-label={messages.auth.profession}
         defaultValue={profession ?? ""}
-        placeholder="Profession"
+        placeholder={messages.auth.profession}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             event.preventDefault();

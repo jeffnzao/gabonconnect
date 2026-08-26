@@ -1,7 +1,9 @@
 import { ArrowRight, Globe2 } from "lucide-react";
 import { SITE_NAME, SITE_VERSION } from "@/config/site";
+import { getLocale, getMessages } from "@/lib/i18n";
 
-export default function Hero() {
+export default async function Hero() {
+  const messages = getMessages(await getLocale());
   return (
     <section className="relative overflow-hidden bg-slate-950">
       {/* Halo décoratif façon Stripe/Notion */}
@@ -19,14 +21,11 @@ export default function Hero() {
         </span>
 
         <h1 className="mt-8 text-balance text-4xl font-semibold tracking-tight text-white sm:text-6xl">
-          The 10th Province of Gabon
+          {messages.home.heroTitle}
         </h1>
 
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-slate-400 sm:text-xl">
-          Des dizaines de milliers de Gabonais vivent hors du pays — en
-          Afrique, en Europe, en Amérique et au-delà. {SITE_NAME} rassemble
-          cette diaspora mondiale sur une seule plateforme : trouvez-vous,
-          organisez-vous, avancez ensemble.
+          {messages.home.heroIntro}
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
@@ -34,7 +33,7 @@ export default function Hero() {
             href="#world-map"
             className="group inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
           >
-            Explore the diaspora
+            {messages.home.exploreDiaspora}
             <ArrowRight
               className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
               aria-hidden
@@ -44,7 +43,7 @@ export default function Hero() {
             href="/join"
             className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
           >
-            Join GabonConnect
+            {messages.home.joinCta}
           </a>
         </div>
       </div>

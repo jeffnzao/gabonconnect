@@ -16,6 +16,7 @@ import Breadcrumb from "@/components/explore/breadcrumb";
 import MemberCard from "@/components/members/member-card";
 import { getCurrentUser } from "@/lib/auth";
 import { getAssociationBySlug, type AssociationProfileDetail } from "@/lib/association-profile";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,7 @@ export async function generateMetadata({
 export default async function AssociationProfilePage({
   params,
 }: AssociationProfilePageProps) {
+  const messages = getMessages(await getLocale());
   const { slug } = await params;
   const association = await getAssociationBySlug(slug);
 
@@ -85,8 +87,8 @@ export default async function AssociationProfilePage({
         <div className="mx-auto max-w-3xl px-6 py-10">
           <Breadcrumb
             items={[
-              { label: "Home", href: "/" },
-              { label: "Associations", href: "/associations" },
+              { label: messages.common.home, href: "/" },
+              { label: messages.navigation.members, href: "/associations" },
               { label: association.name },
             ]}
           />
@@ -116,7 +118,7 @@ export default async function AssociationProfilePage({
               {association.isVerified && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
                   <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-                  Verified
+                  {messages.directories.verified}
                 </span>
               )}
             </div>
@@ -133,7 +135,7 @@ export default async function AssociationProfilePage({
 
             <p className="flex items-center gap-1.5 text-xs text-slate-400">
               <CalendarDays className="h-3.5 w-3.5" aria-hidden />
-              Founded in {foundedLabel}
+              {messages.directories.foundedIn} {foundedLabel}
             </p>
 
             {user ? (
@@ -141,17 +143,17 @@ export default async function AssociationProfilePage({
                 type="button"
                 disabled
                 aria-disabled="true"
-                title="Coming in v0.2"
+                title={messages.home.comingSoon}
                 className="mt-2 inline-flex cursor-not-allowed items-center rounded-full bg-slate-100 px-6 py-2.5 text-sm font-semibold text-slate-400"
               >
-                Join association — Coming in v0.2
+                {messages.directories.joinAssociation} - {messages.home.comingSoon}
               </button>
             ) : (
               <Link
                 href={`/login?next=/associations/${association.slug}`}
                 className="mt-2 inline-flex items-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
               >
-                Join association
+                {messages.directories.joinAssociation}
               </Link>
             )}
           </div>
@@ -161,7 +163,7 @@ export default async function AssociationProfilePage({
       <div className="mx-auto w-full max-w-3xl px-6 py-12">
         {association.description && (
           <section className="mb-10">
-            <h2 className="text-lg font-semibold text-slate-900">About</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{messages.directories.aboutAssociation}</h2>
             <p className="mt-3 whitespace-pre-line leading-relaxed text-slate-600">
               {association.description}
             </p>
@@ -170,7 +172,7 @@ export default async function AssociationProfilePage({
 
         {(association.website || association.email || association.phone) && (
           <section className="mb-10 border-t border-slate-100 pt-10">
-            <h2 className="text-lg font-semibold text-slate-900">Contact</h2>
+            <h2 className="text-lg font-semibold text-slate-900">{messages.directories.contact}</h2>
             <dl className="mt-3 flex flex-col gap-2 text-sm">
               {association.website && (
                 <div className="flex items-center gap-2">
@@ -215,7 +217,7 @@ export default async function AssociationProfilePage({
           <section className="border-t border-slate-100 pt-10">
             <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
               <Users className="h-5 w-5 text-emerald-600" aria-hidden />
-              Community in {association.city?.name}
+              {messages.directories.communityIn} {association.city?.name}
             </h2>
             <p className="mt-1 text-xs text-slate-400">
               Public GabonConnect members based in the same city.

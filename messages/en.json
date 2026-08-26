@@ -27,7 +27,16 @@
     "privacy": "Privacy",
     "contact": "Contact",
     "version": "Version",
-    "tagline": "The 10th province of Gabon."
+    "tagline": "The 10th province of Gabon.",
+    "optional": "optional",
+    "verified": "Verified",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {total}",
+    "membersFound": "member(s) found",
+    "associationsFound": "association(s) found",
+    "participants": "participant(s)",
+    "applications": "application(s)"
   },
   "status": {
     "success": "Operation successful",
@@ -84,7 +93,12 @@
   "events": {
     "going": "Going",
     "maybe": "Maybe",
-    "decline": "Decline"
+    "decline": "Decline",
+    "joinOnline": "Join online",
+    "loginToJoin": "Log in to join",
+    "details": "Event details",
+    "capacity": "Capacity",
+    "virtualLink": "Virtual link"
   },
   "auth": {
     "account": "Account",
@@ -117,7 +131,16 @@
     "profession": "Profession",
     "country": "Country",
     "city": "City",
-    "visibility": "Visibility"
+    "visibility": "Visibility",
+    "accountExists": "An account with this email may already exist. Try signing in.",
+    "emailConfirmationHint": "Click it to confirm your account and continue building your profile.",
+    "didNotGetEmail": "Didn't get it? Check your spam folder, or",
+    "selectCountry": "Select your country",
+    "selectCity": "Select your city",
+    "cityMatchesCountry": "Make sure the city matches the country you selected.",
+    "profilePublicHint": "Your profile can appear in the public GabonConnect directory.",
+    "profilePrivateHint": "Your profile will not be visible publicly.",
+    "saveProfile": "Save my profile"
   },
   "directories": {
     "members": "Gabonese Members",
@@ -142,7 +165,28 @@
     "read": "Read story",
     "filter": "Filter",
     "allTypes": "All types",
-    "location": "Location"
+    "location": "Location",
+    "catalog": "Catalog",
+    "noProducts": "No published products yet.",
+    "readStory": "Read story",
+    "viewShop": "View shop",
+    "viewOpportunity": "View opportunity",
+    "remoteAvailable": "Remote available",
+    "postedBy": "Posted by",
+    "applications": "Applications",
+    "applyExternally": "Apply externally",
+    "alreadyApplied": "You have already applied.",
+    "submitApplication": "Submit application",
+    "contact": "Contact",
+    "verified": "Verified",
+    "foundedIn": "Founded in",
+    "joinAssociation": "Join association",
+    "aboutAssociation": "About",
+    "communityIn": "Community in",
+    "viewMembers": "View all members",
+    "publicMembers": "public members",
+    "approvedAssociations": "approved associations",
+    "noPublicMembers": "No public members found."
   },
   "dashboard": {
     "overview": "Overview",
@@ -200,7 +244,13 @@
     "private": "Private",
     "publicDescription": "Your profile can appear in the member directory.",
     "privateDescription": "Your profile is hidden from the public directory.",
-    "save": "Save my profile"
+    "save": "Save my profile",
+    "publicCard": "This is how your card appears in the member directory.",
+    "privateCard": "Your profile is private; this preview is not shown to other visitors.",
+    "saveChanges": "Save changes",
+    "optional": "optional",
+    "bioPlaceholder": "A few words about you...",
+    "professionPlaceholder": "e.g. Software Engineer"
   },
   "messaging": {
     "messages": "Messages",
@@ -228,5 +278,39 @@
     "commentPlaceholder": "Write a comment",
     "noPosts": "No posts yet.",
     "loginToShare": "Log in to share an update."
+  },
+  "home": {
+    "worldCommunity": "A community around the world",
+    "worldCommunityIntro": "A look at the cities where the Gabonese diaspora is already gathering on GabonConnect.",
+    "featuresTitle": "What you can do",
+    "featuresIntro": "One platform to stay connected to Gabon, all its provinces, and its 10th province.",
+    "exploreContinents": "Explore by continent",
+    "allContinents": "All continents",
+    "comingSoon": "Coming soon",
+    "countries": "countries",
+    "heroTitle": "The 10th Province of Gabon",
+    "heroIntro": "Tens of thousands of Gabonese live beyond the country. GabonConnect brings this global diaspora together on one platform.",
+    "exploreDiaspora": "Explore the diaspora",
+    "joinCta": "Join GabonConnect",
+    "statsContinents": "Continents",
+    "statsCountries": "Countries",
+    "statsCities": "Cities",
+    "statsProfiles": "Public profiles",
+    "statsAssociations": "Approved associations"
+  },
+  "search": {
+    "label": "Search",
+    "title": "Search GabonConnect",
+    "intro": "Use the global search to look for members, associations, opportunities, and community content.",
+    "browseMembers": "Browse members",
+    "browseAssociations": "Browse associations",
+    "resultsFor": "Results for",
+    "noResults": "No results found for this search. Try another keyword.",
+    "all": "All",
+    "members": "Members",
+    "associations": "Associations",
+    "events": "Events",
+    "opportunities": "Opportunities",
+    "posts": "Posts"
   }
 }

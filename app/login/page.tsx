@@ -10,15 +10,6 @@ export const metadata: Metadata = {
   title: "Log in | GabonConnect",
 };
 
-const ERROR_MESSAGES: Record<string, string> = {
-  invalid_email: "Enter a valid email address.",
-  missing_password: "Please enter your password.",
-  invalid_credentials: "Incorrect email or password.",
-  not_confirmed: "Please confirm your email before logging in — check your inbox.",
-  temporary_error: "Something went wrong on our end. Please try again in a moment.",
-  validation: "Please check the form and try again.",
-};
-
 interface LoginPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
@@ -29,6 +20,14 @@ function first(value: string | string[] | undefined): string | undefined {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const messages = getMessages(await getLocale());
+  const errorMessages: Record<string, string> = {
+    invalid_email: messages.auth.invalidEmail,
+    missing_password: messages.auth.checkForm,
+    invalid_credentials: messages.auth.invalidCredentials,
+    not_confirmed: messages.auth.checkEmail,
+    temporary_error: messages.status.error,
+    validation: messages.auth.checkForm,
+  };
   const sp = await searchParams;
   const email = first(sp.email) ?? "";
   const errorCode = first(sp.error);
@@ -61,7 +60,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             role="alert"
             className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
           >
-            {ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.validation}
+            {errorMessages[errorCode] ?? errorMessages.validation}
           </p>
         )}
 

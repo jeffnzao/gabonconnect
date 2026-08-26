@@ -27,7 +27,16 @@
     "privacy": "Confidentialite",
     "contact": "Contact",
     "version": "Version",
-    "tagline": "La 10e province du Gabon."
+    "tagline": "La 10e province du Gabon.",
+    "optional": "facultatif",
+    "verified": "Verifie",
+    "previous": "Precedent",
+    "next": "Suivant",
+    "pageOf": "Page {page} sur {total}",
+    "membersFound": "membre(s) trouve(s)",
+    "associationsFound": "association(s) trouvee(s)",
+    "participants": "participant(s)",
+    "applications": "candidature(s)"
   },
   "status": {
     "success": "Operation reussie",
@@ -84,7 +93,12 @@
   "events": {
     "going": "Participe",
     "maybe": "Peut-etre",
-    "decline": "Decliner"
+    "decline": "Decliner",
+    "joinOnline": "Participer en ligne",
+    "loginToJoin": "Connectez-vous pour participer",
+    "details": "Details de l'evenement",
+    "capacity": "Capacite",
+    "virtualLink": "Lien virtuel"
   },
   "auth": {
     "account": "Compte",
@@ -117,7 +131,16 @@
     "profession": "Profession",
     "country": "Pays",
     "city": "Ville",
-    "visibility": "Visibilite"
+    "visibility": "Visibilite",
+    "accountExists": "Un compte avec cet e-mail existe peut-etre deja. Essayez de vous connecter.",
+    "emailConfirmationHint": "Cliquez dessus pour confirmer votre compte et continuer a creer votre profil.",
+    "didNotGetEmail": "Vous ne l'avez pas recu ? Consultez vos spams ou",
+    "selectCountry": "Selectionnez votre pays",
+    "selectCity": "Selectionnez votre ville",
+    "cityMatchesCountry": "Verifiez que la ville correspond au pays selectionne.",
+    "profilePublicHint": "Votre profil peut apparaitre dans le repertoire public GabonConnect.",
+    "profilePrivateHint": "Votre profil ne sera pas visible publiquement.",
+    "saveProfile": "Enregistrer mon profil"
   },
   "directories": {
     "members": "Membres gabonais",
@@ -142,7 +165,28 @@
     "read": "Lire l'article",
     "filter": "Filtrer",
     "allTypes": "Tous les types",
-    "location": "Lieu"
+    "location": "Lieu",
+    "catalog": "Catalogue",
+    "noProducts": "Aucun produit publie pour le moment.",
+    "readStory": "Lire l'actualite",
+    "viewShop": "Voir la boutique",
+    "viewOpportunity": "Voir l'opportunite",
+    "remoteAvailable": "Disponible a distance",
+    "postedBy": "Publie par",
+    "applications": "Candidatures",
+    "applyExternally": "Postuler a l'exterieur",
+    "alreadyApplied": "Vous avez deja postule.",
+    "submitApplication": "Envoyer ma candidature",
+    "contact": "Contact",
+    "verified": "Verifie",
+    "foundedIn": "Fondee en",
+    "joinAssociation": "Rejoindre l'association",
+    "aboutAssociation": "A propos",
+    "communityIn": "Communaute a",
+    "viewMembers": "Voir tous les membres",
+    "publicMembers": "membres publics",
+    "approvedAssociations": "associations approuvees",
+    "noPublicMembers": "Aucun membre public trouve."
   },
   "dashboard": {
     "overview": "Apercu",
@@ -200,7 +244,13 @@
     "private": "Prive",
     "publicDescription": "Votre profil peut apparaitre dans le repertoire des membres.",
     "privateDescription": "Votre profil est masque du repertoire public.",
-    "save": "Enregistrer mon profil"
+    "save": "Enregistrer mon profil",
+    "publicCard": "Voici comment votre carte apparait dans le repertoire des membres.",
+    "privateCard": "Votre profil est prive : cet apercu n'est pas visible par les visiteurs.",
+    "saveChanges": "Enregistrer les modifications",
+    "optional": "facultatif",
+    "bioPlaceholder": "Quelques mots sur vous...",
+    "professionPlaceholder": "ex. Ingenieur logiciel"
   },
   "messaging": {
     "messages": "Messages",
@@ -228,5 +278,39 @@
     "commentPlaceholder": "Ecrire un commentaire",
     "noPosts": "Aucune publication pour le moment.",
     "loginToShare": "Connectez-vous pour partager une actualite."
+  },
+  "home": {
+    "worldCommunity": "Une communaute dans le monde entier",
+    "worldCommunityIntro": "Un apercu des villes ou la diaspora gabonaise se retrouve deja sur GabonConnect.",
+    "featuresTitle": "Ce que vous pouvez faire",
+    "featuresIntro": "Une seule plateforme pour rester connecte au Gabon, a toutes ses provinces et a sa 10e province.",
+    "exploreContinents": "Explorer par continent",
+    "allContinents": "Tous les continents",
+    "comingSoon": "Bientot disponible",
+    "countries": "pays",
+    "heroTitle": "La 10e province du Gabon",
+    "heroIntro": "Des dizaines de milliers de Gabonais vivent hors du pays. GabonConnect rassemble cette diaspora mondiale sur une seule plateforme.",
+    "exploreDiaspora": "Explorer la diaspora",
+    "joinCta": "Rejoindre GabonConnect",
+    "statsContinents": "Continents",
+    "statsCountries": "Pays",
+    "statsCities": "Villes",
+    "statsProfiles": "Profils publics",
+    "statsAssociations": "Associations approuvees"
+  },
+  "search": {
+    "label": "Rechercher",
+    "title": "Rechercher sur GabonConnect",
+    "intro": "Utilisez la recherche globale pour trouver des membres, associations, opportunites et contenus communautaires.",
+    "browseMembers": "Parcourir les membres",
+    "browseAssociations": "Parcourir les associations",
+    "resultsFor": "Resultats pour",
+    "noResults": "Aucun resultat pour cette recherche. Essayez un autre mot-cle.",
+    "all": "Tout",
+    "members": "Membres",
+    "associations": "Associations",
+    "events": "Evenements",
+    "opportunities": "Opportunites",
+    "posts": "Publications"
   }
 }

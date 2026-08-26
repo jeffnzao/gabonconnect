@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Trees, Landmark, Building, Mountain, Waves, Palmtree } from "lucide-react";
 import type { ContinentOverview } from "@/lib/dashboard";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 interface ContinentGridProps {
   continents: ContinentOverview[];
@@ -21,7 +22,8 @@ const CONTINENT_DISPLAY: Record<string, { label: string; icon: LucideIcon }> = {
 // retourné par la base de données.
 const DISPLAY_ORDER = ["AF", "EU", "NA", "SA", "AS", "OC"];
 
-export default function ContinentGrid({ continents }: ContinentGridProps) {
+export default async function ContinentGrid({ continents }: ContinentGridProps) {
+  const messages = getMessages(await getLocale());
   const byCode = new Map(continents.map((continent) => [continent.code, continent]));
 
   return (
@@ -29,7 +31,7 @@ export default function ContinentGrid({ continents }: ContinentGridProps) {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Explore by continent
+            {messages.home.exploreContinents}
           </h2>
           <p className="mt-4 text-lg text-slate-500">
             La diaspora gabonaise est présente sur tous les continents.
@@ -56,7 +58,7 @@ export default function ContinentGrid({ continents }: ContinentGridProps) {
                   {display.label}
                 </span>
                 <span className="text-xs text-slate-500">
-                  {data ? `${data.countryCount} countries` : "Coming soon"}
+                  {data ? `${data.countryCount} ${messages.home.countries}` : messages.home.comingSoon}
                 </span>
               </button>
             );

@@ -3,10 +3,10 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import {
   type SearchCategory,
-  getSearchCategoryLabel,
   globalSearch,
   isEmptySearchQuery,
 } from "@/lib/search";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 const validCategories = [
   "all",
@@ -33,6 +33,7 @@ function first(value: string | string[] | undefined): string | undefined {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const messages = getMessages(await getLocale());
   const params = (await searchParams) ?? {};
   const rawQuery = first(params.q) ?? first(params.search) ?? "";
   const requestedCategory = first(params.category) ?? "all";
@@ -46,15 +47,15 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <div className="flex items-center gap-3 text-emerald-600">
             <Search className="h-5 w-5" aria-hidden />
-            <p className="text-sm font-semibold uppercase tracking-[0.2em]">Search</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em]">{messages.search.label}</p>
           </div>
 
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
-            Search GabonConnect
+            {messages.search.title}
           </h1>
 
           <p className="mt-4 text-slate-600">
-            Use the global search box to look for members, associations, opportunities, and community content.
+            {messages.search.intro}
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
@@ -62,13 +63,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               href="/members"
               className="inline-flex items-center rounded-full bg-emerald-500 px-4 py-2 font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
             >
-              Browse members
+              {messages.search.browseMembers}
             </Link>
             <Link
               href="/associations"
               className="inline-flex items-center rounded-full border border-slate-200 px-4 py-2 font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900"
             >
-              Browse associations
+              {messages.search.browseAssociations}
             </Link>
           </div>
         </div>
@@ -78,12 +79,20 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   const results = await globalSearch(rawQuery, category, 20);
   const selectedResults = results[category] ?? [];
+  const categoryLabels: Record<SearchCategory, string> = {
+    all: messages.search.all,
+    members: messages.search.members,
+    associations: messages.search.associations,
+    events: messages.search.events,
+    opportunities: messages.search.opportunities,
+    posts: messages.search.posts,
+  };
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
       <div className="mb-8">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-emerald-600">Search</p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-900">Results for “{rawQuery}”</h1>
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-emerald-600">{messages.search.label}</p>
+        <h1 className="mt-2 text-3xl font-bold text-slate-900">{messages.search.resultsFor} “{rawQuery}”</h1>
       </div>
 
       <div className="mb-8 flex flex-wrap gap-2">
@@ -100,7 +109,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
-              {getSearchCategoryLabel(option)}
+              {categoryLabels[option]}
             </Link>
           );
         })}
@@ -108,7 +117,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
       {selectedResults.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-slate-600">
-          No results found for this search. Try another keyword.
+          {messages.search.noResults}
         </div>
       ) : (
         <ul className="space-y-4">

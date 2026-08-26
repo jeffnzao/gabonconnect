@@ -1,5 +1,6 @@
 import { Globe, Landmark, Building2, Users, HeartHandshake } from "lucide-react";
 import type { GlobalStats } from "@/lib/dashboard";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 interface StatsProps {
   stats: GlobalStats;
@@ -7,14 +8,15 @@ interface StatsProps {
 
 const numberFormatter = new Intl.NumberFormat("en-US");
 
-export default function Stats({ stats }: StatsProps) {
+export default async function Stats({ stats }: StatsProps) {
+  const messages = getMessages(await getLocale());
   const items = [
-    { label: "Continents", value: stats.continents, icon: Globe },
-    { label: "Countries", value: stats.countries, icon: Landmark },
-    { label: "Cities", value: stats.cities, icon: Building2 },
-    { label: "Public profiles", value: stats.publicProfiles, icon: Users },
+    { label: messages.home.statsContinents, value: stats.continents, icon: Globe },
+    { label: messages.home.statsCountries, value: stats.countries, icon: Landmark },
+    { label: messages.home.statsCities, value: stats.cities, icon: Building2 },
+    { label: messages.home.statsProfiles, value: stats.publicProfiles, icon: Users },
     {
-      label: "Approved associations",
+      label: messages.home.statsAssociations,
       value: stats.approvedAssociations,
       icon: HeartHandshake,
     },

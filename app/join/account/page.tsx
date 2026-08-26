@@ -11,15 +11,6 @@ export const metadata: Metadata = {
   title: "Create your account | GabonConnect",
 };
 
-const ERROR_MESSAGES: Record<string, string> = {
-  invalid_email: "Enter a valid email address.",
-  weak_password: "Password must be at least 8 characters.",
-  password_mismatch: "Passwords do not match.",
-  signup_failed:
-    "We couldn't create your account. The email may already be in use, or something went wrong — please try again.",
-  validation: "Please check the form and try again.",
-};
-
 interface JoinAccountPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
@@ -30,6 +21,13 @@ function first(value: string | string[] | undefined): string | undefined {
 
 export default async function JoinAccountPage({ searchParams }: JoinAccountPageProps) {
   const messages = getMessages(await getLocale());
+  const errorMessages: Record<string, string> = {
+    invalid_email: messages.auth.invalidEmail,
+    weak_password: messages.auth.passwordLength,
+    password_mismatch: messages.auth.passwordMismatch,
+    signup_failed: messages.status.error,
+    validation: messages.auth.checkForm,
+  };
   const sp = await searchParams;
   const email = first(sp.email) ?? "";
   const errorCode = first(sp.error);
@@ -83,7 +81,7 @@ export default async function JoinAccountPage({ searchParams }: JoinAccountPageP
                 role="alert"
                 className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
               >
-                {ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.validation}
+                {errorMessages[errorCode] ?? errorMessages.validation}
               </p>
             )}
 

@@ -12,15 +12,6 @@ export const metadata: Metadata = {
   title: "Build your profile | GabonConnect",
 };
 
-const ERROR_MESSAGES: Record<string, string> = {
-  missing_name: "Please enter your first and last name.",
-  missing_location: "Please select your country and city.",
-  missing_visibility: "Please choose a visibility.",
-  invalid_location: "That city doesn't belong to the selected country — please pick again.",
-  save_failed: "We couldn't save your profile. Please try again.",
-  validation: "Please check the form and try again.",
-};
-
 interface JoinProfilePageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
@@ -31,6 +22,14 @@ function first(value: string | string[] | undefined): string | undefined {
 
 export default async function JoinProfilePage({ searchParams }: JoinProfilePageProps) {
   const messages = getMessages(await getLocale());
+  const errorMessages: Record<string, string> = {
+    missing_name: messages.auth.checkForm,
+    missing_location: messages.auth.checkForm,
+    missing_visibility: messages.auth.checkForm,
+    invalid_location: messages.auth.cityMatchesCountry,
+    save_failed: messages.status.error,
+    validation: messages.auth.checkForm,
+  };
   // Route protégée : pas de session Supabase → retour à la création de compte.
   const user = await getCurrentUser();
 
@@ -94,7 +93,7 @@ export default async function JoinProfilePage({ searchParams }: JoinProfilePageP
             role="alert"
             className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
           >
-            {ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.validation}
+            {errorMessages[errorCode] ?? errorMessages.validation}
           </p>
         )}
 

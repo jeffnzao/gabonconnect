@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CalendarDays, Clock3, MapPin } from "lucide-react";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 interface EventCardProps {
   event: {
@@ -13,10 +14,12 @@ interface EventCardProps {
   };
 }
 
-export default function EventCard({ event }: EventCardProps) {
-  const day = event.startDate.toLocaleDateString("en-US", { day: "2-digit" });
-  const month = event.startDate.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
-  const time = event.startDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+export default async function EventCard({ event }: EventCardProps) {
+  const messages = getMessages(await getLocale());
+  const locale = (await getLocale()) === "fr" ? "fr-FR" : "en-US";
+  const day = event.startDate.toLocaleDateString(locale, { day: "2-digit" });
+  const month = event.startDate.toLocaleDateString(locale, { month: "short" }).toUpperCase();
+  const time = event.startDate.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   const organizer = event.association?.name ?? (
     event.createdBy.profile
       ? `${event.createdBy.profile.firstName} ${event.createdBy.profile.lastName}`.trim()
@@ -37,9 +40,9 @@ export default function EventCard({ event }: EventCardProps) {
         <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-emerald-600" aria-hidden />{event.location}</p>
         <p className="flex items-center gap-2"><Clock3 className="h-4 w-4 text-emerald-600" aria-hidden />{time}</p>
       </div>
-      <p className="mt-5 text-sm text-slate-500">Organized by {organizer}</p>
-      <p className="mt-2 text-sm text-slate-500">{event._count.participants} participants</p>
-      <Link href={`/events/${event.slug}`} className="mt-5 inline-flex items-center text-sm font-semibold text-emerald-700 hover:text-emerald-800">View event <span className="ml-1" aria-hidden>→</span></Link>
+      <p className="mt-5 text-sm text-slate-500">{messages.directories.postedBy} {organizer}</p>
+      <p className="mt-2 text-sm text-slate-500">{event._count.participants} {messages.common.participants}</p>
+      <Link href={`/events/${event.slug}`} className="mt-5 inline-flex items-center text-sm font-semibold text-emerald-700 hover:text-emerald-800">{messages.events.details} <span className="ml-1" aria-hidden>→</span></Link>
     </article>
   );
 }

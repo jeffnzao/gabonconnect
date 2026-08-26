@@ -44,7 +44,7 @@ Source de vérité :
 La version affichée dans l'application est dérivée de `package.json`.
 
 Version actuelle :
-`0.1.4`
+`0.1.6`
 
 ---
 

@@ -18,16 +18,6 @@ export const metadata: Metadata = {
   title: "My profile | GabonConnect",
 };
 
-const ERROR_MESSAGES: Record<string, string> = {
-  validation: "Please check the form and try again.",
-  save_failed: "We couldn't save your changes. Please try again.",
-};
-
-const VISIBILITY_COPY: Record<ProfileVisibility, string> = {
-  PUBLIC: "Your profile can appear in the GabonConnect member directory.",
-  PRIVATE: "Your profile is hidden from the public member directory.",
-};
-
 interface MyProfilePageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
@@ -42,6 +32,10 @@ function initialsOf(firstName: string, lastName: string): string {
 
 export default async function MyProfilePage({ searchParams }: MyProfilePageProps) {
   const messages = getMessages(await getLocale());
+  const errorMessages: Record<string, string> = {
+    validation: messages.auth.checkForm,
+    save_failed: messages.status.error,
+  };
   // Route protégée : pas de session Supabase → connexion.
   const user = await getCurrentUser();
 
@@ -230,7 +224,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
               </span>
             </p>
             <p className="mt-2 text-sm text-slate-500">
-              {VISIBILITY_COPY[profile.visibility]}
+              {isPublic ? messages.profile.publicDescription : messages.profile.privateDescription}
             </p>
           </section>
         </div>
@@ -254,7 +248,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                 role="alert"
                 className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
               >
-                {ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.validation}
+                {errorMessages[errorCode] ?? errorMessages.validation}
               </p>
             )}
 
@@ -262,7 +256,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="firstName" className="text-sm font-medium text-slate-700">
-                    First name
+                    {messages.auth.firstName}
                   </label>
                   <input
                     id="firstName"
@@ -278,7 +272,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
 
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="lastName" className="text-sm font-medium text-slate-700">
-                    Last name
+                    {messages.auth.lastName}
                   </label>
                   <input
                     id="lastName"
@@ -295,7 +289,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
 
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="profession" className="text-sm font-medium text-slate-700">
-                  Profession
+                  {messages.auth.profession}
                 </label>
                 <input
                   id="profession"
@@ -303,14 +297,14 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                   type="text"
                   maxLength={160}
                   defaultValue={profile.profession ?? ""}
-                  placeholder="e.g. Software Engineer"
+                  placeholder={messages.profile.professionPlaceholder}
                   className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="bio" className="text-sm font-medium text-slate-700">
-                  Bio
+                  {messages.forms.description}
                 </label>
                 <textarea
                   id="bio"
@@ -318,13 +312,13 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                   rows={4}
                   maxLength={1000}
                   defaultValue={profile.bio ?? ""}
-                  placeholder="A few words about you…"
+                  placeholder={messages.profile.bioPlaceholder}
                   className="w-full resize-none rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
                 />
               </div>
 
               <fieldset className="flex flex-col gap-3">
-                <legend className="text-sm font-medium text-slate-700">Visibility</legend>
+                <legend className="text-sm font-medium text-slate-700">{messages.auth.visibility}</legend>
 
                 <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50">
                   <input
@@ -335,9 +329,9 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                     className="mt-1 h-4 w-4 accent-emerald-500"
                   />
                   <span>
-                    <span className="block text-sm font-medium text-slate-900">Public</span>
+                    <span className="block text-sm font-medium text-slate-900">{messages.profile.public}</span>
                     <span className="block text-xs text-slate-500">
-                      {VISIBILITY_COPY.PUBLIC}
+                      {messages.profile.publicDescription}
                     </span>
                   </span>
                 </label>
@@ -351,9 +345,9 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                     className="mt-1 h-4 w-4 accent-emerald-500"
                   />
                   <span>
-                    <span className="block text-sm font-medium text-slate-900">Private</span>
+                    <span className="block text-sm font-medium text-slate-900">{messages.profile.private}</span>
                     <span className="block text-xs text-slate-500">
-                      {VISIBILITY_COPY.PRIVATE}
+                      {messages.profile.privateDescription}
                     </span>
                   </span>
                 </label>
@@ -363,17 +357,17 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
                 type="submit"
                 className="mt-1 inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
               >
-                Save changes
+                {messages.profile.saveChanges}
               </button>
             </form>
           </section>
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="text-base font-semibold text-slate-900">How others see you</h2>
+            <h2 className="text-base font-semibold text-slate-900">{messages.profile.viewPublic}</h2>
             <p className="mt-1 text-xs text-slate-400">
               {isPublic
-                ? "This is how your card appears in the member directory."
-                : "Your profile is private — this preview isn't shown to other visitors."}
+                ? messages.profile.publicCard
+                : messages.profile.privateCard}
             </p>
             <div className="mt-4 max-w-sm">
               <MemberCard member={previewMember} />

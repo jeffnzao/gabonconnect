@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import { getLocale, getMessages } from "@/lib/i18n";
 
 interface MemberSearchProps {
   defaultValue?: string;
@@ -8,13 +9,14 @@ interface MemberSearchProps {
   profession?: string;
 }
 
-export default function MemberSearch({
+export default async function MemberSearch({
   defaultValue,
   continentSlug,
   countrySlug,
   citySlug,
   profession,
 }: MemberSearchProps) {
+  const messages = getMessages(await getLocale());
   return (
     <form
       action="/members"
@@ -26,7 +28,7 @@ export default function MemberSearch({
         type="text"
         name="search"
         defaultValue={defaultValue}
-        placeholder="Search by first name, last name or profession…"
+        placeholder={messages.common.searchPlaceholder}
         className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
       />
       {continentSlug && <input type="hidden" name="continent" value={continentSlug} />}
@@ -37,7 +39,7 @@ export default function MemberSearch({
         type="submit"
         className="shrink-0 rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-slate-950 transition-colors hover:bg-emerald-400"
       >
-        Search
+        {messages.common.search}
       </button>
     </form>
   );
