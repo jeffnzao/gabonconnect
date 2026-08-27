@@ -155,6 +155,7 @@ model User {
   eventParticipations   EventParticipant[]
   opportunitiesCreated  Opportunity[]     @relation("OpportunityCreator")
   opportunityApplications OpportunityApplication[]
+  savedOpportunities      SavedOpportunity[]
   posts                 Post[]                 @relation("PostAuthor")
   postLikes             PostLike[]
   postComments          PostComment[]         @relation("PostCommentAuthor")
@@ -352,6 +353,13 @@ enum OpportunityStatus {
   PUBLISHED
   CLOSED
   ARCHIVED
+}
+
+enum OpportunityApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
 }
 
 enum PostVisibility {
@@ -722,6 +730,7 @@ model Opportunity {
   updatedAt      DateTime        @updatedAt
 
   applications OpportunityApplication[]
+  savedBy       SavedOpportunity[]
 
   @@index([status, createdAt])
   @@index([type, status])
@@ -737,12 +746,28 @@ model OpportunityApplication {
   applicantId   String
   applicant     User        @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   message       String?     @db.Text
+  coverLetter   String?     @db.Text
+  cvUrl         String?
+  status        OpportunityApplicationStatus @default(PENDING)
   createdAt     DateTime    @default(now())
 
   @@unique([opportunityId, applicantId])
   @@index([opportunityId])
   @@index([applicantId])
   @@map("opportunity_applications")
+}
+
+model SavedOpportunity {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@unique([opportunityId, userId])
+  @@index([userId, createdAt])
+  @@map("saved_opportunities")
 }
 
 model Post {

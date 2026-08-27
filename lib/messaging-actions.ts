@@ -33,17 +33,21 @@ export async function getOrCreateConversationForUser(targetUserId: string) {
   redirect(`/messages?conversationId=${conversation.id}`);
 }
 
-export async function sendMessage(conversationId: string, content: string) {
-  const user = await requireUser();
-  await requireConversation(conversationId, user.id);
-  const value = z.string().trim().min(1).max(5000).parse(content);
-  const message = await prisma.message.create({ data: { conversationId, senderId: user.id, content: value } });
-  await prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } });
-  return message;
+export async function sendMessage(conversationId: string, content: string): Promise<{ success: true; message: { id: string; conversationId: string; senderId: string; content: string; createdAt: Date } } | { success: false; error: string }> {
+  try {
+    const user = await requireUser();
+    await requireConversation(conversationId, user.id);
+    const value = z.string().trim().min(1).max(5000).parse(content);
+    const message = await prisma.message.create({ data: { conversationId, senderId: user.id, content: value } });
+    await prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } });
+    return { success: true, message };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Unable to send message." };
+  }
 }
 
 export async function sendMessageFromForm(conversationId: string, formData: FormData) {
-  await sendMessage(conversationId, String(formData.get("content") ?? ""));
+  return sendMessage(conversationId, String(formData.get("content") ?? ""));
 }
 
 export async function markConversationAsRead(conversationId: string) {

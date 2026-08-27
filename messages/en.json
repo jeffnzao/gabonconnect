@@ -174,6 +174,29 @@
     ,"error": "This offer could not be published."
     ,"loading": "Publishing..."
   },
+  "opportunityEngagement": {
+    "apply": "Apply",
+    "save": "Save",
+    "saved": "Saved",
+    "coverLetter": "Cover letter",
+    "cvUrl": "CV link",
+    "submit": "Submit application",
+    "close": "Close",
+    "alreadyApplied": "Your application has already been submitted.",
+    "pending": "Pending",
+    "reviewed": "Reviewed",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "received": "Applications received",
+    "savedTitle": "Saved opportunities",
+    "myApplications": "My applications",
+    "noSaved": "No saved opportunities.",
+    "noApplications": "No applications submitted.",
+    "candidate": "Candidate",
+    "status": "Status",
+    "updateStatus": "Update status",
+    "error": "Something went wrong."
+  },
   "seo": {
     "title": "GabonConnect | The 10th Province of Gabon",
     "description": "Discover and connect with Gabonese professionals, associations, and communities around the world with GabonConnect.",
@@ -420,6 +443,7 @@
     "sending": "Sending...",
     "member": "Member"
     ,"loginToMessage": "Log in to access your conversations."
+    ,"sendError": "The message could not be sent. Please try again."
   },
   "feed": {
     "title": "Community feed",
