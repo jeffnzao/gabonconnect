@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import {
   ArticleStatus,
+  ArticleCategory,
   AssociationStatus,
   EventOrganizerType,
   EventStatus,
@@ -23,6 +24,7 @@ export const newsSchema = z.object({
   summary: z.string().trim().max(500).optional(),
   content: z.string().trim().min(1).max(20000),
   imageUrl: z.string().trim().url().optional(),
+  category: z.nativeEnum(ArticleCategory).default(ArticleCategory.GABON),
 });
 
 export const shopSchema = z.object({
@@ -105,6 +107,7 @@ export async function createNews(input: unknown) {
       summary: data.summary?.trim() || undefined,
       content: data.content,
       imageUrl: data.imageUrl?.trim() || undefined,
+      category: data.category,
       status: ArticleStatus.PUBLISHED,
       publishedAt: new Date(),
     },

@@ -6,6 +6,7 @@ import Features from "@/components/features";
 import { getGlobalStats, getContinentsOverview } from "@/lib/dashboard";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { PublicFeedbacks } from "@/components/public-feedbacks";
+import NewsHub from "@/components/news/news-hub";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export default async function HomePage() {
     getGlobalStats(),
     getContinentsOverview(),
   ]);
+  const articles = await import("@/lib/news").then(({ getPublishedArticles }) => getPublishedArticles({ pageSize: 6 }));
 
   return (
     <div className="flex flex-1 flex-col bg-white">
@@ -40,6 +42,7 @@ export default async function HomePage() {
       </section>
 
       <ContinentGrid continents={continents} />
+      <NewsHub articles={articles} messages={messages} locale={locale} limit={6} />
       <Features />
       <section className="container mx-auto py-12">
         <h2 className="text-2xl font-bold mb-4">{messages.feedback.publicTitle}</h2>

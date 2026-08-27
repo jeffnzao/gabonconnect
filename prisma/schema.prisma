@@ -34,6 +34,19 @@ enum VerificationStatus {
   REJECTED
 }
 
+enum ArticleCategory {
+  GABON
+  INTERNATIONAL
+  DIASPORA
+  STUDENTS
+  CAMPUS
+  OPPORTUNITIES
+  POLITICS
+  ECONOMY
+  CULTURE
+  SPORTS
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -399,12 +412,15 @@ model Article {
   summary     String?
   content     String
   imageUrl    String?
+  category    ArticleCategory @default(GABON)
+  viewCount   Int             @default(0)
   status      ArticleStatus @default(DRAFT)
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
   @@index([status, publishedAt])
+  @@index([category, publishedAt])
   @@index([authorId])
   @@map("articles")
 }

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { LoaderCircle } from "lucide-react";
+import { ArticleCategory } from "@/app/generated/prisma";
 
 import { createNews } from "@/lib/task021";
 import { useMessages } from "@/components/i18n-provider";
@@ -27,6 +28,7 @@ export default function NewsCreateForm() {
         summary: String(formData.get("summary") ?? "") || undefined,
         content: String(formData.get("content") ?? ""),
         imageUrl: String(formData.get("imageUrl") ?? "") || undefined,
+        category: String(formData.get("category") ?? ArticleCategory.GABON),
       });
 
       router.push(`/news/${result.slug}`);
@@ -86,6 +88,13 @@ export default function NewsCreateForm() {
                 placeholder="https://..."
                 className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
               />
+            </label>
+
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+              {messages.newsHub.categories}
+              <select name="category" defaultValue={ArticleCategory.GABON} className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100">
+                {Object.values(ArticleCategory).map((category) => <option key={category} value={category}>{messages.newsHub[category.toLowerCase() as keyof typeof messages.newsHub]}</option>)}
+              </select>
             </label>
           </div>
 
