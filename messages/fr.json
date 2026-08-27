@@ -2,6 +2,9 @@
   "navigation": {
     "explore": "Explorer",
     "members": "Membres",
+    "home": "Accueil",
+    "campus": "Campus",
+    "map": "Carte diaspora",
     "news": "Actualites",
     "shops": "Boutiques",
     "events": "Evenements",
@@ -327,7 +330,18 @@
     "statsCountries": "Pays",
     "statsCities": "Villes",
     "statsProfiles": "Profils publics",
-    "statsAssociations": "Associations approuvees"
+    "statsAssociations": "Associations approuvees",
+    "mapMarkerDetails": "Voir les details",
+    "mapLoading": "Chargement de la carte...",
+    "mapEmpty": "Aucune localisation publique disponible pour le moment."
+    ,"campusTitle": "Campus GabonConnect"
+    ,"campusIntro": "Bourses, logement et ressources pour les etudiants gabonais."
+    ,"practicalTitle": "Informations pratiques"
+    ,"practicalIntro": "Retrouvez les demarches consulaires, passeport, visa et integration."
+    ,"opportunitiesTitle": "Opportunites recentes"
+    ,"eventsTitle": "Evenements a venir"
+    ,"viewAll": "Tout voir"
+    ,"mapMarkerDetails": "Voir les details"
   },
   "search": {
     "label": "Rechercher",

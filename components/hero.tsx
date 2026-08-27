@@ -1,4 +1,4 @@
-import { ArrowRight, Globe2 } from "lucide-react";
+import { ArrowRight, Globe2, Search } from "lucide-react";
 import { SITE_NAME, SITE_VERSION } from "@/config/site";
 import { getLocale, getMessages } from "@/lib/i18n";
 
@@ -9,9 +9,9 @@ export default async function Hero() {
       {/* Halo décoratif façon Stripe/Notion */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-40 -z-0 flex justify-center blur-3xl"
+        className="pointer-events-none absolute inset-x-0 -top-40 z-0 flex justify-center blur-3xl"
       >
-        <div className="h-[520px] w-[820px] rounded-full bg-gradient-to-tr from-emerald-500/30 via-sky-500/20 to-yellow-400/20" />
+        <div className="h-130 w-205 rounded-full bg-linear-to-tr from-emerald-500/30 via-sky-500/20 to-yellow-400/20" />
       </div>
 
       <div className="relative mx-auto flex max-w-5xl flex-col items-center px-6 pb-24 pt-28 text-center sm:pb-32 sm:pt-36">
@@ -27,6 +27,13 @@ export default async function Hero() {
         <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-slate-400 sm:text-xl">
           {messages.home.heroIntro}
         </p>
+
+        <form action="/search" method="get" className="mt-8 flex w-full max-w-xl items-center gap-2 rounded-xl border border-white/15 bg-white px-3 py-2 text-left shadow-lg">
+          <Search className="h-5 w-5 shrink-0 text-slate-400" aria-hidden />
+          <label htmlFor="hero-search" className="sr-only">{messages.common.search}</label>
+          <input id="hero-search" name="q" type="search" placeholder={messages.common.searchPlaceholder} className="min-w-0 flex-1 bg-transparent px-2 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400" />
+          <button type="submit" className="shrink-0 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">{messages.common.search}</button>
+        </form>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
           <a

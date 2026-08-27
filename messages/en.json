@@ -2,6 +2,9 @@
   "navigation": {
     "explore": "Explore",
     "members": "Members",
+    "home": "Home",
+    "campus": "Campus",
+    "map": "Diaspora map",
     "news": "News",
     "shops": "Shops",
     "events": "Events",
@@ -327,7 +330,18 @@
     "statsCountries": "Countries",
     "statsCities": "Cities",
     "statsProfiles": "Public profiles",
-    "statsAssociations": "Approved associations"
+    "statsAssociations": "Approved associations",
+    "mapMarkerDetails": "View details",
+    "mapLoading": "Loading map...",
+    "mapEmpty": "No public locations are available yet."
+    ,"campusTitle": "GabonConnect Campus"
+    ,"campusIntro": "Scholarships, housing, and resources for Gabonese students."
+    ,"practicalTitle": "Practical information"
+    ,"practicalIntro": "Find consular, passport, visa, and integration guidance."
+    ,"opportunitiesTitle": "Recent opportunities"
+    ,"eventsTitle": "Upcoming events"
+    ,"viewAll": "View all"
+    ,"mapMarkerDetails": "View details"
   },
   "search": {
     "label": "Search",

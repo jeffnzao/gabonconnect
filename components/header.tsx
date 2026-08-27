@@ -14,13 +14,12 @@ export default async function Header({ locale }: HeaderProps) {
   const user = await getCurrentUser();
   const messages = getMessages(locale);
   const BASE_LINKS = [
-    { label: messages.navigation.explore, href: "/explore" },
-    { label: messages.navigation.members, href: "/members" },
+    { label: messages.navigation.home, href: "/" },
     { label: messages.navigation.news, href: "/news" },
-    { label: messages.navigation.shops, href: "/shops" },
-    { label: messages.navigation.events, href: "/events" },
+    { label: messages.navigation.campus, href: "/explore" },
     { label: messages.navigation.opportunities, href: "/opportunities" },
-    { label: messages.navigation.feed, href: "/feed" },
+    { label: messages.navigation.events, href: "/events" },
+    { label: messages.navigation.map, href: "/#world-map" },
   ];
   const isAuthenticated = Boolean(user);
   const navLinks = isAuthenticated

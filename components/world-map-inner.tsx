@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import type { DiasporaMapMarker } from "@/lib/diaspora-map";
 
 // Les images d'icônes par défaut de Leaflet ne se résolvent pas correctement
 // une fois passées par le bundler Next.js : on pointe explicitement vers le
@@ -17,23 +18,7 @@ const markerIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-export interface DemoMarker {
-  name: string;
-  country: string;
-  latitude: number;
-  longitude: number;
-}
-
-export const DEMO_MARKERS: DemoMarker[] = [
-  { name: "Libreville", country: "Gabon", latitude: 0.4162, longitude: 9.4673 },
-  { name: "Paris", country: "France", latitude: 48.8566, longitude: 2.3522 },
-  { name: "Brussels", country: "Belgique", latitude: 50.8503, longitude: 4.3517 },
-  { name: "Montreal", country: "Canada", latitude: 45.5019, longitude: -73.5674 },
-  { name: "New York", country: "États-Unis", latitude: 40.7128, longitude: -74.006 },
-  { name: "Dakar", country: "Sénégal", latitude: 14.7167, longitude: -17.4677 },
-];
-
-export default function WorldMapInner() {
+export default function WorldMapInner({ markers, detailsLabel }: { markers: DiasporaMapMarker[]; detailsLabel: string }) {
   return (
     <MapContainer
       center={[20, 0]}
@@ -46,7 +31,7 @@ export default function WorldMapInner() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {DEMO_MARKERS.map((marker) => (
+      {markers.map((marker) => (
         <Marker
           key={marker.name}
           position={[marker.latitude, marker.longitude]}
@@ -55,7 +40,9 @@ export default function WorldMapInner() {
           <Popup>
             <span className="font-medium">{marker.name}</span>
             <br />
-            {marker.country}
+            {marker.city}, {marker.country}
+            <br />
+            <a href={marker.href} className="text-emerald-700 underline">{detailsLabel}</a>
           </Popup>
         </Marker>
       ))}
