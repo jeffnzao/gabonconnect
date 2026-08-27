@@ -12,7 +12,8 @@ export const dynamic = "force-dynamic";
 
 
 export default async function HomePage() {
-  const messages = getMessages(await getLocale());
+  const locale = await getLocale();
+  const messages = getMessages(locale);
   const [stats, continents] = await Promise.all([
     getGlobalStats(),
     getContinentsOverview(),
@@ -41,8 +42,8 @@ export default async function HomePage() {
       <ContinentGrid continents={continents} />
       <Features />
       <section className="container mx-auto py-12">
-        <h2 className="text-2xl font-bold mb-4">Avis des visiteurs</h2>
-        <PublicFeedbacks />
+        <h2 className="text-2xl font-bold mb-4">{messages.feedback.publicTitle}</h2>
+        <PublicFeedbacks locale={locale} />
       </section>
     </div>
   );

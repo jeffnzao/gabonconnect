@@ -325,6 +325,14 @@
     "submit": "Send feedback",
     "sending": "Sending...",
     "thanks": "Thank you for your feedback. It helps us improve.",
-    "error": "Your feedback could not be sent. Please try again."
+    "error": "Your feedback could not be sent. Please try again.",
+    "publicTitle": "Visitor feedback",
+    "loading": "Loading feedback...",
+    "empty": "No feedback published yet. Be the first to share yours!",
+    "unavailable": "Feedback is not available right now.",
+    "likesLabel": "What people like",
+    "ideasLabel": "Idea",
+    "dislikesLabel": "Could be improved",
+    "bugsLabel": "Reported bug"
   }
 }
