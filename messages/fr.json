@@ -23,6 +23,7 @@
     "english": "Anglais",
     "menuOpen": "Ouvrir le menu",
     "menuClose": "Fermer le menu",
+    "mainNavigation": "Navigation principale",
     "about": "A propos",
     "privacy": "Confidentialite",
     "contact": "Contact",
@@ -46,6 +47,11 @@
     "away": "Absent",
     "busy": "Occupe",
     "offline": "Hors ligne"
+  },
+  "seo": {
+    "title": "GabonConnect | La 10e province du Gabon",
+    "description": "Decouvrez et connectez-vous aux professionnels, associations et communautes gabonaises du monde entier avec GabonConnect.",
+    "ogDescription": "Une plateforme de confiance pour connecter les Gabonais, les communautes et les organisations partout dans le monde."
   },
   "actions": {
     "save": "Enregistrer",
@@ -330,6 +336,10 @@
     "loading": "Chargement des avis...",
     "empty": "Aucun avis publie pour le moment. Soyez le premier a donner le votre !",
     "unavailable": "Les avis ne sont pas disponibles pour le moment.",
+    "invalid": "Votre retour est invalide. Verifiez les champs puis reessayez.",
+    "storageUnavailable": "Le stockage des avis n'est pas configure.",
+    "storeFailed": "Votre retour n'a pas pu etre enregistre.",
+    "submitFailed": "Votre retour n'a pas pu etre traite.",
     "likesLabel": "Ce qui est apprecie",
     "ideasLabel": "Idee",
     "dislikesLabel": "A ameliorer",

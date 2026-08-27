@@ -19,51 +19,36 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "GabonConnect | The 10th Province of Gabon",
-    template: "%s | GabonConnect",
-  },
-  description:
-    "Discover and connect Gabonese professionals, associations, and communities around the world with GabonConnect.",
-  applicationName: "GabonConnect",
-  keywords: [
-    "Gabon",
-    "GabonConnect",
-    "diaspora",
-    "associations",
-    "community",
-    "networking",
-    "profiles",
-    "Gabonese",
-  ],
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName: "GabonConnect",
-    title: "GabonConnect | The 10th Province of Gabon",
-    description:
-      "A trusted platform connecting Gabonese people, communities, and organizations across the globe.",
-    images: [{ url: "/globe.svg", width: 512, height: 512, alt: "GabonConnect" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "GabonConnect | The 10th Province of Gabon",
-    description:
-      "A trusted platform connecting Gabonese people, communities, and organizations across the globe.",
-    images: ["/globe.svg"],
-  },
-  icons: {
-    icon: [{ url: "/globe.svg", type: "image/svg+xml" }],
-    shortcut: "/globe.svg",
-    apple: "/globe.svg",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const messages = getMessages(locale);
+  const seoLocale = locale === "fr" ? "fr_FR" : "en_US";
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: messages.seo.title, template: `%s | GabonConnect` },
+    description: messages.seo.description,
+    applicationName: "GabonConnect",
+    keywords: ["Gabon", "GabonConnect", "diaspora", "associations", "community", "networking", "profiles", "Gabonese"],
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      locale: seoLocale,
+      url: siteUrl,
+      siteName: "GabonConnect",
+      title: messages.seo.title,
+      description: messages.seo.ogDescription,
+      images: [{ url: "/globe.svg", width: 512, height: 512, alt: "GabonConnect" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: messages.seo.title,
+      description: messages.seo.ogDescription,
+      images: ["/globe.svg"],
+    },
+    icons: { icon: [{ url: "/globe.svg", type: "image/svg+xml" }], shortcut: "/globe.svg", apple: "/globe.svg" },
+  };
+}
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();

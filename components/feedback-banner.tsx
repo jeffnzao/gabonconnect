@@ -18,26 +18,28 @@ export default function FeedbackBanner({ locale }: { locale: Locale }) {
     setError(null);
 
     const formData = new FormData(event.currentTarget);
-    const response = await fetch("/api/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        likes: formData.get("likes"),
-        ideas: formData.get("ideas"),
-        dislikes: formData.get("dislikes"),
-        bugs: formData.get("bugs"),
-        website: formData.get("website"),
-        locale,
-      }),
-    });
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          likes: formData.get("likes"),
+          ideas: formData.get("ideas"),
+          dislikes: formData.get("dislikes"),
+          bugs: formData.get("bugs"),
+          website: formData.get("website"),
+          locale,
+        }),
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        throw new Error(messages.feedback.error);
+      }
+
+      setIsSubmitted(true);
+    } catch {
       setError(messages.feedback.error);
-      setIsSubmitting(false);
-      return;
     }
-
-    setIsSubmitted(true);
     setIsSubmitting(false);
   }
 

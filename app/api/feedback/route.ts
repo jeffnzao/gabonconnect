@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
+import { getMessages, isLocale, type Locale } from "@/lib/i18n";
 
 const feedbackSchema = z
   .object({
@@ -18,14 +19,17 @@ const feedbackSchema = z
   );
 
 export async function POST(request: Request) {
+  let locale: Locale = "fr";
   try {
+    const body = await request.json().catch(() => ({}));
+    locale = isLocale(body?.locale) ? body.locale : "fr";
+    const messages = getMessages(locale);
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.json({ error: "Feedback storage is not configured." }, { status: 503 });
+      return NextResponse.json({ error: messages.feedback.storageUnavailable }, { status: 503 });
     }
 
-    const body = await request.json();
     const feedback = feedbackSchema.parse(body);
 
     if (feedback.website) {
@@ -43,15 +47,15 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("[supabase-insert-error]", error.message);
-      return NextResponse.json({ error: "Unable to store feedback." }, { status: 502 });
+      return NextResponse.json({ error: messages.feedback.storeFailed }, { status: 502 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid feedback." }, { status: 400 });
+      return NextResponse.json({ error: getMessages(locale).feedback.invalid }, { status: 400 });
     }
 
-    return NextResponse.json({ error: "Unable to submit feedback." }, { status: 500 });
+    return NextResponse.json({ error: getMessages(locale).feedback.submitFailed }, { status: 500 });
   }
 }

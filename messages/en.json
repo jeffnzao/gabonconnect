@@ -23,6 +23,7 @@
     "english": "English",
     "menuOpen": "Open menu",
     "menuClose": "Close menu",
+    "mainNavigation": "Main navigation",
     "about": "About",
     "privacy": "Privacy",
     "contact": "Contact",
@@ -46,6 +47,11 @@
     "away": "Away",
     "busy": "Busy",
     "offline": "Offline"
+  },
+  "seo": {
+    "title": "GabonConnect | The 10th Province of Gabon",
+    "description": "Discover and connect with Gabonese professionals, associations, and communities around the world with GabonConnect.",
+    "ogDescription": "A trusted platform connecting Gabonese people, communities, and organizations across the globe."
   },
   "actions": {
     "save": "Save",
@@ -330,6 +336,10 @@
     "loading": "Loading feedback...",
     "empty": "No feedback published yet. Be the first to share yours!",
     "unavailable": "Feedback is not available right now.",
+    "invalid": "Your feedback is invalid. Check the fields and try again.",
+    "storageUnavailable": "Feedback storage is not configured.",
+    "storeFailed": "Your feedback could not be stored.",
+    "submitFailed": "Your feedback could not be processed.",
     "likesLabel": "What people like",
     "ideasLabel": "Idea",
     "dislikesLabel": "Could be improved",

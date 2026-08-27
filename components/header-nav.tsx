@@ -57,7 +57,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           />
         </form>
 
-        <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 lg:flex">
+        <nav aria-label={labels.common.mainNavigation} className="hidden items-center gap-5 text-sm font-medium text-slate-600 xl:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -69,7 +69,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           ))}
         </nav>
 
-        <div className="hidden sm:block">
+        <div className="hidden xl:block">
           {isAuthenticated ? (
             <form action={signOutAction}>
               <button
@@ -94,7 +94,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
         <button
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
-          className="inline-flex items-center justify-center rounded-full p-2 text-slate-600 transition-colors hover:bg-slate-100 sm:hidden"
+          className="inline-flex items-center justify-center rounded-full p-2 text-slate-600 transition-colors hover:bg-slate-100 xl:hidden"
           aria-label={isMenuOpen ? labels.common.menuClose : labels.common.menuOpen}
           aria-expanded={isMenuOpen}
         >
@@ -107,7 +107,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
       </div>
 
       {isMenuOpen && (
-        <div className="border-t border-slate-100 bg-white px-6 py-4 sm:hidden">
+        <div className="border-t border-slate-100 bg-white px-6 py-4 xl:hidden">
           <form onSubmit={handleSearchSubmit} className="mb-3 flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
             <Search className="h-4 w-4 text-slate-400" aria-hidden />
             <input
@@ -120,7 +120,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
             />
           </form>
 
-          <nav className="flex flex-col gap-1">
+          <nav aria-label={labels.common.mainNavigation} className="flex max-h-[calc(100vh-10rem)] flex-col gap-1 overflow-y-auto">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
