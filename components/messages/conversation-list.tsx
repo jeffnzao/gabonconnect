@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { getPublicStatus } from "@/lib/messaging";
 import { useMessages } from "@/components/i18n-provider";
