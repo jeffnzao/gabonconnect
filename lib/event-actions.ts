@@ -6,6 +6,7 @@ import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { canOrganizeAssociationEvent, hasEventCapacity } from "@/lib/events";
 import { z } from "zod";
+import { createNotificationForUser } from "@/lib/services/notification-service";
 
 const eventSchema = z.object({
   title: z.string().trim().min(1).max(160),
@@ -82,7 +83,7 @@ export async function toggleEventParticipation(
 
   try {
     const user = await requireUser();
-    const event = await prisma.event.findUnique({ where: { id: eventId }, select: { status: true, maxParticipants: true, _count: { select: { participants: { where: { status: EventParticipantStatus.GOING } } } } } });
+    const event = await prisma.event.findUnique({ where: { id: eventId }, select: { title: true, slug: true, createdById: true, status: true, maxParticipants: true, _count: { select: { participants: { where: { status: EventParticipantStatus.GOING } } } } } });
     if (!event || event.status !== EventStatus.PUBLISHED) throw new Error("Event is not available.");
     if (nextStatus === "GOING" && previousStatus !== "GOING" && !hasEventCapacity(event.maxParticipants, event._count.participants)) throw new Error("This event is full.");
 
@@ -91,6 +92,19 @@ export async function toggleEventParticipation(
       create: { eventId, userId: user.id, status: EventParticipantStatus[nextStatus] },
       update: { status: EventParticipantStatus[nextStatus] },
     });
+
+    if (event.createdById !== user.id && nextStatus !== "DECLINED") {
+      try {
+        await createNotificationForUser(user.id === event.createdById ? user.id : event.createdById, {
+          type: "EVENT",
+          title: event.title,
+          message: event.title,
+          link: `/events/${event.slug}`,
+        });
+      } catch (error) {
+        console.error("Failed to emit event notification:", error);
+      }
+    }
 
     revalidatePath("/events");
     revalidatePath("/events/[slug]");

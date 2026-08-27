@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/phase13";
 import { canApplyToOpportunity, canCreateAssociationOpportunity } from "@/lib/opportunities";
 import { z } from "zod";
+import { broadcastNotification } from "@/lib/services/notification-service";
 
 const opportunitySchema = z.object({
   title: z.string().trim().min(1).max(180),
@@ -43,7 +44,7 @@ export async function createOpportunity(input: unknown) {
     }
   }
 
-  return prisma.opportunity.create({
+  const opportunity = await prisma.opportunity.create({
     data: {
       title: data.title,
       slug,
@@ -59,6 +60,19 @@ export async function createOpportunity(input: unknown) {
       status: OpportunityStatus.PUBLISHED,
     },
   });
+
+  try {
+    await broadcastNotification({
+      type: "OPPORTUNITY",
+      title: opportunity.title,
+      message: opportunity.description,
+      link: `/opportunities/${opportunity.slug}`,
+    });
+  } catch (error) {
+    console.error("Failed to emit opportunity notification:", error);
+  }
+
+  return opportunity;
 }
 
 export async function applyToOpportunity(opportunityId: string, message?: string) {

@@ -17,6 +17,7 @@ import {
 import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeSlug } from "@/lib/phase13";
+import { broadcastNotification } from "@/lib/services/notification-service";
 
 export const newsSchema = z.object({
   title: z.string().trim().min(1).max(180),
@@ -114,6 +115,16 @@ export async function createNews(input: unknown) {
   });
 
   revalidatePath("/news");
+  try {
+    await broadcastNotification({
+      type: data.category === ArticleCategory.STUDENTS || data.category === ArticleCategory.CAMPUS ? "CAMPUS" : "NEWS",
+      title: article.title,
+      message: article.summary || article.title,
+      link: `/news/${article.slug}`,
+    });
+  } catch (error) {
+    console.error("Failed to emit news notification:", error);
+  }
   return article;
 }
 
