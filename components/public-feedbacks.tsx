@@ -13,6 +13,8 @@ interface Feedback {
   ideas?: string;
   dislikes?: string;
   bugs?: string;
+  status?: string;
+  is_published?: boolean;
 }
 
 export function PublicFeedbacks({ locale }: { locale: Locale }) {
@@ -38,6 +40,8 @@ export function PublicFeedbacks({ locale }: { locale: Locale }) {
       const { data, error: fetchError } = await supabase
         .from("feedbacks")
         .select("id, created_at, likes, ideas, dislikes, bugs")
+        .eq("is_published", true)
+        .eq("status", "published")
         .order("created_at", { ascending: false })
         .limit(10);
 
