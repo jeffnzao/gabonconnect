@@ -16,7 +16,7 @@ export interface MembershipState {
  * ni d'un argument client. C'est le même contrat que updateProfileAction()
  * dans app/profile/actions.ts (ensureUser() → userId vérifié → profile).
  */
-async function requireOwnProfileId(): Promise<string> {
+async function requireOwnProfile(): Promise<{ id: string; userId: string }> {
   const ensuredUser = await ensureUser();
   if (!ensuredUser) {
     throw new Error("Please log in to join an association.");
@@ -31,7 +31,7 @@ async function requireOwnProfileId(): Promise<string> {
     throw new Error("Complete your profile before joining an association.");
   }
 
-  return profile.id;
+  return { id: profile.id, userId: ensuredUser.id };
 }
 
 /**
@@ -49,7 +49,8 @@ export async function toggleMembershipAction(
   const intent = formData.get("intent") === "leave" ? "leave" : "join";
 
   try {
-    const profileId = await requireOwnProfileId();
+    const profile = await requireOwnProfile();
+    const profileId = profile.id;
 
     if (intent === "join") {
       const association = await prisma.association.findUnique({
@@ -66,7 +67,7 @@ export async function toggleMembershipAction(
       // applicatif qui serait sujet à une race condition.
       await prisma.associationMember.upsert({
         where: { associationId_profileId: { associationId, profileId } },
-        create: { associationId, profileId },
+        create: { associationId, profileId, userId: profile.userId },
         update: {},
       });
 

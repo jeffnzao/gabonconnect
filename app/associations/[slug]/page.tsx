@@ -17,6 +17,7 @@ import MemberCard from "@/components/members/member-card";
 import { getCurrentUser } from "@/lib/auth";
 import { getAssociationBySlug, type AssociationProfileDetail } from "@/lib/association-profile";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { joinAssociation } from "@/lib/actions/associations";
 
 export const dynamic = "force-dynamic";
 
@@ -139,15 +140,11 @@ export default async function AssociationProfilePage({
             </p>
 
             {user ? (
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                title={messages.home.comingSoon}
-                className="mt-2 inline-flex cursor-not-allowed items-center rounded-full bg-slate-100 px-6 py-2.5 text-sm font-semibold text-slate-400"
-              >
-                {messages.directories.joinAssociation} - {messages.home.comingSoon}
-              </button>
+              <form action={joinAssociation.bind(null, association.id)}>
+                <button type="submit" className="mt-2 inline-flex items-center rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400">
+                  {messages.directories.joinAssociation}
+                </button>
+              </form>
             ) : (
               <Link
                 href={`/login?next=/associations/${association.slug}`}

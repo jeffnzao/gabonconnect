@@ -56,6 +56,33 @@ enum NotificationType {
   MESSAGE
 }
 
+enum AssociationCategory {
+  CULTURE
+  EDUCATION
+  BUSINESS
+  SOLIDARITY
+  SPORT
+}
+
+enum AssociationMemberRole {
+  MEMBER
+  ADMIN
+  TREASURER
+  SECRETARY
+}
+
+enum AssociationMemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ConsulateType {
+  EMBASSY
+  CONSULATE_GENERAL
+  HONORARY_CONSULATE
+}
+
 enum AdministrativeProcedureCategory {
   CONSULAR
   IMMIGRATION
@@ -166,6 +193,8 @@ model User {
   notificationPreference NotificationPreference?
   procedureProgress       UserProcedureProgress[]
   housingOffers            HousingOffer[]
+  associationMemberships   AssociationMember[] @relation("AssociationMemberUser")
+  presidedAssociations     Association[] @relation("AssociationPresident")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -218,6 +247,11 @@ model Association {
   website     String?
   email       String?
   phone       String?
+  logoUrl     String?
+  category    AssociationCategory @default(SOLIDARITY)
+  address     String?
+  presidentId String?
+  president   User? @relation("AssociationPresident", fields: [presidentId], references: [id], onDelete: SetNull)
 
   cityId String?
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
@@ -251,13 +285,39 @@ model AssociationMember {
 
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User @relation("AssociationMemberUser", fields: [userId], references: [id], onDelete: Cascade)
+  role      AssociationMemberRole @default(MEMBER)
+  status    AssociationMemberStatus @default(PENDING)
+  joinedAt  DateTime?
 
   createdAt DateTime @default(now())
 
   @@unique([associationId, profileId])
   @@index([associationId])
   @@index([profileId])
+  @@index([userId, status])
   @@map("association_members")
+}
+
+model Consulate {
+  id            String        @id @default(cuid())
+  name          String
+  type          ConsulateType
+  country       String
+  city          String
+  address       String
+  phone         String
+  email         String
+  website       String
+  openingHours  String
+  jurisdiction  String
+  latitude      Float
+  longitude     Float
+  createdAt     DateTime      @default(now())
+
+  @@index([country, type])
+  @@map("consulates")
 }
 
 enum ConnectionStatus {

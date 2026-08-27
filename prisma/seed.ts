@@ -9,7 +9,7 @@
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 // seed.ts
-import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory, ScholarshipLevel } from "../app/generated/prisma";
+import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory, ScholarshipLevel, ConsulateType } from "../app/generated/prisma";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -213,6 +213,17 @@ async function main() {
       },
     });
   }
+
+  const consulates = [
+    { id: "consulate-embassy-france", name: "Ambassade du Gabon en France", type: ConsulateType.EMBASSY, country: "France", city: "Paris", address: "26 bis avenue Raphaël, 75016 Paris", phone: "+33 1 42 99 68 68", email: "ambassade@gabonfrance.com", website: "https://www.ambassadedugabon.fr/", openingHours: "Lundi au vendredi, 09:00-15:00", jurisdiction: "France", latitude: 48.8566, longitude: 2.3522 },
+    { id: "consulate-general-paris", name: "Consulat Général du Gabon à Paris", type: ConsulateType.CONSULATE_GENERAL, country: "France", city: "Paris", address: "41 rue de la Bienfaisance, 75008 Paris", phone: "+33 1 40 04 90 13", email: "consulat@gabonfrance.com", website: "https://www.ambassadedugabon.fr/", openingHours: "Lundi au vendredi, 09:00-14:00", jurisdiction: "France", latitude: 48.876, longitude: 2.316 },
+    { id: "embassy-canada", name: "Ambassade du Gabon au Canada", type: ConsulateType.EMBASSY, country: "Canada", city: "Ottawa", address: "4 Range Road, Ottawa, ON K1N 8J5", phone: "+1 613 232 5301", email: "info@ambassadedugabon.ca", website: "https://ambassadedugabon.ca/", openingHours: "Monday to Friday, 09:00-15:00", jurisdiction: "Canada", latitude: 45.4215, longitude: -75.6972 },
+    { id: "embassy-usa", name: "Ambassade du Gabon aux Etats-Unis", type: ConsulateType.EMBASSY, country: "Etats-Unis", city: "Washington", address: "2033 20th Street NW, Washington DC 20009", phone: "+1 202 797 1000", email: "info@gabonembassyusa.org", website: "https://gabonembassyusa.org/", openingHours: "Monday to Friday, 09:00-15:00", jurisdiction: "United States", latitude: 38.9072, longitude: -77.0369 },
+    { id: "embassy-china", name: "Ambassade du Gabon en Chine", type: ConsulateType.EMBASSY, country: "Chine", city: "Pekin", address: "No. 36 Dong Zhi Men Wai Da Jie, Beijing", phone: "+86 10 6532 2822", email: "ambassadegabonchine@gmail.com", website: "https://www.diplomatie.gouv.ga/", openingHours: "Monday to Friday, 09:00-15:00", jurisdiction: "China", latitude: 39.9042, longitude: 116.4074 },
+    { id: "embassy-morocco", name: "Ambassade du Gabon au Maroc", type: ConsulateType.EMBASSY, country: "Maroc", city: "Rabat", address: "Rue Oued Fes, Souissi, Rabat", phone: "+212 537 63 90 80", email: "ambgabon.rabat@gmail.com", website: "https://www.diplomatie.gouv.ga/", openingHours: "Lundi au vendredi, 09:00-15:00", jurisdiction: "Morocco", latitude: 34.0209, longitude: -6.8416 },
+    { id: "embassy-senegal", name: "Ambassade du Gabon au Senegal", type: ConsulateType.EMBASSY, country: "Senegal", city: "Dakar", address: "Rue Aime Cesaire, Dakar", phone: "+221 33 823 91 53", email: "ambassadedugabon.sn@gmail.com", website: "https://www.diplomatie.gouv.ga/", openingHours: "Lundi au vendredi, 09:00-15:00", jurisdiction: "Senegal", latitude: 14.7167, longitude: -17.4677 },
+  ];
+  for (const consulate of consulates) await prisma.consulate.upsert({ where: { id: consulate.id }, update: consulate, create: consulate });
 
   const procedures = [
     {

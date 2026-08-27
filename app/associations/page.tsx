@@ -1,144 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Breadcrumb from "@/components/explore/breadcrumb";
-import AssociationCard from "@/components/associations/association-card";
-import AssociationFilters from "@/components/associations/association-filters";
-import AssociationEmptyState from "@/components/associations/association-empty-state";
-import { getAssociations, getAssociationFilterOptions } from "@/lib/associations";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { getAssociations } from "@/lib/actions/associations";
+import { AssociationCategory } from "@/app/generated/prisma";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Associations | GabonConnect" };
 
-export const metadata: Metadata = {
-  title: "Associations Directory | GabonConnect",
-  description:
-    "Discover Gabonese diaspora associations around the world and connect with your community.",
-};
+type Props = { searchParams: Promise<{ country?: string; city?: string; category?: string }> };
 
-interface AssociationsPageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}
-
-function first(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value || undefined;
-}
-
-function buildPageHref(
-  targetPage: number,
-  filters: { search?: string; continentSlug?: string; countrySlug?: string },
-) {
-  const params = new URLSearchParams();
-  if (filters.search) params.set("q", filters.search);
-  if (filters.continentSlug) params.set("continent", filters.continentSlug);
-  if (filters.countrySlug) params.set("country", filters.countrySlug);
-  if (targetPage > 1) params.set("page", String(targetPage));
-
-  const queryString = params.toString();
-  return queryString ? `/associations?${queryString}` : "/associations";
-}
-
-export default async function AssociationsPage({ searchParams }: AssociationsPageProps) {
+export default async function AssociationsPage({ searchParams }: Props) {
   const messages = getMessages(await getLocale());
-  const sp = await searchParams;
-
-  const search = first(sp.q);
-  const continentSlug = first(sp.continent);
-  const countrySlug = first(sp.country);
-  const pageParam = first(sp.page);
-  const page = pageParam ? Math.max(1, Number.parseInt(pageParam, 10) || 1) : 1;
-
-  const [{ associations, totalCount, totalPages }, filterOptions] = await Promise.all([
-    getAssociations({ search, continentSlug, countrySlug, page }),
-    getAssociationFilterOptions(),
-  ]);
-
-  const hasActiveFilters = Boolean(search || continentSlug || countrySlug);
-  const filtersForPagination = { search, continentSlug, countrySlug };
-
-  return (
-    <div className="flex flex-1 flex-col bg-slate-50">
-      <section className="border-b border-slate-100 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-10">
-          <Breadcrumb items={[{ label: messages.common.home, href: "/" }, { label: messages.navigation.members }]} />
-
-          <div className="mx-auto mt-8 max-w-2xl text-center">
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-              {messages.directories.associations}
-            </h1>
-            <p className="mt-4 text-lg text-slate-500">
-              {messages.directories.associationsIntro}
-            </p>
-            <p className="mt-3 text-sm font-medium text-emerald-700">
-              {totalCount} association{totalCount === 1 ? "" : "s"} found
-            </p>
-          </div>
-
-          <div className="mx-auto mt-8 max-w-3xl">
-            <AssociationFilters
-              filterOptions={filterOptions}
-              search={search}
-              continentSlug={continentSlug}
-              countrySlug={countrySlug}
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
-        {associations.length === 0 ? (
-          <AssociationEmptyState hasActiveFilters={hasActiveFilters} />
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {associations.map((association) => (
-                <AssociationCard key={association.id} association={association} />
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <nav
-                aria-label="Pagination"
-                className="mt-12 flex items-center justify-center gap-4 text-sm"
-              >
-                {page > 1 ? (
-                  <Link
-                    href={buildPageHref(page - 1, filtersForPagination)}
-                    className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-600"
-                  >
-                    <ChevronLeft className="h-4 w-4" aria-hidden />
-                    Previous
-                  </Link>
-                ) : (
-                  <span className="flex items-center gap-1 rounded-full border border-slate-100 bg-slate-50 px-4 py-2 font-medium text-slate-300">
-                    <ChevronLeft className="h-4 w-4" aria-hidden />
-                    Previous
-                  </span>
-                )}
-
-                <span className="text-slate-500">
-                  Page {page} of {totalPages}
-                </span>
-
-                {page < totalPages ? (
-                  <Link
-                    href={buildPageHref(page + 1, filtersForPagination)}
-                    className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 transition-colors hover:border-emerald-200 hover:text-emerald-600"
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" aria-hidden />
-                  </Link>
-                ) : (
-                  <span className="flex items-center gap-1 rounded-full border border-slate-100 bg-slate-50 px-4 py-2 font-medium text-slate-300">
-                    Next
-                    <ChevronRight className="h-4 w-4" aria-hidden />
-                  </span>
-                )}
-              </nav>
-            )}
-          </>
-        )}
-      </section>
-    </div>
-  );
+  const params = await searchParams;
+  const category = Object.values(AssociationCategory).includes(params.category as AssociationCategory) ? params.category : undefined;
+  const associations = await getAssociations({ country: params.country, city: params.city, category });
+  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12"><header><p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">{messages.navigation.members}</p><h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{messages.directories.associations}</h1><p className="mt-3 max-w-2xl text-sm text-slate-600">{messages.directories.associationsIntro}</p></header><form method="get" className="mt-8 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-4"><label className="flex flex-col gap-1 text-sm font-medium text-slate-700">{messages.directory2.country}<input name="country" defaultValue={params.country} className="rounded-lg border border-slate-200 px-3 py-2 font-normal" /></label><label className="flex flex-col gap-1 text-sm font-medium text-slate-700">{messages.directory2.city}<input name="city" defaultValue={params.city} className="rounded-lg border border-slate-200 px-3 py-2 font-normal" /></label><label className="flex flex-col gap-1 text-sm font-medium text-slate-700">{messages.directory2.associationCategory}<select name="category" defaultValue={category ?? ""} className="rounded-lg border border-slate-200 bg-white px-3 py-2 font-normal"><option value="">{messages.directory2.allCategories}</option>{Object.values(AssociationCategory).map((item) => <option key={item} value={item}>{messages.directory2[item.toLowerCase() as keyof typeof messages.directory2]}</option>)}</select></label><button type="submit" className="self-end rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white">{messages.common.search}</button></form>{associations.length === 0 ? <p className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500">{messages.directory2.noAssociations}</p> : <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{associations.map((association) => <article key={association.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-center justify-between gap-3"><span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">{messages.directory2[association.category.toLowerCase() as keyof typeof messages.directory2]}</span>{association.isVerified && <span className="text-xs font-semibold text-emerald-700">{messages.directories.verified}</span>}</div><h2 className="mt-4 text-xl font-semibold text-slate-900">{association.name}</h2><p className="mt-2 text-sm text-slate-500">{association.city ? `${association.city.name}, ${association.city.country.name}` : ""}</p>{association.description && <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{association.description}</p>}<p className="mt-4 text-xs text-slate-500">{association._count.members} {messages.directory2.members}</p><Link href={`/associations/${association.slug}`} className="mt-5 inline-flex rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white">{messages.directories.view}</Link></article>)}</div>}</main>;
 }
