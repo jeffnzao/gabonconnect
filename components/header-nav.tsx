@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Globe2, Menu, Search, X } from "lucide-react";
 import { signOutAction } from "@/lib/auth-actions";
 import LanguageSwitcher from "@/components/language-switcher";
+import NotificationCenter from "@/components/notifications/notification-center";
 import type { Locale, Messages } from "@/lib/i18n";
 
 export interface HeaderNavLink {
@@ -90,6 +91,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
         </div>
 
         <LanguageSwitcher locale={locale} labels={labels.common} />
+        <NotificationCenter isAuthenticated={isAuthenticated} labels={labels.notifications} locale={locale} />
 
         <button
           type="button"

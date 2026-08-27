@@ -51,6 +51,24 @@
     "busy": "Busy",
     "offline": "Offline"
   },
+  "notifications": {
+    "title": "Notifications",
+    "open": "Open notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet.",
+    "loading": "Loading notifications...",
+    "unread": "unread",
+    "news": "News",
+    "event": "Event",
+    "opportunity": "Opportunity",
+    "campus": "Campus",
+    "system": "System",
+    "message": "Message",
+    "preferences": "Notification preferences",
+    "inApp": "In-app notifications",
+    "email": "Email notifications",
+    "push": "Push notifications"
+  },
   "seo": {
     "title": "GabonConnect | The 10th Province of Gabon",
     "description": "Discover and connect with Gabonese professionals, associations, and communities around the world with GabonConnect.",

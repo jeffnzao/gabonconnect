@@ -47,6 +47,15 @@ enum ArticleCategory {
   SPORTS
 }
 
+enum NotificationType {
+  NEWS
+  EVENT
+  OPPORTUNITY
+  CAMPUS
+  SYSTEM
+  MESSAGE
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -126,6 +135,8 @@ model User {
   conversationsAsFirst  Conversation[]       @relation("ConversationParticipant1")
   conversationsAsSecond Conversation[]       @relation("ConversationParticipant2")
   sentMessages          Message[]             @relation("MessageSender")
+  notifications         Notification[]
+  notificationPreference NotificationPreference?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -510,6 +521,33 @@ model UserConsent {
   @@unique([userId, type])
   @@index([type, granted])
   @@map("user_consents")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead, createdAt])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id      String @id @default(cuid())
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inApp   Boolean @default(true)
+  email   Boolean @default(false)
+  push    Boolean @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@map("notification_preferences")
 }
 
 model Event {

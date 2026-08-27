@@ -51,6 +51,24 @@
     "busy": "Occupe",
     "offline": "Hors ligne"
   },
+  "notifications": {
+    "title": "Notifications",
+    "open": "Ouvrir les notifications",
+    "markAllRead": "Tout marquer comme lu",
+    "empty": "Aucune notification pour le moment.",
+    "loading": "Chargement des notifications...",
+    "unread": "non lue(s)",
+    "news": "Actualite",
+    "event": "Evenement",
+    "opportunity": "Opportunite",
+    "campus": "Campus",
+    "system": "Systeme",
+    "message": "Message",
+    "preferences": "Preferences de notification",
+    "inApp": "Notifications dans l'application",
+    "email": "Notifications par e-mail",
+    "push": "Notifications push"
+  },
   "seo": {
     "title": "GabonConnect | La 10e province du Gabon",
     "description": "Decouvrez et connectez-vous aux professionnels, associations et communautes gabonaises du monde entier avec GabonConnect.",
