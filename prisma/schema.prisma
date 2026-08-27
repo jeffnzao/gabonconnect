@@ -69,6 +69,19 @@ enum UserProcedureStatus {
   COMPLETED
 }
 
+enum ScholarshipLevel {
+  LICENCE
+  MASTER
+  DOCTORAT
+}
+
+enum HousingType {
+  COLOCATION
+  STUDIO
+  CHAMBRE
+  SOUS_LOCATION
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -151,6 +164,7 @@ model User {
   notifications         Notification[]
   notificationPreference NotificationPreference?
   procedureProgress       UserProcedureProgress[]
+  housingOffers            HousingOffer[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -608,6 +622,41 @@ model UserProcedureProgress {
   @@unique([userId, procedureId])
   @@index([userId, status])
   @@map("user_procedure_progress")
+}
+
+model Scholarship {
+  id                 String           @id @default(cuid())
+  title              String
+  provider           String
+  country            String
+  level              ScholarshipLevel
+  description        String
+  eligibilityCriteria String
+  deadline           DateTime
+  applicationUrl     String
+  createdAt          DateTime         @default(now())
+
+  @@index([country, level, deadline])
+  @@index([provider, deadline])
+  @@map("scholarships")
+}
+
+model HousingOffer {
+  id          String      @id @default(cuid())
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  city        String
+  country     String
+  type        HousingType
+  price       Float
+  description String
+  contactEmail String
+  isAvailable Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  @@index([country, city, type, isAvailable])
+  @@index([authorId, createdAt])
+  @@map("housing_offers")
 }
 
 model Event {

@@ -9,7 +9,7 @@
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 // seed.ts
-import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory } from "../app/generated/prisma";
+import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory, ScholarshipLevel } from "../app/generated/prisma";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -287,6 +287,14 @@ async function main() {
     for (const [index, [title, description, isRequired]] of procedureData.steps.entries()) {
       await prisma.procedureStep.upsert({ where: { procedureId_order: { procedureId: procedure.id, order: index + 1 } }, update: { title, description, isRequired }, create: { procedureId: procedure.id, order: index + 1, title, description, isRequired } });
     }
+  }
+
+  const scholarships = [
+    { id: "scholarship-campus-france", title: "Bourse Campus France", provider: "Campus France", country: "France", level: ScholarshipLevel.MASTER, description: "Opportunite de financement pour un projet d'etudes superieures en France.", eligibilityCriteria: "Consultez les conditions et le calendrier de l'appel officiel.", deadline: new Date("2027-01-31"), applicationUrl: "https://www.campusfrance.org/" },
+    { id: "scholarship-dgbc-excellence", title: "Bourse d'excellence DGBC", provider: "DGBC", country: "Gabon", level: ScholarshipLevel.LICENCE, description: "Aide a la preparation d'un dossier de bourse d'excellence gabonaise.", eligibilityCriteria: "Verifiez les criteres publies par la DGBC pour votre campagne.", deadline: new Date("2027-02-28"), applicationUrl: "https://www.dgbc.gouv.ga/" },
+  ];
+  for (const scholarship of scholarships) {
+    await prisma.scholarship.upsert({ where: { id: scholarship.id }, update: scholarship, create: scholarship });
   }
 
   console.log("Seed terminé : géographie, membres et associations de démonstration créés.");
