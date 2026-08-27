@@ -1,9 +1,12 @@
 import { ArrowRight, Globe2, Search } from "lucide-react";
 import { SITE_NAME, SITE_VERSION } from "@/config/site";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { getCurrentUser } from "@/lib/auth";
 
 export default async function Hero() {
-  const messages = getMessages(await getLocale());
+  const [locale, user] = await Promise.all([getLocale(), getCurrentUser()]);
+  const messages = getMessages(locale);
+  const isAuthenticated = Boolean(user);
   return (
     <section className="relative overflow-hidden bg-slate-950">
       {/* Halo décoratif façon Stripe/Notion */}
@@ -47,10 +50,10 @@ export default async function Hero() {
             />
           </a>
           <a
-            href="/join"
+            href={isAuthenticated ? "/associations" : "/register"}
             className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
           >
-            {messages.home.joinCta}
+            {isAuthenticated ? messages.home.associationCta : messages.home.joinCta}
           </a>
         </div>
       </div>

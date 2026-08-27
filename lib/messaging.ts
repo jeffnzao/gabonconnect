@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { ProfileVisibility, UserStatus, Prisma } from "@/app/generated/prisma";
-import { prisma } from "@/lib/prisma";
+import { isMissingTableError, prisma } from "@/lib/prisma";
 
 export interface ParticipantPair {
   participant1Id: string;
@@ -52,7 +52,9 @@ export const getOrCreateConversation = cache(async (currentUserId: string, targe
 });
 
 export const getUserConversations = cache(async (userId: string) => {
-  const conversations = await prisma.conversation.findMany({
+  let conversations;
+  try {
+    conversations = await prisma.conversation.findMany({
     where: { OR: [{ participant1Id: userId }, { participant2Id: userId }] },
     orderBy: { updatedAt: "desc" },
     select: {
@@ -73,7 +75,11 @@ export const getUserConversations = cache(async (userId: string) => {
         },
       },
     },
-  });
+    });
+  } catch (error) {
+    if (isMissingTableError(error)) return [];
+    throw error;
+  }
 
   return conversations.map((conversation) => {
     const other = conversation.participant1Id === userId
@@ -91,17 +97,29 @@ export const getUserConversations = cache(async (userId: string) => {
 });
 
 export const getConversationMessages = cache(async (conversationId: string, userId: string) => {
-  const conversation = await prisma.conversation.findFirst({
+  let conversation;
+  try {
+    conversation = await prisma.conversation.findFirst({
     where: { id: conversationId, OR: [{ participant1Id: userId }, { participant2Id: userId }] },
     select: { id: true, participant1Id: true, participant2Id: true },
-  });
+    });
+  } catch (error) {
+    if (isMissingTableError(error)) return null;
+    throw error;
+  }
   if (!conversation) throw new Error("Conversation not found.");
 
-  const messages = await prisma.message.findMany({
-    where: { conversationId },
-    orderBy: { createdAt: "asc" },
-    select: { id: true, content: true, senderId: true, isRead: true, createdAt: true },
-  });
+  let messages;
+  try {
+    messages = await prisma.message.findMany({
+      where: { conversationId },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, content: true, senderId: true, isRead: true, createdAt: true },
+    });
+  } catch (error) {
+    if (isMissingTableError(error)) return null;
+    throw error;
+  }
   return { conversation, messages };
 });
 

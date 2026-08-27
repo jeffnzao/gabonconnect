@@ -9,7 +9,7 @@
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 // seed.ts
-import { PrismaClient, ProfileVisibility, AssociationStatus, Role } from "../app/generated/prisma";
+import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory } from "../app/generated/prisma";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -212,6 +212,81 @@ async function main() {
         status: a.status,
       },
     });
+  }
+
+  const procedures = [
+    {
+      slug: "passeport-renouvellement",
+      title: "Renouvellement du passeport gabonais",
+      description: "Preparez votre dossier et suivez les etapes de renouvellement de votre passeport.",
+      category: AdministrativeProcedureCategory.CONSULAR,
+      estimatedDays: 30,
+      cost: "Selon le tarif du consulat",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Verifier les conditions", "Confirmez la procedure aupres de votre consulat.", true],
+        ["Rassembler les pieces", "Preparez votre ancien passeport, vos photos et les justificatifs demandes.", true],
+        ["Prendre rendez-vous", "Utilisez le portail officiel ou contactez votre representation consulaire.", true],
+        ["Deposer le dossier", "Presentez les originaux et reglez les frais applicables.", true],
+        ["Retirer le passeport", "Suivez la notification du consulat pour le retrait.", true],
+      ],
+    },
+    {
+      slug: "immatriculation-consulaire",
+      title: "Inscription consulaire",
+      description: "Inscrivez-vous aupres de votre consulat pour faciliter vos demarches a l'etranger.",
+      category: AdministrativeProcedureCategory.CONSULAR,
+      estimatedDays: 7,
+      cost: "Gratuit ou selon le consulat",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Identifier votre consulat", "Trouvez la representation competente pour votre lieu de residence.", true],
+        ["Preparer vos justificatifs", "Rassemblez une piece d'identite et un justificatif de residence.", true],
+        ["Remplir le formulaire", "Completez le formulaire d'immatriculation fourni par le consulat.", true],
+        ["Valider l'inscription", "Deposez ou envoyez votre dossier selon les instructions officielles.", true],
+      ],
+    },
+    {
+      slug: "acte-naissance",
+      title: "Demande d'acte de naissance",
+      description: "Preparez une demande d'acte d'etat civil aupres de l'autorite competente.",
+      category: AdministrativeProcedureCategory.CONSULAR,
+      estimatedDays: 15,
+      cost: "Selon le service sollicite",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Preciser le document", "Determinez la copie ou l'extrait necessaire pour votre demarche.", true],
+        ["Rassembler les informations", "Preparez les informations d'etat civil et les justificatifs disponibles.", true],
+        ["Envoyer la demande", "Suivez les instructions du consulat ou de la mairie competente.", true],
+        ["Recevoir le document", "Verifiez les informations avant de l'utiliser dans une autre procedure.", true],
+      ],
+    },
+    {
+      slug: "attestation-non-boursier",
+      title: "Attestation de non-boursier",
+      description: "Suivez les etapes de preparation d'une attestation pour un dossier etudiant ou Campus.",
+      category: AdministrativeProcedureCategory.INTEGRATION,
+      estimatedDays: 14,
+      cost: "Selon les conditions de l'organisme",
+      officialUrl: "https://www.dgbc.gouv.ga/",
+      steps: [
+        ["Verifier l'organisme demandeur", "Confirmez le format et la periode attendus par votre etablissement.", true],
+        ["Preparer votre dossier", "Rassemblez votre identite, votre inscription et les justificatifs de scolarite.", true],
+        ["Soumettre la demande", "Transmettez le dossier au service DGBC ou Campus indique.", true],
+        ["Archiver l'attestation", "Conservez le document et verifiez sa date de validite.", true],
+      ],
+    },
+  ] as const;
+
+  for (const procedureData of procedures) {
+    const procedure = await prisma.administrativeProcedure.upsert({
+      where: { slug: procedureData.slug },
+      update: { title: procedureData.title, description: procedureData.description, category: procedureData.category, estimatedDays: procedureData.estimatedDays, cost: procedureData.cost, officialUrl: procedureData.officialUrl },
+      create: { slug: procedureData.slug, title: procedureData.title, description: procedureData.description, category: procedureData.category, estimatedDays: procedureData.estimatedDays, cost: procedureData.cost, officialUrl: procedureData.officialUrl },
+    });
+    for (const [index, [title, description, isRequired]] of procedureData.steps.entries()) {
+      await prisma.procedureStep.upsert({ where: { procedureId_order: { procedureId: procedure.id, order: index + 1 } }, update: { title, description, isRequired }, create: { procedureId: procedure.id, order: index + 1, title, description, isRequired } });
+    }
   }
 
   console.log("Seed terminé : géographie, membres et associations de démonstration créés.");

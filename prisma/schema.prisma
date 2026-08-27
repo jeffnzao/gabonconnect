@@ -56,6 +56,19 @@ enum NotificationType {
   MESSAGE
 }
 
+enum AdministrativeProcedureCategory {
+  CONSULAR
+  IMMIGRATION
+  INTEGRATION
+  RETURN
+}
+
+enum UserProcedureStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -137,6 +150,7 @@ model User {
   sentMessages          Message[]             @relation("MessageSender")
   notifications         Notification[]
   notificationPreference NotificationPreference?
+  procedureProgress       UserProcedureProgress[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -548,6 +562,52 @@ model NotificationPreference {
   updatedAt DateTime @updatedAt
 
   @@map("notification_preferences")
+}
+
+model AdministrativeProcedure {
+  id            String                         @id @default(cuid())
+  slug          String                         @unique
+  title         String
+  description   String
+  category      AdministrativeProcedureCategory
+  estimatedDays Int
+  cost          String
+  officialUrl   String
+  steps         ProcedureStep[]
+  progress      UserProcedureProgress[]
+  createdAt     DateTime                       @default(now())
+  updatedAt     DateTime                       @updatedAt
+
+  @@index([category])
+  @@map("administrative_procedures")
+}
+
+model ProcedureStep {
+  id          String                  @id @default(cuid())
+  procedureId String
+  procedure   AdministrativeProcedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  order       Int
+  title       String
+  description String
+  isRequired  Boolean                 @default(true)
+
+  @@unique([procedureId, order])
+  @@map("procedure_steps")
+}
+
+model UserProcedureProgress {
+  id               String                  @id @default(cuid())
+  userId           String
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  procedureId      String
+  procedure        AdministrativeProcedure @relation(fields: [procedureId], references: [id], onDelete: Cascade)
+  status           UserProcedureStatus      @default(NOT_STARTED)
+  completedStepIds String[]                 @default([])
+  updatedAt        DateTime                @updatedAt
+
+  @@unique([userId, procedureId])
+  @@index([userId, status])
+  @@map("user_procedure_progress")
 }
 
 model Event {
