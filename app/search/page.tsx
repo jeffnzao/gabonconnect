@@ -15,6 +15,8 @@ const validCategories = [
   "events",
   "opportunities",
   "posts",
+  "procedures",
+  "consulates",
 ] as const satisfies readonly SearchCategory[];
 
 export const dynamic = "force-dynamic";
@@ -86,6 +88,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     events: messages.search.events,
     opportunities: messages.search.opportunities,
     posts: messages.search.posts,
+    procedures: messages.search.procedures,
+    consulates: messages.search.consulates,
   };
 
   return (

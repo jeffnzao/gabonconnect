@@ -7,6 +7,7 @@ import { Globe2, Menu, Search, X } from "lucide-react";
 import { signOutAction } from "@/lib/auth-actions";
 import LanguageSwitcher from "@/components/language-switcher";
 import NotificationCenter from "@/components/notifications/notification-center";
+import GlobalSearch from "@/components/global-search";
 import type { Locale, Messages } from "@/lib/i18n";
 
 export interface HeaderNavLink {
@@ -46,17 +47,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           <span className="text-sm font-semibold">GabonConnect</span>
         </Link>
 
-        <form onSubmit={handleSearchSubmit} className="hidden flex-1 max-w-md items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 md:flex">
-          <Search className="h-4 w-4 text-slate-400" aria-hidden />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder={labels.common.searchPlaceholder}
-            className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
-            aria-label={labels.common.search}
-          />
-        </form>
+        <GlobalSearch />
 
         <nav aria-label={labels.common.mainNavigation} className="hidden items-center gap-5 text-sm font-medium text-slate-600 xl:flex">
           {navLinks.map((link) => (

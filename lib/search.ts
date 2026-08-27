@@ -9,7 +9,7 @@ import {
 } from "@/app/generated/prisma";
 import { prisma } from "@/lib/prisma";
 
-export type SearchCategory = "all" | "members" | "associations" | "events" | "opportunities" | "posts";
+export type SearchCategory = "all" | "members" | "associations" | "events" | "opportunities" | "posts" | "procedures" | "consulates";
 
 export interface SearchResult {
   kind: Exclude<SearchCategory, "all">;
@@ -26,6 +26,8 @@ export interface SearchResults {
   events: SearchResult[];
   opportunities: SearchResult[];
   posts: SearchResult[];
+  procedures: SearchResult[];
+  consulates: SearchResult[];
 }
 
 export function normalizeSearchQuery(query: string): string {
@@ -57,6 +59,8 @@ export function getSearchCategoryLabel(category: SearchCategory): string {
     events: "Events",
     opportunities: "Opportunities",
     posts: "Posts",
+    procedures: "Procedures",
+    consulates: "Consulates",
   };
   return labels[category];
 }
@@ -74,6 +78,8 @@ export const globalSearch = cache(async (
     events: [],
     opportunities: [],
     posts: [],
+    procedures: [],
+    consulates: [],
   };
 
   if (isEmptySearchQuery(term)) {
@@ -133,7 +139,7 @@ export const globalSearch = cache(async (
     ],
   };
 
-  const [members, associations, events, opportunities, posts] = await Promise.all([
+  const [members, associations, events, opportunities, posts, procedures, consulates] = await Promise.all([
     prisma.profile.findMany({
       where: memberWhere,
       take: limit,
@@ -194,6 +200,18 @@ export const globalSearch = cache(async (
         author: { select: { profile: { select: { firstName: true, lastName: true } } } },
       },
     }),
+    prisma.administrativeProcedure.findMany({
+      where: { OR: [{ title: { contains: term, mode: "insensitive" } }, { description: { contains: term, mode: "insensitive" } }] },
+      take: limit,
+      orderBy: { title: "asc" },
+      select: { id: true, slug: true, title: true, description: true },
+    }),
+    prisma.consulate.findMany({
+      where: { OR: [{ name: { contains: term, mode: "insensitive" } }, { country: { contains: term, mode: "insensitive" } }, { city: { contains: term, mode: "insensitive" } }] },
+      take: limit,
+      orderBy: [{ country: "asc" }, { city: "asc" }],
+      select: { id: true, name: true, country: true, city: true },
+    }),
   ]);
 
   const mappedMembers: SearchResult[] = members.map((member) => ({
@@ -238,6 +256,8 @@ export const globalSearch = cache(async (
     subtitle: `By ${post.author.profile ? `${post.author.profile.firstName} ${post.author.profile.lastName}` : "member"}`,
     href: "/feed",
   }));
+  const mappedProcedures: SearchResult[] = procedures.map((procedure) => ({ kind: "procedures", id: procedure.id, title: procedure.title, subtitle: procedure.description, href: `/procedures/${procedure.slug}` }));
+  const mappedConsulates: SearchResult[] = consulates.map((consulate) => ({ kind: "consulates", id: consulate.id, title: consulate.name, subtitle: `${consulate.city} · ${consulate.country}`, href: "/consulates" }));
 
   const results: SearchResults = {
     all: [...mappedMembers, ...mappedAssociations, ...mappedEvents, ...mappedOpportunities, ...mappedPosts],
@@ -246,6 +266,8 @@ export const globalSearch = cache(async (
     events: mappedEvents,
     opportunities: mappedOpportunities,
     posts: mappedPosts,
+    procedures: mappedProcedures,
+    consulates: mappedConsulates,
   };
 
   if (category !== "all") {

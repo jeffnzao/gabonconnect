@@ -4,7 +4,10 @@ import OpportunityCard from "@/components/opportunities/opportunity-card";
 import { getOpportunities, type OpportunityFilters } from "@/lib/opportunities";
 import { getLocale, getMessages } from "@/lib/i18n";
 
-export const metadata: Metadata = { title: "Opportunities | GabonConnect" };
+export async function generateMetadata(): Promise<Metadata> {
+  const messages = getMessages(await getLocale());
+  return { title: messages.directories.opportunities, description: messages.directories.opportunitiesIntro };
+}
 
 interface OpportunitiesPageProps { searchParams: Promise<Record<string, string | string[] | undefined>> }
 function first(value: string | string[] | undefined): string | undefined { return Array.isArray(value) ? value[0] : value; }

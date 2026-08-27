@@ -20,6 +20,7 @@
   "common": {
     "home": "Accueil",
     "search": "Rechercher",
+    "searchAll": "Rechercher partout",
     "searchPlaceholder": "Rechercher des personnes, associations, evenements...",
     "language": "Langue",
     "french": "Francais",
@@ -474,6 +475,7 @@
     "member": "Membre"
     ,"loginToMessage": "Connectez-vous pour acceder a vos conversations."
     ,"sendError": "Le message n'a pas pu etre envoye. Reessayez."
+    ,"searchAll": "Rechercher partout"
   },
   "feed": {
     "title": "Fil d'actualite",
@@ -536,6 +538,8 @@
     "events": "Evenements",
     "opportunities": "Opportunites",
     "posts": "Publications"
+    ,"procedures": "Demarches"
+    ,"consulates": "Consulats"
   },
   "feedback": {
     "banner": "Vous testez GabonConnect : partagez votre retour avec nous.",

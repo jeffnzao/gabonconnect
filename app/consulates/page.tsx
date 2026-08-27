@@ -5,7 +5,10 @@ import { getConsulates } from "@/lib/actions/consulates";
 import { ConsulateType } from "@/app/generated/prisma";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Consular directory | GabonConnect" };
+export async function generateMetadata(): Promise<Metadata> {
+  const messages = getMessages(await getLocale());
+  return { title: messages.directory2.consulates };
+}
 
 type Props = { searchParams: Promise<{ country?: string; type?: string }> };
 

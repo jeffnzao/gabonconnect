@@ -20,6 +20,7 @@
   "common": {
     "home": "Home",
     "search": "Search",
+    "searchAll": "Search everywhere",
     "searchPlaceholder": "Search people, associations, events...",
     "language": "Language",
     "french": "French",
@@ -474,6 +475,7 @@
     "member": "Member"
     ,"loginToMessage": "Log in to access your conversations."
     ,"sendError": "The message could not be sent. Please try again."
+    ,"searchAll": "Search everywhere"
   },
   "feed": {
     "title": "Community feed",
@@ -536,6 +538,8 @@
     "events": "Events",
     "opportunities": "Opportunities",
     "posts": "Posts"
+    ,"procedures": "Procedures"
+    ,"consulates": "Consulates"
   },
   "feedback": {
     "banner": "Trying GabonConnect? Share your feedback with us.",

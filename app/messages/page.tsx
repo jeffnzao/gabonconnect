@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getConversationMessages, getUserConversations } from "@/lib/messaging";
 import { markConversationAsRead } from "@/lib/messaging-actions";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { getOrCreateConversationForUser } from "@/lib/messaging-actions";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Messages | GabonConnect" };
@@ -25,7 +26,12 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps) 
   } catch {
     conversations = [];
   }
-  const requestedId = first((await searchParams).conversationId);
+  const params = await searchParams;
+  const requestedId = first(params.conversationId);
+  const targetUserId = first(params.userId) ?? first(params.recipientId);
+  if (!requestedId && targetUserId) {
+    await getOrCreateConversationForUser(targetUserId);
+  }
   const active = conversations.find((conversation) => conversation.id === requestedId) ?? conversations[0];
   let thread = null;
   if (active) {

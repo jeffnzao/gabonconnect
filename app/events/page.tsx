@@ -4,7 +4,10 @@ import EventCard from "@/components/events/event-card";
 import { getEvents } from "@/lib/events";
 import { getLocale, getMessages } from "@/lib/i18n";
 
-export const metadata: Metadata = { title: "Events | GabonConnect" };
+export async function generateMetadata(): Promise<Metadata> {
+  const messages = getMessages(await getLocale());
+  return { title: messages.directories.events, description: messages.directories.eventsIntro };
+}
 
 export default async function EventsPage() {
   const messages = getMessages(await getLocale());

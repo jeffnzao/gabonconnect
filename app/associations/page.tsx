@@ -5,7 +5,10 @@ import { getAssociations } from "@/lib/actions/associations";
 import { AssociationCategory } from "@/app/generated/prisma";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Associations | GabonConnect" };
+export async function generateMetadata(): Promise<Metadata> {
+  const messages = getMessages(await getLocale());
+  return { title: messages.directories.associations, description: messages.directories.associationsIntro };
+}
 
 type Props = { searchParams: Promise<{ country?: string; city?: string; category?: string }> };
 
