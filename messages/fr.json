@@ -52,6 +52,12 @@
     "busy": "Occupe",
     "offline": "Hors ligne"
   },
+  "offline": {
+    "title": "Vous etes hors connexion",
+    "message": "Les contenus enregistres restent disponibles. Reconnectez-vous pour continuer.",
+    "retry": "Reessayer",
+    "banner": "Connexion internet interrompue."
+  },
   "notifications": {
     "title": "Notifications",
     "open": "Ouvrir les notifications",

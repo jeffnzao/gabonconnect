@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import { I18nProvider } from "@/components/i18n-provider";
 import FeedbackBanner from "@/components/feedback-banner";
 import { getLocale, getMessages } from "@/lib/i18n";
+import OfflineBanner from "@/components/offline-banner";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -64,6 +65,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex flex-1 flex-col">{children}</main>
           <Footer locale={locale} />
           <FeedbackBanner locale={locale} />
+          <OfflineBanner labels={getMessages(locale).offline} />
         </I18nProvider>
       </body>
     </html>

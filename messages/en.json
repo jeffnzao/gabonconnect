@@ -52,6 +52,12 @@
     "busy": "Busy",
     "offline": "Offline"
   },
+  "offline": {
+    "title": "You are offline",
+    "message": "Saved content remains available. Reconnect to continue.",
+    "retry": "Try again",
+    "banner": "Internet connection interrupted."
+  },
   "notifications": {
     "title": "Notifications",
     "open": "Open notifications",
