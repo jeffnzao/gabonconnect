@@ -115,6 +115,15 @@ enum ContentModerationStatus {
   REJECTED
 }
 
+enum SourceRegistryType {
+  GOVERNMENT
+  DIPLOMATIC
+  MEDIA
+  UNIVERSITY
+  DIASPORA
+  OTHER
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -206,6 +215,27 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model SourceRegistry {
+  id              String             @id @default(cuid())
+  name            String
+  url             String             @unique
+  type            SourceRegistryType
+  country         String             @default("GA")
+  language        String             @default("fr")
+  rssUrl          String?
+  active          Boolean            @default(true)
+  reliability     Float              @default(3)
+  lastFetchedAt   DateTime?
+  termsUrl        String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([active, type])
+  @@index([country, language])
+  @@index([lastFetchedAt])
+  @@map("source_registry")
 }
 
 model Profile {
