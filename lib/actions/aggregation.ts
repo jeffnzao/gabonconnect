@@ -8,6 +8,8 @@ import { fetchActiveSources } from "@/lib/aggregation/fetcher";
 import { normalizeFeedItems } from "@/lib/aggregation/normalizer";
 import { isDuplicate } from "@/lib/aggregation/deduplicator";
 import { classifyArticle } from "@/lib/aggregation/classifier";
+import { extractEvent } from "@/lib/aggregation/event-extractor";
+import { isDuplicateEvent } from "@/lib/aggregation/deduplicator";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -24,6 +26,7 @@ export async function runAggregationPipeline() {
   let created = 0;
   let duplicates = 0;
   let failed = 0;
+  let eventsCreated = 0;
 
   for (const result of sources) {
     if (result.error) {
@@ -33,6 +36,32 @@ export async function runAggregationPipeline() {
     const items = normalizeFeedItems(result.items, result.source);
     fetched += items.length;
     for (const item of items) {
+      const event = extractEvent(item);
+      if (event) {
+        if (await isDuplicateEvent(event)) continue;
+        await prisma.event.create({
+          data: {
+            title: event.title,
+            slug: `${item.externalId.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase().slice(0, 120) || "aggregated-event"}-${Date.now()}`,
+            description: event.description,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            location: event.location,
+            isVirtual: event.isOnline,
+            virtualUrl: event.isOnline ? event.registrationUrl : undefined,
+            registrationUrl: event.registrationUrl,
+            organizerType: "USER",
+            createdById: admin.id,
+            status: "DRAFT",
+            moderationStatus: ContentModerationStatus.PENDING,
+            canonicalUrl: event.canonicalUrl,
+            sourceName: event.sourceName,
+            copyrightFlag: true,
+          },
+        });
+        eventsCreated += 1;
+        continue;
+      }
       if (await isDuplicate(item)) {
         duplicates += 1;
         continue;
@@ -59,7 +88,7 @@ export async function runAggregationPipeline() {
     }
   }
 
-  return { sources: sources.length, fetched, created, duplicates, failed };
+  return { sources: sources.length, fetched, created, eventsCreated, duplicates, failed };
 }
 
 export async function runAggregationFromForm(): Promise<void> {

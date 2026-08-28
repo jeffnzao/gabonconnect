@@ -29,13 +29,22 @@ const PUBLIC_EVENT_SELECT = {
   endDate: true,
   location: true,
   isVirtual: true,
+  registrationUrl: true,
+  canonicalUrl: true,
+  sourceName: true,
   association: { select: { id: true, name: true, slug: true } },
   createdBy: { select: { id: true, profile: { select: { firstName: true, lastName: true } } } },
   _count: { select: { participants: { where: { status: { not: EventParticipantStatus.DECLINED } } } } },
 } satisfies Prisma.EventSelect;
 
 function buildEventWhere(filters: EventFilters): Prisma.EventWhereInput {
-  const where: Prisma.EventWhereInput = { status: EventStatus.PUBLISHED };
+  const where: Prisma.EventWhereInput = {
+    status: EventStatus.PUBLISHED,
+    OR: [
+      { canonicalUrl: null },
+      { moderationStatus: "APPROVED", publishedAt: { not: null } },
+    ],
+  };
   if (filters.upcomingOnly) where.startDate = { gte: new Date() };
   if (filters.location?.trim()) where.location = { contains: filters.location.trim(), mode: "insensitive" };
   if (filters.associationId) where.associationId = filters.associationId;

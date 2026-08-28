@@ -11,6 +11,9 @@ interface EventCardProps {
     association: { name: string } | null;
     createdBy: { profile: { firstName: string; lastName: string } | null };
     _count: { participants: number };
+    registrationUrl: string | null;
+    canonicalUrl: string | null;
+    sourceName: string | null;
   };
 }
 
@@ -41,8 +44,10 @@ export default async function EventCard({ event }: EventCardProps) {
         <p className="flex items-center gap-2"><Clock3 className="h-4 w-4 text-emerald-600" aria-hidden />{time}</p>
       </div>
       <p className="mt-5 text-sm text-slate-500">{messages.directories.postedBy} {organizer}</p>
+      {event.sourceName && <p className="mt-2 text-xs font-semibold text-sky-700">{messages.events.externalSource}: {event.sourceName}</p>}
       <p className="mt-2 text-sm text-slate-500">{event._count.participants} {messages.common.participants}</p>
       <Link href={`/events/${event.slug}`} className="mt-5 inline-flex items-center text-sm font-semibold text-emerald-700 hover:text-emerald-800">{messages.events.details} <span className="ml-1" aria-hidden>→</span></Link>
+      {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex text-sm font-semibold text-emerald-700">{messages.events.officialRegistration}</a>}
     </article>
   );
 }

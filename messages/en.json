@@ -389,7 +389,9 @@
     "loginToJoin": "Log in to join",
     "details": "Event details",
     "capacity": "Capacity",
-    "virtualLink": "Virtual link"
+    "virtualLink": "Virtual link",
+    "externalSource": "External source",
+    "officialRegistration": "Register on the official website ->"
   },
   "auth": {
     "account": "Account",

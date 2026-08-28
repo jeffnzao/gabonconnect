@@ -10,3 +10,8 @@ export async function isDuplicate(item: NormalizedFeedItem) {
   const candidates = await prisma.article.findMany({ where: { title: { contains: item.title.slice(0, 40), mode: "insensitive" } }, select: { title: true }, take: 10 });
   return candidates.some((candidate) => similarity(candidate.title, item.title) >= 0.8);
 }
+
+export async function isDuplicateEvent(event: { title: string; startDate: Date; location: string }) {
+  const candidates = await prisma.event.findMany({ where: { startDate: { gte: new Date(event.startDate.getTime() - 86400000), lte: new Date(event.startDate.getTime() + 86400000) }, location: { contains: event.location === "Online" ? "Online" : event.location.slice(0, 30), mode: "insensitive" } }, select: { title: true, startDate: true, location: true }, take: 20 });
+  return candidates.some((candidate) => similarity(candidate.title, event.title) >= 0.8 && candidate.location.toLowerCase() === event.location.toLowerCase());
+}

@@ -389,7 +389,9 @@
     "loginToJoin": "Connectez-vous pour participer",
     "details": "Details de l'evenement",
     "capacity": "Capacite",
-    "virtualLink": "Lien virtuel"
+    "virtualLink": "Lien virtuel",
+    "externalSource": "Source externe",
+    "officialRegistration": "S'inscrire sur le site officiel ->"
   },
   "auth": {
     "account": "Compte",

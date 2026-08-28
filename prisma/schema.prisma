@@ -823,6 +823,7 @@ model Event {
   canonicalUrl    String?
   sourceName      String?
   copyrightFlag   Boolean             @default(false)
+  registrationUrl String?
 
   participants EventParticipant[]
 
