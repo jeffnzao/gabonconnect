@@ -30,6 +30,11 @@ export async function getOrCreateConversationForUser(targetUserId: string) {
   if (!targetUser?.profile || targetUser.profile.visibility !== ProfileVisibility.PUBLIC) throw new Error("Member is not available for contact.");
   const pair = normalizeParticipantPair(user.id, targetUser.id);
   const conversation = await prisma.conversation.upsert({ where: { participant1Id_participant2Id: pair }, create: pair, update: {}, select: { id: true } });
+  return conversation;
+}
+
+export async function openConversationForUser(targetUserId: string): Promise<void> {
+  const conversation = await getOrCreateConversationForUser(targetUserId);
   redirect(`/messages?conversationId=${conversation.id}`);
 }
 

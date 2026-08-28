@@ -27,7 +27,7 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps) 
   }
 
   const params = await searchParams;
-  let requestedId = first(params.conversationId);
+  const requestedId = first(params.conversationId);
   const targetUserId = first(params.userId) ?? first(params.recipientId);
 
   // Redirection propre si un targetUserId est passé dans la query string

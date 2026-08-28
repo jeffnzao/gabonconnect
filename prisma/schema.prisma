@@ -109,6 +109,12 @@ enum HousingType {
   SOUS_LOCATION
 }
 
+enum ContentModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -252,6 +258,12 @@ model Association {
   address     String?
   presidentId String?
   president   User? @relation("AssociationPresident", fields: [presidentId], references: [id], onDelete: SetNull)
+  publishedAt DateTime?
+  archivedAt DateTime?
+  moderationStatus ContentModerationStatus @default(APPROVED)
+  canonicalUrl String?
+  sourceName String?
+  copyrightFlag Boolean @default(false)
 
   cityId String?
   city   City?   @relation(fields: [cityId], references: [id], onDelete: Restrict)
@@ -274,6 +286,7 @@ model Association {
 
   @@index([cityId])
   @@index([status])
+  @@index([moderationStatus, publishedAt])
   @@map("associations")
 }
 
@@ -523,12 +536,18 @@ model Article {
   viewCount   Int             @default(0)
   status      ArticleStatus @default(DRAFT)
   publishedAt DateTime?
+  archivedAt DateTime?
+  moderationStatus ContentModerationStatus @default(APPROVED)
+  canonicalUrl String?
+  sourceName String?
+  copyrightFlag Boolean @default(false)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
   @@index([status, publishedAt])
   @@index([category, publishedAt])
   @@index([authorId])
+  @@index([moderationStatus, publishedAt])
   @@map("articles")
 }
 
@@ -578,12 +597,19 @@ model Shop {
   status       ShopStatus @default(DRAFT)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  publishedAt DateTime?
+  archivedAt DateTime?
+  moderationStatus ContentModerationStatus @default(APPROVED)
+  canonicalUrl String?
+  sourceName String?
+  copyrightFlag Boolean @default(false)
 
   products Product[]
 
   @@index([status])
   @@index([ownerId])
   @@index([associationId])
+  @@index([moderationStatus, publishedAt])
   @@map("shops")
 }
 
@@ -659,6 +685,12 @@ model AdministrativeProcedure {
   progress      UserProcedureProgress[]
   createdAt     DateTime                       @default(now())
   updatedAt     DateTime                       @updatedAt
+  publishedAt   DateTime?
+  archivedAt    DateTime?
+  moderationStatus ContentModerationStatus     @default(APPROVED)
+  canonicalUrl  String?
+  sourceName    String?
+  copyrightFlag Boolean                        @default(false)
 
   @@index([category])
   @@map("administrative_procedures")
@@ -703,6 +735,12 @@ model Scholarship {
   deadline           DateTime
   applicationUrl     String
   createdAt          DateTime         @default(now())
+  publishedAt        DateTime?
+  archivedAt         DateTime?
+  moderationStatus   ContentModerationStatus @default(APPROVED)
+  canonicalUrl       String?
+  sourceName         String?
+  copyrightFlag      Boolean          @default(false)
 
   @@index([country, level, deadline])
   @@index([provider, deadline])
@@ -746,6 +784,12 @@ model Event {
   status          EventStatus         @default(PUBLISHED)
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
+  publishedAt     DateTime?
+  archivedAt      DateTime?
+  moderationStatus ContentModerationStatus @default(APPROVED)
+  canonicalUrl    String?
+  sourceName      String?
+  copyrightFlag   Boolean             @default(false)
 
   participants EventParticipant[]
 
@@ -788,6 +832,12 @@ model Opportunity {
   status         OpportunityStatus @default(PUBLISHED)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  publishedAt    DateTime?
+  archivedAt     DateTime?
+  moderationStatus ContentModerationStatus @default(APPROVED)
+  canonicalUrl   String?
+  sourceName     String?
+  copyrightFlag  Boolean           @default(false)
 
   applications OpportunityApplication[]
   savedBy       SavedOpportunity[]
@@ -863,6 +913,12 @@ model PostLike {
   @@index([postId])
   @@index([userId])
   @@map("post_likes")
+  publishedAt DateTime?
+  archivedAt DateTime?
+  moderationStatus ContentModerationStatus @default(APPROVED)
+  canonicalUrl String?
+  sourceName String?
+  copyrightFlag Boolean @default(false)
 }
 
 model PostComment {
