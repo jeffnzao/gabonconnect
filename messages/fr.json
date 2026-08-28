@@ -76,6 +76,13 @@
     "email": "Notifications par e-mail",
     "push": "Notifications push"
   },
+  "aggregation": {
+    "alertsTitle": "Alertes et mises a jour",
+    "external": "Sources externes",
+    "reliability": "Fiabilite",
+    "officialPortal": "Consulter le portail officiel ->",
+    "noAlerts": "Aucune alerte externe pour le moment."
+  },
   "procedures": {
     "title": "Demarches administratives",
     "intro": "Des parcours guides pour preparer vos demarches a l'etranger.",
@@ -248,6 +255,10 @@
     "university": "Universite",
     "diaspora": "Diaspora",
     "other": "Autre",
+    "audiences": "Publics cibles",
+    "campus": "Campus",
+    "diaspora": "Diaspora",
+    "administrative": "Administratif",
     "runAggregation": "Lancer l'agregation",
     "aggregationStarted": "Agregation terminee",
     "aggregationError": "L'agregation a echoue."

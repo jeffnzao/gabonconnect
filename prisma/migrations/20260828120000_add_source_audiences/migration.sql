@@ -1,0 +1,2 @@
+ALTER TABLE "source_registry" ADD COLUMN "targetAudiences" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+CREATE INDEX "source_registry_targetAudiences_idx" ON "source_registry" USING GIN ("targetAudiences");

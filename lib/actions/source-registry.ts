@@ -16,6 +16,7 @@ const sourceSchema = z.object({
   rssUrl: z.string().trim().url().optional().or(z.literal("")),
   reliability: z.coerce.number().min(1).max(5),
   termsUrl: z.string().trim().url().optional().or(z.literal("")),
+  targetAudiences: z.array(z.enum(["CAMPUS", "DIASPORA", "ADMINISTRATIVE"])).default([]),
 });
 
 async function requireAdmin() {
@@ -32,6 +33,10 @@ function normalize(data: z.infer<typeof sourceSchema>) {
     rssUrl: data.rssUrl || null,
     termsUrl: data.termsUrl || null,
   };
+}
+
+function audienceValues(formData: FormData) {
+  return formData.getAll("targetAudiences").filter((value): value is string => typeof value === "string");
 }
 
 export async function listSourceRegistry(options: { page?: number; pageSize?: number; query?: string; type?: SourceRegistryType; active?: boolean } = {}) {
@@ -90,11 +95,13 @@ export async function deleteSourceRegistry(id: string): Promise<void> {
 export async function createSourceRegistryFromForm(formData: FormData): Promise<void> {
   await createSourceRegistry({
     name: formData.get("name"), url: formData.get("url"), type: formData.get("type"), country: formData.get("country"), language: formData.get("language"), rssUrl: formData.get("rssUrl"), reliability: formData.get("reliability"), termsUrl: formData.get("termsUrl"),
+      targetAudiences: audienceValues(formData),
   });
 }
 
 export async function updateSourceRegistryFromForm(id: string, formData: FormData): Promise<void> {
   await updateSourceRegistry(id, {
     name: formData.get("name"), url: formData.get("url"), type: formData.get("type"), country: formData.get("country"), language: formData.get("language"), rssUrl: formData.get("rssUrl"), reliability: formData.get("reliability"), termsUrl: formData.get("termsUrl"),
+      targetAudiences: audienceValues(formData),
   });
 }

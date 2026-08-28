@@ -9,7 +9,7 @@
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 // seed.ts
-import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory, ScholarshipLevel, ConsulateType } from "../app/generated/prisma";
+import { PrismaClient, ProfileVisibility, AssociationStatus, Role, AdministrativeProcedureCategory, ScholarshipLevel, ConsulateType, SourceRegistryType } from "../app/generated/prisma";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -306,6 +306,18 @@ async function main() {
   ];
   for (const scholarship of scholarships) {
     await prisma.scholarship.upsert({ where: { id: scholarship.id }, update: scholarship, create: scholarship });
+  }
+
+  const sourceRegistry = [
+    { name: "Agence Nationale des Bourses du Gabon", url: "https://www.anbgabon.org/", type: SourceRegistryType.GOVERNMENT, country: "GA", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["CAMPUS"] },
+    { name: "Campus France", url: "https://www.campusfrance.org/", type: SourceRegistryType.UNIVERSITY, country: "FR", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["CAMPUS", "DIASPORA"] },
+    { name: "Diplomatie Gabon", url: "https://www.diplomatie.gouv.ga/", type: SourceRegistryType.DIPLOMATIC, country: "GA", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["DIASPORA", "ADMINISTRATIVE"] },
+    { name: "Ambassade du Gabon en France", url: "https://www.ambassadedugabon.fr/", type: SourceRegistryType.DIPLOMATIC, country: "FR", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["DIASPORA", "ADMINISTRATIVE"] },
+    { name: "Universite Omar Bongo", url: "https://www.uob.ga/", type: SourceRegistryType.UNIVERSITY, country: "GA", language: "fr", rssUrl: null, reliability: 4, termsUrl: null, targetAudiences: ["CAMPUS"] },
+    { name: "Diaspora Gabonaise", url: "https://www.diplomatie.gouv.ga/diaspora", type: SourceRegistryType.DIASPORA, country: "GA", language: "fr", rssUrl: null, reliability: 3, termsUrl: null, targetAudiences: ["DIASPORA"] },
+  ];
+  for (const source of sourceRegistry) {
+    await prisma.sourceRegistry.upsert({ where: { url: source.url }, update: source, create: source });
   }
 
   console.log("Seed terminé : géographie, membres et associations de démonstration créés.");

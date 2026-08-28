@@ -76,6 +76,13 @@
     "email": "Email notifications",
     "push": "Push notifications"
   },
+  "aggregation": {
+    "alertsTitle": "Alerts and updates",
+    "external": "External sources",
+    "reliability": "Reliability",
+    "officialPortal": "Visit official portal ->",
+    "noAlerts": "No external alerts yet."
+  },
   "procedures": {
     "title": "Administrative procedures",
     "intro": "Guided journeys to prepare your administrative tasks abroad.",
@@ -248,6 +255,10 @@
     "university": "University",
     "diaspora": "Diaspora",
     "other": "Other",
+    "audiences": "Target audiences",
+    "campus": "Campus",
+    "diaspora": "Diaspora",
+    "administrative": "Administrative",
     "runAggregation": "Run aggregation now",
     "aggregationStarted": "Aggregation complete",
     "aggregationError": "Aggregation failed."

@@ -231,6 +231,7 @@ model SourceRegistry {
   reliability     Float              @default(3)
   lastFetchedAt   DateTime?
   termsUrl        String?
+  targetAudiences String[]           @default([])
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
