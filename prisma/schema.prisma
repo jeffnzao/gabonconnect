@@ -45,6 +45,8 @@ enum ArticleCategory {
   ECONOMY
   CULTURE
   SPORTS
+  SPORT
+  ADMINISTRATIVE
 }
 
 enum NotificationType {

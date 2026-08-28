@@ -247,7 +247,10 @@
     "media": "Media",
     "university": "University",
     "diaspora": "Diaspora",
-    "other": "Other"
+    "other": "Other",
+    "runAggregation": "Run aggregation now",
+    "aggregationStarted": "Aggregation complete",
+    "aggregationError": "Aggregation failed."
   },
   "adminContent": {
     "eyebrow": "Administration",
