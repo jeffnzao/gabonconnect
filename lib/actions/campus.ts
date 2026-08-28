@@ -1,6 +1,6 @@
 "use server";
 
-import { HousingType, ScholarshipLevel } from "@/app/generated/prisma";
+import { ContentModerationStatus, HousingType, ScholarshipLevel } from "@/app/generated/prisma";
 import { ensureUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -11,6 +11,7 @@ export async function getScholarships(filters: { level?: ScholarshipLevel; count
       ...(filters.country?.trim() ? { country: { contains: filters.country.trim(), mode: "insensitive" } } : {}),
       ...(filters.provider?.trim() ? { provider: { contains: filters.provider.trim(), mode: "insensitive" } } : {}),
       deadline: { gte: new Date() },
+      OR: [{ canonicalUrl: null }, { moderationStatus: ContentModerationStatus.APPROVED, publishedAt: { not: null } }],
     },
     orderBy: { deadline: "asc" },
   });

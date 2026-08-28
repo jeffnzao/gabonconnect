@@ -15,3 +15,10 @@ export async function isDuplicateEvent(event: { title: string; startDate: Date; 
   const candidates = await prisma.event.findMany({ where: { startDate: { gte: new Date(event.startDate.getTime() - 86400000), lte: new Date(event.startDate.getTime() + 86400000) }, location: { contains: event.location === "Online" ? "Online" : event.location.slice(0, 30), mode: "insensitive" } }, select: { title: true, startDate: true, location: true }, take: 20 });
   return candidates.some((candidate) => similarity(candidate.title, event.title) >= 0.8 && candidate.location.toLowerCase() === event.location.toLowerCase());
 }
+
+export async function isDuplicateOpportunity(item: { title: string; applicationUrl: string; sourceName: string }) {
+  const existing = await prisma.opportunity.findFirst({ where: { OR: [{ applicationUrl: item.applicationUrl }, { AND: [{ title: { contains: item.title.slice(0, 40), mode: "insensitive" } }, { sourceName: item.sourceName }] }] }, select: { id: true } });
+  if (existing) return true;
+  const scholarship = await prisma.scholarship.findFirst({ where: { OR: [{ applicationUrl: item.applicationUrl }, { AND: [{ title: { contains: item.title.slice(0, 40), mode: "insensitive" } }, { provider: item.sourceName }] }] }, select: { id: true } });
+  return Boolean(scholarship);
+}

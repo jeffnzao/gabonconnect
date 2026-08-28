@@ -10,6 +10,8 @@ import { isDuplicate } from "@/lib/aggregation/deduplicator";
 import { classifyArticle } from "@/lib/aggregation/classifier";
 import { extractEvent } from "@/lib/aggregation/event-extractor";
 import { isDuplicateEvent } from "@/lib/aggregation/deduplicator";
+import { extractOpportunity } from "@/lib/aggregation/opportunity-extractor";
+import { isDuplicateOpportunity } from "@/lib/aggregation/deduplicator";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -27,6 +29,7 @@ export async function runAggregationPipeline() {
   let duplicates = 0;
   let failed = 0;
   let eventsCreated = 0;
+  let opportunitiesCreated = 0;
 
   for (const result of sources) {
     if (result.error) {
@@ -62,6 +65,20 @@ export async function runAggregationPipeline() {
         eventsCreated += 1;
         continue;
       }
+      const opportunity = extractOpportunity(item);
+      if (opportunity) {
+        if (await isDuplicateOpportunity(opportunity)) {
+          duplicates += 1;
+          continue;
+        }
+        if (opportunity.scholarshipLevel) {
+          await prisma.scholarship.create({ data: { title: opportunity.title, provider: opportunity.sourceName, country: "GA", level: opportunity.scholarshipLevel, description: opportunity.description, eligibilityCriteria: "See the official announcement.", deadline: opportunity.deadline ?? new Date(Date.now() + 86400000 * 30), applicationUrl: opportunity.applicationUrl, moderationStatus: ContentModerationStatus.PENDING, canonicalUrl: opportunity.canonicalUrl, sourceName: opportunity.sourceName, copyrightFlag: true } });
+        } else {
+          await prisma.opportunity.create({ data: { title: opportunity.title, slug: `${item.externalId.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase().slice(0, 120) || "aggregated-opportunity"}-${Date.now()}`, description: opportunity.description, type: opportunity.type, location: opportunity.location, applicationUrl: opportunity.applicationUrl, createdById: admin.id, status: "DRAFT", moderationStatus: ContentModerationStatus.PENDING, canonicalUrl: opportunity.canonicalUrl, sourceName: opportunity.sourceName, copyrightFlag: true } });
+        }
+        opportunitiesCreated += 1;
+        continue;
+      }
       if (await isDuplicate(item)) {
         duplicates += 1;
         continue;
@@ -88,7 +105,7 @@ export async function runAggregationPipeline() {
     }
   }
 
-  return { sources: sources.length, fetched, created, eventsCreated, duplicates, failed };
+  return { sources: sources.length, fetched, created, eventsCreated, opportunitiesCreated, duplicates, failed };
 }
 
 export async function runAggregationFromForm(): Promise<void> {

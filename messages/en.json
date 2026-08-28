@@ -82,6 +82,7 @@
     "reliability": "Reliability",
     "officialPortal": "Visit official portal ->",
     "noAlerts": "No external alerts yet."
+    ,"scholarshipsTitle": "External scholarships"
   },
   "procedures": {
     "title": "Administrative procedures",
@@ -185,6 +186,8 @@
     "guideIntro": "Prepare your arrival with practical advice and find a mentor in the community.",
     "guideItems": ["Check enrollment deadlines", "Plan your budget and housing", "Identify local student services", "Connect with a diaspora member"],
     "loginToPublish": "Log in to publish a housing offer."
+    ,"externalSource": "External source"
+    ,"officialApply": "Apply on the official website ->"
     ,"error": "This offer could not be published."
     ,"loading": "Publishing..."
   },
@@ -392,6 +395,10 @@
     "virtualLink": "Virtual link",
     "externalSource": "External source",
     "officialRegistration": "Register on the official website ->"
+  },
+  "opportunities": {
+    "externalSource": "External source",
+    "officialApply": "Apply on the official website ->"
   },
   "auth": {
     "account": "Account",

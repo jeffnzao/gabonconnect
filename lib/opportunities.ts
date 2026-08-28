@@ -18,6 +18,8 @@ export const PUBLIC_OPPORTUNITY_SELECT = {
   isRemote: true,
   companyName: true,
   applicationUrl: true,
+  canonicalUrl: true,
+  sourceName: true,
   contactEmail: true,
   association: { select: { id: true, name: true, slug: true } },
   createdAt: true,
@@ -25,7 +27,7 @@ export const PUBLIC_OPPORTUNITY_SELECT = {
 } satisfies Prisma.OpportunitySelect;
 
 export function buildOpportunityWhere(filters: OpportunityFilters): Prisma.OpportunityWhereInput {
-  const where: Prisma.OpportunityWhereInput = { status: OpportunityStatus.PUBLISHED };
+  const where: Prisma.OpportunityWhereInput = { status: OpportunityStatus.PUBLISHED, OR: [{ canonicalUrl: null }, { moderationStatus: "APPROVED", publishedAt: { not: null } }] };
   if (filters.type) where.type = filters.type;
   if (filters.location?.trim()) where.location = { contains: filters.location.trim(), mode: "insensitive" };
   if (filters.associationId) where.associationId = filters.associationId;

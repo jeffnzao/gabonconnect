@@ -82,6 +82,7 @@
     "reliability": "Fiabilite",
     "officialPortal": "Consulter le portail officiel ->",
     "noAlerts": "Aucune alerte externe pour le moment."
+    ,"scholarshipsTitle": "Bourses externes"
   },
   "procedures": {
     "title": "Demarches administratives",
@@ -187,6 +188,8 @@
     "loginToPublish": "Connectez-vous pour publier une offre de logement."
     ,"error": "Impossible de publier cette offre."
     ,"loading": "Publication..."
+    ,"externalSource": "Source externe"
+    ,"officialApply": "Postuler sur le site officiel ->"
   },
   "directory2": {
     "associationCategory": "Domaine",
@@ -392,6 +395,10 @@
     "virtualLink": "Lien virtuel",
     "externalSource": "Source externe",
     "officialRegistration": "S'inscrire sur le site officiel ->"
+  },
+  "opportunities": {
+    "externalSource": "Source externe",
+    "officialApply": "Postuler sur le site officiel ->"
   },
   "auth": {
     "account": "Compte",

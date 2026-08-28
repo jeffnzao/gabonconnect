@@ -19,3 +19,12 @@ export async function getAggregatedAlerts(options: { categories?: string[]; limi
   const reliability = new Map(sources.map((source) => [source.name, source.reliability]));
   return articles.map((article) => ({ ...article, reliability: article.sourceName ? reliability.get(article.sourceName) ?? null : null }));
 }
+
+export async function getAggregatedScholarships(limit = 6) {
+  return prisma.scholarship.findMany({
+    where: { moderationStatus: ContentModerationStatus.APPROVED, publishedAt: { not: null }, canonicalUrl: { not: null }, deadline: { gte: new Date() } },
+    orderBy: { deadline: "asc" },
+    take: Math.min(12, Math.max(1, limit)),
+    select: { id: true, title: true, provider: true, country: true, deadline: true, applicationUrl: true, canonicalUrl: true, sourceName: true },
+  });
+}
