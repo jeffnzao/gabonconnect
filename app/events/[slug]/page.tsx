@@ -20,6 +20,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   const user = await getCurrentUser();
   const participant = user ? event.participants.find((entry) => entry.userId === user.id) : null;
   const participantCount = event.participants.length;
+  const calendarHref = `/events/${event.slug}/calendar`;
+  const isUpcoming = event.startDate >= new Date();
   const maxParticipantsText = event.maxParticipants ? `${participantCount}/${event.maxParticipants} ${messages.events.going}` : `${participantCount} ${messages.common.participants}`;
 
   return (
@@ -30,6 +32,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
         {event.startDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
       </p>
       <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">{event.title}</h1>
+      <span className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${isUpcoming ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{isUpcoming ? "A venir" : "Passe"}</span>
 
       <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
         <span className="rounded-full bg-slate-100 px-3 py-1.5">{event.location}</span>
@@ -42,6 +45,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
       </div>
 
       <p className="mt-6 whitespace-pre-wrap text-base leading-8 text-slate-700">{event.description}</p>
+      <a href={calendarHref} className="mt-5 inline-flex rounded-lg border border-emerald-200 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">Ajouter a mon agenda</a>
       {event.sourceName && <p className="mt-4 text-sm font-semibold text-sky-700">{messages.events.externalSource}: {event.sourceName}</p>}
       {event.canonicalUrl && <a href={event.canonicalUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-800">{messages.events.officialRegistration}</a>}
 

@@ -28,6 +28,7 @@ export default async function EventCard({ event }: EventCardProps) {
       ? `${event.createdBy.profile.firstName} ${event.createdBy.profile.lastName}`.trim()
       : "GabonConnect member"
   );
+  const isUpcoming = event.startDate >= new Date();
 
   return (
     <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
@@ -43,6 +44,7 @@ export default async function EventCard({ event }: EventCardProps) {
         <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-emerald-600" aria-hidden />{event.location}</p>
         <p className="flex items-center gap-2"><Clock3 className="h-4 w-4 text-emerald-600" aria-hidden />{time}</p>
       </div>
+      <span className={`mt-3 w-fit rounded-full px-3 py-1 text-xs font-semibold ${isUpcoming ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{isUpcoming ? "A venir" : "Passe"}</span>
       <p className="mt-5 text-sm text-slate-500">{messages.directories.postedBy} {organizer}</p>
       {event.sourceName && <p className="mt-2 text-xs font-semibold text-sky-700">{messages.events.externalSource}: {event.sourceName}</p>}
       <p className="mt-2 text-sm text-slate-500">{event._count.participants} {messages.common.participants}</p>

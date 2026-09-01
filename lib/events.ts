@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 
 export interface EventFilters {
   upcomingOnly?: boolean;
+  country?: string;
+  city?: string;
   location?: string;
   associationId?: string;
 }
@@ -45,6 +47,10 @@ function buildEventWhere(filters: EventFilters): Prisma.EventWhereInput {
   };
   if (filters.upcomingOnly) where.startDate = { gte: new Date() };
   if (filters.location?.trim()) where.location = { contains: filters.location.trim(), mode: "insensitive" };
+  const locationFilters: Prisma.EventWhereInput[] = [];
+  if (filters.country?.trim()) locationFilters.push({ location: { contains: filters.country.trim(), mode: "insensitive" } });
+  if (filters.city?.trim()) locationFilters.push({ location: { contains: filters.city.trim(), mode: "insensitive" } });
+  if (locationFilters.length) where.AND = locationFilters;
   if (filters.associationId) where.associationId = filters.associationId;
   return where;
 }

@@ -28,6 +28,8 @@ export default function OpportunityCreateForm() {
         type: String(formData.get("type") ?? "JOB") as "JOB" | "INTERNSHIP" | "VOLUNTEERING" | "PROJECT_CALL" | "MUTUAL_AID",
         location: String(formData.get("location") ?? "") || "Remote",
         applicationUrl: String(formData.get("applicationUrl") ?? "") || undefined,
+        deadline: String(formData.get("deadline") ?? "") || undefined,
+        eligibilityCriteria: String(formData.get("eligibilityCriteria") ?? "") || undefined,
         companyName: String(formData.get("organizationName") ?? "") || undefined,
         associationId: String(formData.get("associationId") ?? "") || undefined,
         isRemote: String(formData.get("isRemote") ?? "false") === "true",
@@ -134,6 +136,11 @@ export default function OpportunityCreateForm() {
               className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
             />
           </label>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">Date limite<input name="deadline" type="date" className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100" /></label>
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">Criteres d'eligibilite<input name="eligibilityCriteria" type="text" maxLength={1000} placeholder="Ex. Etudiants gabonais, diaspora France" className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100" /></label>
+          </div>
 
           <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
             {messages.forms.associationId}

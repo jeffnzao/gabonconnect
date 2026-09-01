@@ -58,6 +58,8 @@ export const opportunitySchema = z.object({
   isRemote: z.boolean().default(false),
   companyName: z.string().trim().max(180).optional(),
   applicationUrl: z.string().trim().url().optional(),
+  deadline: z.coerce.date().optional(),
+  eligibilityCriteria: z.string().trim().min(3).max(1000).optional(),
   contactEmail: z.string().trim().email().optional(),
   associationId: z.string().trim().optional(),
 });
@@ -219,6 +221,8 @@ export async function createOpportunity(input: unknown) {
       isRemote: data.isRemote,
       companyName: data.companyName?.trim() || undefined,
       applicationUrl: data.applicationUrl?.trim() || undefined,
+      deadline: data.deadline,
+      eligibilityCriteria: data.eligibilityCriteria?.trim() || undefined,
       contactEmail: data.contactEmail?.trim() || undefined,
       associationId: data.associationId || undefined,
       createdById: user.id,

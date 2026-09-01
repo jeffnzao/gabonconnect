@@ -18,6 +18,8 @@ export const PUBLIC_OPPORTUNITY_SELECT = {
   isRemote: true,
   companyName: true,
   applicationUrl: true,
+  deadline: true,
+  eligibilityCriteria: true,
   canonicalUrl: true,
   sourceName: true,
   contactEmail: true,
@@ -31,6 +33,10 @@ export function buildOpportunityWhere(filters: OpportunityFilters): Prisma.Oppor
   if (filters.type) where.type = filters.type;
   if (filters.location?.trim()) where.location = { contains: filters.location.trim(), mode: "insensitive" };
   if (filters.associationId) where.associationId = filters.associationId;
+  where.OR = [
+    { deadline: null },
+    { deadline: { gte: new Date() } },
+  ];
   return where;
 }
 

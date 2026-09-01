@@ -32,10 +32,12 @@ export default async function OpportunityDetailPage({ params }: OpportunityDetai
       <p className="mt-6 whitespace-pre-wrap text-base leading-8 text-slate-700">{opportunity.description}</p>
       <dl className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
         <div><dt className="text-xs uppercase tracking-wide text-slate-500">{messages.directories.location}</dt><dd className="mt-1 text-sm text-slate-900">{opportunity.location}{opportunity.isRemote ? ` (${messages.directories.remoteAvailable})` : ""}</dd></div>
+        <div><dt className="text-xs uppercase tracking-wide text-slate-500">Date limite</dt><dd className="mt-1 text-sm font-semibold text-slate-900">{opportunity.deadline ? opportunity.deadline.toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US") : "A confirmer"}</dd></div>
+        <div className="sm:col-span-2"><dt className="text-xs uppercase tracking-wide text-slate-500">Eligibilite</dt><dd className="mt-1 text-sm text-slate-900">{opportunity.eligibilityCriteria ?? "Voir les conditions de l'offre officielle."}</dd></div>
         <div><dt className="text-xs uppercase tracking-wide text-slate-500">{messages.directories.applications}</dt><dd className="mt-1 text-sm text-slate-900">{opportunity._count.applications}</dd></div>
       </dl>
       {opportunity.association && <p className="mt-5 text-sm text-slate-500">{messages.directories.postedBy} {opportunity.association.name}</p>}
-      {opportunity.applicationUrl && <a href={opportunity.applicationUrl} className="mt-5 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-800">{messages.directories.applyExternally}</a>}
+      {(opportunity.applicationUrl ?? opportunity.canonicalUrl) && <a href={opportunity.applicationUrl ?? opportunity.canonicalUrl!} target="_blank" rel="noreferrer" className="mt-5 inline-flex rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500">Postuler / voir l'offre officielle</a>}
       {opportunity.contactEmail && <p className="mt-3 text-sm text-slate-600">{messages.directories.contact}: {opportunity.contactEmail}</p>}
       {user ? <><OpportunityEngagement opportunityId={opportunity.id} initialSaved={hasSaved} labels={messages.opportunityEngagement} />{hasApplied && <p className="mt-3 text-sm font-semibold text-emerald-700">{messages.opportunityEngagement.alreadyApplied}</p>}</> : <p className="mt-8 text-sm text-slate-500">{messages.events.loginToJoin}</p>}
     </article>

@@ -52,9 +52,9 @@ function SourceBadge({ source }: { source: AssistantSource }) {
   );
 }
 
-export default function AssistantChat({ locale }: { locale: Locale }) {
+export default function AssistantChat({ locale, embedded = false }: { locale: Locale; embedded?: boolean }) {
   const messages = useMessages();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(embedded);
   const [chat, setChat] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -90,32 +90,32 @@ export default function AssistantChat({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <button
+      {!embedded && <button
         type="button"
         onClick={() => setIsOpen(true)}
         aria-label={messages.assistant.launcherLabel}
         className="fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-slate-950 shadow-lg shadow-slate-900/20 hover:bg-emerald-400"
       >
         <Bot className="h-6 w-6" aria-hidden />
-      </button>
+      </button>}
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/40 p-4 sm:items-center"
+          className={embedded ? "w-full" : "fixed inset-0 z-50 flex items-end justify-center bg-slate-950/40 p-4 sm:items-center"}
           role="presentation"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) close();
           }}
         >
-          <section role="dialog" aria-modal="true" aria-labelledby="assistant-title" className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+          <section role="dialog" aria-modal={!embedded} aria-labelledby="assistant-title" className={`flex w-full flex-col overflow-hidden rounded-2xl bg-white ${embedded ? "min-h-130 border border-slate-200 shadow-sm" : "max-h-[85vh] max-w-lg shadow-2xl"}`}>
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-5">
               <div>
                 <h2 id="assistant-title" className="text-lg font-semibold text-slate-900">{messages.assistant.title}</h2>
                 <p className="mt-1 text-xs text-slate-500">{messages.assistant.subtitle}</p>
               </div>
-              <button type="button" onClick={close} aria-label={messages.assistant.close} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900">
+              {!embedded && <button type="button" onClick={close} aria-label={messages.assistant.close} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900">
                 <X className="h-5 w-5" aria-hidden />
-              </button>
+              </button>}
             </div>
 
             <div className="flex-1 space-y-4 overflow-y-auto p-5">

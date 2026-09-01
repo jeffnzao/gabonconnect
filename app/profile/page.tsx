@@ -11,6 +11,7 @@ import { ProfileVisibility } from "@/app/generated/prisma";
 import { LOCATION_SELECT, type MemberListItem } from "@/lib/members";
 import { updateProfileAction } from "./actions";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { PreferencesForm } from "@/components/profile/preferences-form";
 
 
 export const dynamic = "force-dynamic";
@@ -65,6 +66,8 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
   if (!profile) {
     redirect("/join/profile");
   }
+
+  const preferenceLocations = await prisma.country.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, cities: { orderBy: { name: "asc" }, select: { id: true, name: true } } } });
 
   const sp = await searchParams;
   const errorCode = first(sp.error);
@@ -362,6 +365,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
               </button>
             </form>
           </section>
+          <PreferencesForm locations={preferenceLocations} />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6">
             <h2 className="text-base font-semibold text-slate-900">{messages.profile.viewPublic}</h2>

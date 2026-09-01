@@ -20,11 +20,12 @@ export default async function Header({ locale }: HeaderProps) {
     { label: messages.navigation.opportunities, href: "/opportunities" },
     { label: messages.navigation.events, href: "/events" },
     { label: messages.navigation.memory, href: "/memoire" },
+    { label: messages.navigation.assistant, href: "/assistant" },
     { label: messages.navigation.map, href: "/#world-map" },
   ];
   const isAuthenticated = Boolean(user);
   const navLinks = isAuthenticated
-    ? [...BASE_LINKS, { label: messages.navigation.dashboard, href: "/dashboard" }, { label: messages.navigation.profile, href: "/profile" }]
+    ? [...BASE_LINKS, { label: messages.navigation.personalizedFeed, href: "/fil" }, { label: messages.navigation.dashboard, href: "/dashboard" }, { label: messages.navigation.profile, href: "/profile" }]
     : [...BASE_LINKS, { label: messages.navigation.join, href: "/join" }, { label: messages.navigation.login, href: "/login" }];
 
   return <HeaderNav isAuthenticated={isAuthenticated} navLinks={navLinks} locale={locale} labels={messages} />;

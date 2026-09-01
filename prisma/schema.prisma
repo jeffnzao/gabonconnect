@@ -129,6 +129,8 @@ enum SourceRegistryType {
 enum MemberStatus {
   STUDENT
   PROFESSIONAL
+  ENTREPRENEUR
+  ARTIST
   OTHER
 }
 
@@ -1101,6 +1103,8 @@ model Opportunity {
   isRemote       Boolean         @default(false)
   companyName    String?
   applicationUrl String?
+  deadline       DateTime?
+  eligibilityCriteria String?
   contactEmail   String?
   associationId  String?
   association    Association?   @relation(fields: [associationId], references: [id], onDelete: SetNull)
@@ -1122,6 +1126,7 @@ model Opportunity {
 
   @@index([status, createdAt])
   @@index([type, status])
+  @@index([status, deadline])
   @@index([associationId])
   @@index([createdById])
   @@map("opportunities")

@@ -4,10 +4,12 @@
 
 import { getMessages, type Locale } from "@/lib/i18n-config";
 import { buildSourceAttribution } from "@/lib/notifications";
+import { EmbeddingSourceType } from "@/app/generated/prisma";
 import { searchSimilarContent, type SimilarContentMatch } from "@/lib/ai/vector-store";
 
 const CHAT_MODEL = process.env.RAG_CHAT_MODEL ?? "gpt-4o-mini";
 const MAX_CONTEXT_MATCHES = 5;
+const UNIFIED_ASSISTANT_SOURCE_TYPES = [EmbeddingSourceType.ARTICLE, EmbeddingSourceType.EVENT, EmbeddingSourceType.OPPORTUNITY, EmbeddingSourceType.ADMINISTRATIVE_PROCEDURE, EmbeddingSourceType.SCHOLARSHIP, EmbeddingSourceType.HISTORICAL_EVENT, EmbeddingSourceType.HISTORICAL_FIGURE, EmbeddingSourceType.HISTORICAL_ARCHIVE, EmbeddingSourceType.DIASPORA_IMPACT];
 
 export interface AssistantSource {
   sourceName: string | null;
@@ -112,6 +114,6 @@ export async function generateAssistantAnswer(prompt: string, matches: SimilarCo
 export async function answerFromRAG(prompt: string, locale: Locale = "fr"): Promise<AssistantAnswer> {
   const trimmed = prompt.trim();
   if (!trimmed) return { answer: getMessages(locale).assistant.noData, sources: [], grounded: false };
-  const matches = await searchSimilarContent(trimmed, MAX_CONTEXT_MATCHES);
+  const matches = await searchSimilarContent(trimmed, MAX_CONTEXT_MATCHES, { sourceTypes: UNIFIED_ASSISTANT_SOURCE_TYPES });
   return generateAssistantAnswer(trimmed, matches, locale);
 }
