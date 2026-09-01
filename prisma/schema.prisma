@@ -631,6 +631,7 @@ model Article {
   archivedAt DateTime?
   moderationStatus ContentModerationStatus @default(APPROVED)
   canonicalUrl String?
+  contentHash  String?
   sourceName String?
   copyrightFlag Boolean @default(false)
   relevanceDecision Json?
@@ -641,6 +642,7 @@ model Article {
   @@index([category, publishedAt])
   @@index([authorId])
   @@index([moderationStatus, publishedAt])
+  @@index([contentHash])
   @@map("articles")
 }
 
