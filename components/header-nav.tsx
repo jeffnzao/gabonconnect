@@ -46,7 +46,6 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           className="flex items-center gap-2 text-slate-900"
           onClick={() => setIsMenuOpen(false)}
         >
-          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/gabonconnect360.svg"
               alt="GabonConnect 360"
@@ -54,7 +53,6 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
               height={40}
               priority
             />
-          </Link>
           <span className="text-sm font-semibold">GabonConnect</span>
           
         </Link>
