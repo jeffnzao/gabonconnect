@@ -58,7 +58,7 @@ export async function sendMessageFromForm(conversationId: string, formData: Form
 export async function markConversationAsRead(conversationId: string) {
   const user = await requireUser();
   await requireConversation(conversationId, user.id);
-  await prisma.message.updateMany({ where: { conversationId, senderId: { not: user.id }, isRead: false }, data: { isRead: true } });
+  await prisma.message.updateMany({ where: { conversationId, senderId: { not: user.id }, isRead: false }, data: { isRead: true, readAt: new Date() } });
 }
 
 export async function updateMyPresence(status: UserStatus, showStatus: boolean) {

@@ -590,6 +590,7 @@
     "member": "Member"
     ,"loginToMessage": "Log in to access your conversations."
     ,"sendError": "The message could not be sent. Please try again."
+    ,"conversationUnavailable": "This conversation cannot be opened. The member may be unavailable or their profile is private."
     ,"searchAll": "Search everywhere"
   },
   "feed": {

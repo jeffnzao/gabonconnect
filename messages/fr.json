@@ -590,6 +590,7 @@
     "member": "Membre"
     ,"loginToMessage": "Connectez-vous pour acceder a vos conversations."
     ,"sendError": "Le message n'a pas pu etre envoye. Reessayez."
+    ,"conversationUnavailable": "Cette conversation ne peut pas etre ouverte. Le membre est peut-etre indisponible ou son profil est prive."
     ,"searchAll": "Rechercher partout"
   },
   "feed": {
