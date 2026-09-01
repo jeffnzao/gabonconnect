@@ -7,6 +7,45 @@ import type { MemberStatus } from "@/app/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { createNotificationForUser } from "@/lib/services/notification-service";
 
+import { prisma } from "@/lib/prisma";
+import { NotificationType } from "@prisma/client";
+
+export async function createNotification({
+  userId,
+  type,
+  title,
+  message,
+  link,
+}: {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+}) {
+  return await prisma.notification.create({
+    data: { userId, type, title, message, link },
+  });
+}
+
+// Pour diffuser à TOUS les utilisateurs lors d'une nouvelle publication
+export async function notifyAllUsersAboutPublication(pubTitle: string, pubLink: string, authorId: string) {
+  const users = await prisma.user.findMany({
+    where: { id: { not: authorId } }, // Exclure l'auteur
+    select: { id: true },
+  });
+
+  const notifications = users.map((u) => ({
+    userId: u.id,
+    type: NotificationType.NEW_PUBLICATION,
+    title: "Nouvelle publication",
+    message: `Un nouveau contenu a été publié : "${pubTitle}"`,
+    link: pubLink,
+  }));
+
+  await prisma.notification.createMany({ data: notifications });
+}
+
 export type NotifiableContentType = "articles" | "events" | "opportunities";
 
 export interface ContentTargeting {
