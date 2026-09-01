@@ -9,6 +9,7 @@
     "shops": "Shops",
     "events": "Events",
     "opportunities": "Opportunities",
+    "memory": "Memory & History",
     "feed": "Feed",
     "dashboard": "Dashboard",
     "profile": "My profile",
@@ -654,6 +655,27 @@
     "posts": "Posts"
     ,"procedures": "Procedures"
     ,"consulates": "Consulates"
+  },
+  "memoire": {
+    "eyebrow": "Historical corpus",
+    "title": "Memory & History of Gabon",
+    "intro": "Historical landmarks, key figures, archives, and diaspora journeys documented by source level.",
+    "events": "Founding events",
+    "figures": "Key figures",
+    "archives": "Texts & archives",
+    "diaspora": "Diaspora & impact",
+    "filter": "Filter",
+    "period": "Period or keyword",
+    "allStatuses": "All statuses",
+    "allScopes": "All scopes",
+    "allSources": "All source levels",
+    "sourceLevel": "Source level",
+    "scope": "Scope",
+    "status": "Historical status",
+    "noResults": "No entries match these filters.",
+    "periodLabel": "Period",
+    "impact": "Contribution",
+    "document": "View document"
   },
   "feedback": {
     "banner": "Trying GabonConnect? Share your feedback with us.",

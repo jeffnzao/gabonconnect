@@ -19,6 +19,7 @@ export default async function Header({ locale }: HeaderProps) {
     { label: messages.navigation.campus, href: "/explore" },
     { label: messages.navigation.opportunities, href: "/opportunities" },
     { label: messages.navigation.events, href: "/events" },
+    { label: messages.navigation.memory, href: "/memoire" },
     { label: messages.navigation.map, href: "/#world-map" },
   ];
   const isAuthenticated = Boolean(user);

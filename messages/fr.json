@@ -9,6 +9,7 @@
     "shops": "Boutiques",
     "events": "Evenements",
     "opportunities": "Opportunites",
+    "memory": "Memoire & Histoire",
     "feed": "Fil d'actualite",
     "dashboard": "Tableau de bord",
     "profile": "Mon profil",
@@ -654,6 +655,27 @@
     "posts": "Publications"
     ,"procedures": "Demarches"
     ,"consulates": "Consulats"
+  },
+  "memoire": {
+    "eyebrow": "Corpus historique",
+    "title": "Memoire & Histoire du Gabon",
+    "intro": "Repères historiques, figures, archives et parcours de la diaspora, documentés selon leur niveau de source.",
+    "events": "Evenements fondateurs",
+    "figures": "Figures majeures",
+    "archives": "Textes & archives",
+    "diaspora": "Diaspora & impact",
+    "filter": "Filtrer",
+    "period": "Periode ou mot-cle",
+    "allStatuses": "Tous les statuts",
+    "allScopes": "Tous les perimetres",
+    "allSources": "Tous les niveaux de source",
+    "sourceLevel": "Niveau de source",
+    "scope": "Perimetre",
+    "status": "Statut historiographique",
+    "noResults": "Aucun element ne correspond a ces filtres.",
+    "periodLabel": "Periode",
+    "impact": "Contribution",
+    "document": "Consulter le document"
   },
   "feedback": {
     "banner": "Vous testez GabonConnect : partagez votre retour avec nous.",

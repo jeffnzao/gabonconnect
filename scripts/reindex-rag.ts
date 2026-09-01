@@ -6,12 +6,16 @@ import { prisma } from "../lib/prisma";
 import { indexContentForRAG } from "../lib/ai/vector-store";
 
 async function main() {
-  const [articles, events, opportunities, scholarships, procedures] = await Promise.all([
+  const [articles, events, opportunities, scholarships, procedures, historicalEvents, historicalFigures, historicalArchives, diasporaImpacts] = await Promise.all([
     prisma.article.findMany({ where: { status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
     prisma.event.findMany({ where: { status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
     prisma.opportunity.findMany({ where: { status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
     prisma.scholarship.findMany({ where: { moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
     prisma.administrativeProcedure.findMany({ where: { moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
+    prisma.historicalEvent.findMany({ select: { id: true } }),
+    prisma.historicalFigure.findMany({ select: { id: true } }),
+    prisma.historicalArchive.findMany({ select: { id: true } }),
+    prisma.diasporaImpact.findMany({ select: { id: true } }),
   ]);
 
   const jobs = [
@@ -20,6 +24,10 @@ async function main() {
     { sourceType: EmbeddingSourceType.OPPORTUNITY, ids: opportunities.map((row) => row.id) },
     { sourceType: EmbeddingSourceType.SCHOLARSHIP, ids: scholarships.map((row) => row.id) },
     { sourceType: EmbeddingSourceType.ADMINISTRATIVE_PROCEDURE, ids: procedures.map((row) => row.id) },
+    { sourceType: EmbeddingSourceType.HISTORICAL_EVENT, ids: historicalEvents.map((row) => row.id) },
+    { sourceType: EmbeddingSourceType.HISTORICAL_FIGURE, ids: historicalFigures.map((row) => row.id) },
+    { sourceType: EmbeddingSourceType.HISTORICAL_ARCHIVE, ids: historicalArchives.map((row) => row.id) },
+    { sourceType: EmbeddingSourceType.DIASPORA_IMPACT, ids: diasporaImpacts.map((row) => row.id) },
   ];
 
   let itemsIndexed = 0;

@@ -173,6 +173,26 @@ async function loadIndexableContent(sourceType: EmbeddingSourceType, sourceId: s
     if (!row) return null;
     return { title: row.title, excerpt: row.description, sourceName: row.sourceName, canonicalUrl: row.canonicalUrl, locale: "fr", isApproved: row.moderationStatus === "APPROVED" && row.publishedAt !== null };
   }
+  if (sourceType === EmbeddingSourceType.HISTORICAL_EVENT) {
+    const row = await prisma.historicalEvent.findUnique({ where: { id: sourceId }, select: { title: true, period: true, description: true, sourceLevel: true, relevanceDecision: true } });
+    if (!row) return null;
+    return { title: row.title, excerpt: row.period, content: row.description, sourceName: `Niveau de source ${row.sourceLevel}`, canonicalUrl: null, locale: "fr", isApproved: row.relevanceDecision !== null };
+  }
+  if (sourceType === EmbeddingSourceType.HISTORICAL_FIGURE) {
+    const row = await prisma.historicalFigure.findUnique({ where: { id: sourceId }, select: { fullName: true, category: true, biography: true, mainImpact: true, sourceLevel: true, relevanceDecision: true } });
+    if (!row) return null;
+    return { title: row.fullName, excerpt: row.category, content: `${row.biography}\n\n${row.mainImpact}`, sourceName: `Niveau de source ${row.sourceLevel}`, canonicalUrl: null, locale: "fr", isApproved: row.relevanceDecision !== null };
+  }
+  if (sourceType === EmbeddingSourceType.HISTORICAL_ARCHIVE) {
+    const row = await prisma.historicalArchive.findUnique({ where: { id: sourceId }, select: { title: true, legalNature: true, sourceLevel: true, documentUrl: true, relevanceDecision: true } });
+    if (!row) return null;
+    return { title: row.title, excerpt: row.legalNature, sourceName: `Niveau de source ${row.sourceLevel}`, canonicalUrl: row.documentUrl, locale: "fr", isApproved: row.relevanceDecision !== null };
+  }
+  if (sourceType === EmbeddingSourceType.DIASPORA_IMPACT) {
+    const row = await prisma.diasporaImpact.findUnique({ where: { id: sourceId }, select: { country: true, city: true, period: true, domain: true, contribution: true, sourceLevel: true, relevanceDecision: true, figure: { select: { fullName: true } } } });
+    if (!row) return null;
+    return { title: row.figure?.fullName ?? `Parcours diaspora - ${row.country}`, excerpt: `${row.domain}, ${row.city ?? row.country}, ${row.period}`, content: row.contribution, sourceName: `Niveau de source ${row.sourceLevel}`, canonicalUrl: null, locale: "fr", isApproved: row.relevanceDecision !== null };
+  }
   return null;
 }
 
@@ -226,6 +246,18 @@ export interface SimilarContentMatch {
 export interface SearchSimilarContentFilters {
   sourceTypes?: EmbeddingSourceType[];
   locale?: string;
+}
+
+const HISTORICAL_EMBEDDING_TYPES = [
+  EmbeddingSourceType.HISTORICAL_EVENT,
+  EmbeddingSourceType.HISTORICAL_FIGURE,
+  EmbeddingSourceType.HISTORICAL_ARCHIVE,
+  EmbeddingSourceType.DIASPORA_IMPACT,
+];
+
+/** Recherche RAG restreinte au corpus historique et aux parcours de diaspora. */
+export async function searchHistoricalContent(query: string, limit = 5): Promise<SimilarContentMatch[]> {
+  return searchSimilarContent(query, limit, { sourceTypes: HISTORICAL_EMBEDDING_TYPES });
 }
 
 /**
