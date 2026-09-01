@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { I18nProvider } from "@/components/i18n-provider";
 import FeedbackBanner from "@/components/feedback-banner";
+import AssistantChat from "@/components/ai/assistant-chat";
 import { getLocale, getMessages } from "@/lib/i18n";
 import OfflineBanner from "@/components/offline-banner";
 import "./globals.css";
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex flex-1 flex-col">{children}</main>
           <Footer locale={locale} />
           <FeedbackBanner locale={locale} />
+          <AssistantChat locale={locale} />
           <OfflineBanner labels={getMessages(locale).offline} />
         </I18nProvider>
       </body>

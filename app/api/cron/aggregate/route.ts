@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const result = await runAggregationPipeline();
+    const result = await runAggregationPipeline({ bypassSessionAuth: true });
     return NextResponse.json({ success: true, ...result });
   } catch (error) {
     return NextResponse.json({ success: false, error: error instanceof Error ? error.message : "Aggregation failed" }, { status: 500 });

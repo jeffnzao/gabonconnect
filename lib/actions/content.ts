@@ -1,12 +1,25 @@
 "use server";
 
-import { ContentModerationStatus } from "@/app/generated/prisma";
+import { ContentModerationStatus, EmbeddingSourceType } from "@/app/generated/prisma";
 import { ensureUser } from "@/lib/auth";
 import { isAdminRole } from "@/lib/imports";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { contentDomains, type ContentAction, type ContentDomain, type ContentItem } from "@/lib/content-types";
 import { normalizeSlug } from "@/lib/phase13";
+import { dispatchContentNotifications, type NotifiableContentType } from "@/lib/notifications";
+import { indexContentForRAG } from "@/lib/ai/vector-store";
+
+const NOTIFIABLE_DOMAINS: ContentDomain[] = ["articles", "events", "opportunities"];
+
+// Domaines couverts par le pipeline RAG (Task 061) : associations/shops n'ont pas d'EmbeddingSourceType.
+const DOMAIN_TO_EMBEDDING_SOURCE_TYPE: Partial<Record<ContentDomain, EmbeddingSourceType>> = {
+  articles: EmbeddingSourceType.ARTICLE,
+  events: EmbeddingSourceType.EVENT,
+  opportunities: EmbeddingSourceType.OPPORTUNITY,
+  scholarships: EmbeddingSourceType.SCHOLARSHIP,
+  procedures: EmbeddingSourceType.ADMINISTRATIVE_PROCEDURE,
+};
 
 async function requireAdmin() {
   const user = await ensureUser();
@@ -83,6 +96,23 @@ export async function moderateContent(domain: ContentDomain, id: string, action:
   const data = action === "approve" ? { moderationStatus: ContentModerationStatus.APPROVED } : action === "reject" ? { moderationStatus: ContentModerationStatus.REJECTED } : action === "publish" ? { ...businessData, moderationStatus: ContentModerationStatus.APPROVED, publishedAt: new Date(), archivedAt: null } : action === "unpublish" ? { ...businessData, publishedAt: null } : { ...businessData, archivedAt: new Date(), publishedAt: null };
   await delegate(domain).update({ where: { id }, data } as never);
   revalidatePath("/admin/content");
+
+  // Reindexation RAG (Task 061), en tache de fond : ne bloque jamais la reponse de moderation.
+  const embeddingSourceType = DOMAIN_TO_EMBEDDING_SOURCE_TYPE[domain];
+  if (embeddingSourceType) {
+    void indexContentForRAG(embeddingSourceType, id).catch((error) => {
+      console.error("[moderateContent] RAG indexing failed:", error);
+    });
+  }
+
+  // Dispatch des notifications ciblees (Task 060) uniquement quand le contenu devient APPROVED + publie.
+  if (action === "publish" && NOTIFIABLE_DOMAINS.includes(domain)) {
+    try {
+      await dispatchContentNotifications(id, domain as NotifiableContentType);
+    } catch (error) {
+      console.error("[moderateContent] notification dispatch failed:", error);
+    }
+  }
 }
 
 export async function getContentItem(domain: ContentDomain, id: string) {

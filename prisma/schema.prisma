@@ -126,6 +126,35 @@ enum SourceRegistryType {
   OTHER
 }
 
+enum MemberStatus {
+  STUDENT
+  PROFESSIONAL
+  OTHER
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+}
+
+enum EmbeddingSourceType {
+  ARTICLE
+  ADMINISTRATIVE_PROCEDURE
+  SCHOLARSHIP
+  EVENT
+  OPPORTUNITY
+  SOURCE_REGISTRY
+}
+
+enum CommunityFeedbackStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+  PROCESSED
+  ARCHIVED
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -150,6 +179,7 @@ model Country {
   continent   Continent @relation(fields: [continentId], references: [id], onDelete: Restrict)
 
   cities City[]
+  userPreferences UserPreferences[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -171,6 +201,7 @@ model City {
 
   profiles     Profile[]
   associations Association[]
+  userPreferences UserPreferences[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -212,6 +243,9 @@ model User {
   housingOffers            HousingOffer[]
   associationMemberships   AssociationMember[] @relation("AssociationMemberUser")
   presidedAssociations     Association[] @relation("AssociationPresident")
+  preferences              UserPreferences?
+  communityFeedbacks       CommunityFeedback[]
+  communityFeedbackVotes   CommunityFeedbackVote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -679,15 +713,16 @@ model UserConsent {
 }
 
 model Notification {
-  id        String           @id @default(cuid())
+  id        String              @id @default(cuid())
   userId    String
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      NotificationType
+  channel   NotificationChannel @default(IN_APP)
   title     String
   message   String
   link      String?
-  isRead    Boolean          @default(false)
-  createdAt DateTime         @default(now())
+  isRead    Boolean             @default(false)
+  createdAt DateTime            @default(now())
 
   @@index([userId, isRead, createdAt])
   @@map("notifications")
@@ -703,6 +738,90 @@ model NotificationPreference {
   updatedAt DateTime @updatedAt
 
   @@map("notification_preferences")
+}
+
+// Personnalisation V0.3.0 : ciblage du feed/notifications par localisation, statut et centres d'interet.
+model UserPreferences {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  countryId String?
+  country   Country? @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  cityId    String?
+  city      City?    @relation(fields: [cityId], references: [id], onDelete: SetNull)
+
+  memberStatus      MemberStatus          @default(OTHER)
+  interests         String[]              @default([])
+  preferredChannels NotificationChannel[] @default([IN_APP])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([countryId])
+  @@index([cityId])
+  @@index([memberStatus])
+  @@map("user_preferences")
+}
+
+// Reference d'embedding pour l'assistant IA RAG (Task 061). Vecteur stocke en Float[] en attendant
+// l'activation de l'extension pgvector et sa migration dediee ; ce modele fixe la forme des donnees des maintenant.
+model ContentEmbedding {
+  id         String              @id @default(cuid())
+  sourceType EmbeddingSourceType
+  sourceId   String
+  locale     String              @default("fr")
+  chunkIndex Int                 @default(0)
+  content    String              @db.Text
+  embedding  Float[]             @default([])
+  provider   String?
+  model      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sourceType, sourceId, locale, chunkIndex])
+  @@index([sourceType, sourceId])
+  @@map("content_embeddings")
+}
+
+// Module "La Voix de la Communaute" (V0.3.0). Table distincte de la table Supabase historique `feedbacks`,
+// dont la migration de donnees est traitee separement (Task 066) pour rester non destructive ici.
+model CommunityFeedback {
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  locale      String                  @default("fr")
+  likes       String?
+  ideas       String?
+  dislikes    String?
+  bugs        String?
+  status      CommunityFeedbackStatus @default(PENDING)
+  isPublished Boolean                 @default(false)
+
+  votes CommunityFeedbackVote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@map("community_feedbacks")
+}
+
+model CommunityFeedbackVote {
+  id         String            @id @default(cuid())
+  feedbackId String
+  feedback   CommunityFeedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([feedbackId, userId])
+  @@index([feedbackId])
+  @@map("community_feedback_votes")
 }
 
 model AdministrativeProcedure {

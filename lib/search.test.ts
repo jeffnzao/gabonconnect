@@ -18,6 +18,8 @@ async function run() {
     events: [],
     opportunities: [],
     posts: [],
+    procedures: [],
+    consulates: [],
   });
 
   const categoryResults = await globalSearch("gabon", "members", 5);

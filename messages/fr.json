@@ -681,6 +681,23 @@
     "dislikesLabel": "A ameliorer",
     "bugsLabel": "Bug signale"
   },
+  "assistant": {
+    "launcherLabel": "Assistant GabonConnect",
+    "title": "Assistant GabonConnect",
+    "subtitle": "Reponses sourcees a partir des demarches, bourses, actualites, evenements et opportunites publies.",
+    "placeholder": "Posez votre question...",
+    "send": "Envoyer",
+    "sending": "Recherche en cours...",
+    "close": "Fermer l'assistant",
+    "suggestionsTitle": "Questions frequentes",
+    "suggestion1": "Comment renouveler mon passeport ?",
+    "suggestion2": "Quelles sont les bourses ANBG pour l'Afrique ?",
+    "suggestion3": "Evenements du 30 Aout",
+    "sourcesLabel": "Sources",
+    "noData": "Je ne dispose pas de cette information dans les contenus publies de GabonConnect pour le moment.",
+    "error": "L'assistant n'a pas pu repondre. Reessayez.",
+    "empty": "Bonjour, posez-moi une question sur les demarches, bourses, actualites, evenements ou opportunites du Gabon et de sa diaspora."
+  },
   "adminFeedback": {
     "eyebrow": "Administration",
     "title": "Moderation des avis",

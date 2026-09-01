@@ -149,6 +149,7 @@ async function main() {
     },
   ];
 
+  const users: Record<string, { id: string }> = {};
   for (const m of demoMembers) {
     const user = await prisma.user.upsert({
       where: { email: m.email },
@@ -159,6 +160,7 @@ async function main() {
         role: m.role,
       },
     });
+    users[m.email] = user;
 
     await prisma.profile.upsert({
       where: { userId: user.id },
@@ -228,14 +230,16 @@ async function main() {
   const procedures = [
     {
       slug: "passeport-renouvellement",
-      title: "Renouvellement du passeport gabonais",
-      description: "Preparez votre dossier et suivez les etapes de renouvellement de votre passeport.",
+      title: "Renouvellement du passeport biometrique gabonais",
+      description: "Pieces a fournir (ancien passeport, 2 photos d'identite, justificatif de domicile, acte de naissance), tarifs consulaires en vigueur et delai indicatif de traitement pour le renouvellement de votre passeport biometrique.",
       category: AdministrativeProcedureCategory.CONSULAR,
       estimatedDays: 30,
-      cost: "Selon le tarif du consulat",
+      cost: "Selon le tarif du consulat (bareme consulaire officiel)",
       officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ministere des Affaires Etrangeres du Gabon",
+      canonicalUrl: "https://www.diplomatie.gouv.ga/",
       steps: [
-        ["Verifier les conditions", "Confirmez la procedure aupres de votre consulat.", true],
+        ["Verifier les conditions", "Confirmez la procedure et le bareme tarifaire aupres de votre consulat.", true],
         ["Rassembler les pieces", "Preparez votre ancien passeport, vos photos et les justificatifs demandes.", true],
         ["Prendre rendez-vous", "Utilisez le portail officiel ou contactez votre representation consulaire.", true],
         ["Deposer le dossier", "Presentez les originaux et reglez les frais applicables.", true],
@@ -244,12 +248,14 @@ async function main() {
     },
     {
       slug: "immatriculation-consulaire",
-      title: "Inscription consulaire",
-      description: "Inscrivez-vous aupres de votre consulat pour faciliter vos demarches a l'etranger.",
+      title: "Immatriculation consulaire (carte consulaire)",
+      description: "Etablissez votre carte consulaire pour faciliter vos demarches en tant que membre de la diaspora aupres de votre consulat de residence.",
       category: AdministrativeProcedureCategory.CONSULAR,
       estimatedDays: 7,
       cost: "Gratuit ou selon le consulat",
       officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ambassade du Gabon en France",
+      canonicalUrl: "https://www.ambassadedugabon.fr/",
       steps: [
         ["Identifier votre consulat", "Trouvez la representation competente pour votre lieu de residence.", true],
         ["Preparer vos justificatifs", "Rassemblez une piece d'identite et un justificatif de residence.", true],
@@ -265,6 +271,8 @@ async function main() {
       estimatedDays: 15,
       cost: "Selon le service sollicite",
       officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ministere des Affaires Etrangeres du Gabon",
+      canonicalUrl: "https://www.diplomatie.gouv.ga/",
       steps: [
         ["Preciser le document", "Determinez la copie ou l'extrait necessaire pour votre demarche.", true],
         ["Rassembler les informations", "Preparez les informations d'etat civil et les justificatifs disponibles.", true],
@@ -280,6 +288,8 @@ async function main() {
       estimatedDays: 14,
       cost: "Selon les conditions de l'organisme",
       officialUrl: "https://www.dgbc.gouv.ga/",
+      sourceName: "DGBC - Direction Generale des Bourses du Gabon",
+      canonicalUrl: "https://www.dgbc.gouv.ga/",
       steps: [
         ["Verifier l'organisme demandeur", "Confirmez le format et la periode attendus par votre etablissement.", true],
         ["Preparer votre dossier", "Rassemblez votre identite, votre inscription et les justificatifs de scolarite.", true],
@@ -287,13 +297,115 @@ async function main() {
         ["Archiver l'attestation", "Conservez le document et verifiez sa date de validite.", true],
       ],
     },
+    {
+      slug: "visa-court-sejour",
+      title: "Demande de visa court sejour pour le Gabon",
+      description: "Constituez votre dossier de visa court sejour (tourisme, affaires ou visite familiale) aupres d'une representation diplomatique gabonaise.",
+      category: AdministrativeProcedureCategory.CONSULAR,
+      estimatedDays: 10,
+      cost: "Selon le bareme consulaire en vigueur",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ministere des Affaires Etrangeres du Gabon",
+      canonicalUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Determiner le type de visa", "Identifiez le motif du sejour et la duree requise.", true],
+        ["Constituer le dossier", "Reunissez passeport valide, formulaire, photo et justificatifs de voyage.", true],
+        ["Deposer la demande", "Presentez le dossier aupres de l'ambassade ou du consulat competent.", true],
+        ["Suivre l'instruction", "Patientez le delai de traitement avant retrait du visa.", true],
+      ],
+    },
+    {
+      slug: "legalisation-documents",
+      title: "Legalisation de documents officiels gabonais",
+      description: "Faites authentifier vos documents administratifs gabonais (diplomes, actes, attestations) pour qu'ils soient reconnus a l'etranger.",
+      category: AdministrativeProcedureCategory.CONSULAR,
+      estimatedDays: 12,
+      cost: "Selon la nature du document",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ministere des Affaires Etrangeres du Gabon",
+      canonicalUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Verifier l'exigence de legalisation", "Confirmez si l'organisme destinataire exige une legalisation ou une apostille.", true],
+        ["Preparer les originaux", "Rassemblez les documents originaux et leurs copies certifiees.", true],
+        ["Deposer aupres du consulat", "Soumettez le dossier au service competent de la representation gabonaise.", true],
+        ["Recuperer le document legalise", "Verifiez le cachet et la signature avant utilisation.", true],
+      ],
+    },
+    {
+      slug: "titre-sejour-france",
+      title: "Titre de sejour et integration en France",
+      description: "Reperes pour la demande ou le renouvellement de titre de sejour et les etapes d'integration des Gabonais residant en France (OFII, prefecture, CAF).",
+      category: AdministrativeProcedureCategory.INTEGRATION,
+      estimatedDays: 90,
+      cost: "Timbres fiscaux et taxes prefectorales selon le titre",
+      officialUrl: "https://www.ambassadedugabon.fr/",
+      sourceName: "Ambassade du Gabon en France",
+      canonicalUrl: "https://www.ambassadedugabon.fr/",
+      steps: [
+        ["Identifier le titre concerne", "Determinez le titre de sejour applicable a votre situation (etudiant, salarie, vie privee et familiale).", true],
+        ["Preparer le dossier prefectoral", "Rassemblez passeport, justificatifs de ressources et de logement.", true],
+        ["Deposer la demande", "Soumettez le dossier en prefecture ou via le portail dedie dans les delais legaux.", true],
+        ["Suivre l'integration", "Completez le parcours OFII (visite medicale, formation civique) si requis.", true],
+      ],
+    },
+    {
+      slug: "titre-sejour-senegal",
+      title: "Titre de sejour et integration au Senegal",
+      description: "Etapes pour la carte de sejour et l'integration des Gabonais residant au Senegal, en lien avec l'ambassade du Gabon a Dakar.",
+      category: AdministrativeProcedureCategory.INTEGRATION,
+      estimatedDays: 45,
+      cost: "Selon le bareme de la Direction de la Police des Etrangers",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ambassade du Gabon au Senegal",
+      canonicalUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Signaler votre arrivee", "Immatriculez-vous aupres de l'ambassade du Gabon a Dakar.", true],
+        ["Constituer le dossier de sejour", "Preparez passeport, justificatif de logement et attestation d'activite.", true],
+        ["Deposer la demande", "Soumettez le dossier a la Direction de la Police des Etrangers et des Titres de Voyage.", true],
+        ["Retirer la carte de sejour", "Recuperez le titre selon le delai communique.", true],
+      ],
+    },
+    {
+      slug: "titre-sejour-maroc",
+      title: "Titre de sejour et integration au Maroc",
+      description: "Etapes pour la carte d'immatriculation et l'integration des Gabonais residant au Maroc (etudiants et professionnels), en lien avec l'ambassade du Gabon a Rabat.",
+      category: AdministrativeProcedureCategory.INTEGRATION,
+      estimatedDays: 45,
+      cost: "Selon le bareme de la Direction Generale de la Surete Nationale",
+      officialUrl: "https://www.diplomatie.gouv.ga/",
+      sourceName: "Ambassade du Gabon au Maroc",
+      canonicalUrl: "https://www.diplomatie.gouv.ga/",
+      steps: [
+        ["Signaler votre arrivee", "Immatriculez-vous aupres de l'ambassade du Gabon a Rabat.", true],
+        ["Constituer le dossier", "Preparez passeport, justificatif d'inscription ou de contrat et justificatif de logement.", true],
+        ["Deposer la demande", "Soumettez le dossier a la Direction Generale de la Surete Nationale.", true],
+        ["Retirer la carte d'immatriculation", "Recuperez le titre selon le delai communique.", true],
+      ],
+    },
+    {
+      slug: "titre-sejour-canada",
+      title: "Titre de sejour et integration au Canada",
+      description: "Reperes pour le permis d'etudes ou de travail et l'integration des Gabonais residant au Canada, en lien avec l'ambassade du Gabon a Ottawa.",
+      category: AdministrativeProcedureCategory.INTEGRATION,
+      estimatedDays: 60,
+      cost: "Frais IRCC selon le type de permis",
+      officialUrl: "https://ambassadedugabon.ca/",
+      sourceName: "Ambassade du Gabon au Canada",
+      canonicalUrl: "https://ambassadedugabon.ca/",
+      steps: [
+        ["Identifier le permis requis", "Determinez s'il s'agit d'un permis d'etudes, de travail ou de residence temporaire.", true],
+        ["Preparer le dossier IRCC", "Rassemblez lettre d'admission ou d'emploi, preuve de fonds et passeport valide.", true],
+        ["Soumettre la demande en ligne", "Deposez le dossier via le portail Immigration, Refugies et Citoyennete Canada.", true],
+        ["Signaler votre arrivee au consulat", "Immatriculez-vous aupres de l'ambassade du Gabon a Ottawa.", true],
+      ],
+    },
   ] as const;
 
   for (const procedureData of procedures) {
     const procedure = await prisma.administrativeProcedure.upsert({
       where: { slug: procedureData.slug },
-      update: { title: procedureData.title, description: procedureData.description, category: procedureData.category, estimatedDays: procedureData.estimatedDays, cost: procedureData.cost, officialUrl: procedureData.officialUrl },
-      create: { slug: procedureData.slug, title: procedureData.title, description: procedureData.description, category: procedureData.category, estimatedDays: procedureData.estimatedDays, cost: procedureData.cost, officialUrl: procedureData.officialUrl },
+      update: { title: procedureData.title, description: procedureData.description, category: procedureData.category, estimatedDays: procedureData.estimatedDays, cost: procedureData.cost, officialUrl: procedureData.officialUrl, sourceName: procedureData.sourceName, canonicalUrl: procedureData.canonicalUrl, moderationStatus: "APPROVED", publishedAt: new Date() },
+      create: { slug: procedureData.slug, title: procedureData.title, description: procedureData.description, category: procedureData.category, estimatedDays: procedureData.estimatedDays, cost: procedureData.cost, officialUrl: procedureData.officialUrl, sourceName: procedureData.sourceName, canonicalUrl: procedureData.canonicalUrl, moderationStatus: "APPROVED", publishedAt: new Date() },
     });
     for (const [index, [title, description, isRequired]] of procedureData.steps.entries()) {
       await prisma.procedureStep.upsert({ where: { procedureId_order: { procedureId: procedure.id, order: index + 1 } }, update: { title, description, isRequired }, create: { procedureId: procedure.id, order: index + 1, title, description, isRequired } });
@@ -301,20 +413,71 @@ async function main() {
   }
 
   const scholarships = [
-    { id: "scholarship-campus-france", title: "Bourse Campus France", provider: "Campus France", country: "France", level: ScholarshipLevel.MASTER, description: "Opportunite de financement pour un projet d'etudes superieures en France.", eligibilityCriteria: "Consultez les conditions et le calendrier de l'appel officiel.", deadline: new Date("2027-01-31"), applicationUrl: "https://www.campusfrance.org/" },
-    { id: "scholarship-dgbc-excellence", title: "Bourse d'excellence DGBC", provider: "DGBC", country: "Gabon", level: ScholarshipLevel.LICENCE, description: "Aide a la preparation d'un dossier de bourse d'excellence gabonaise.", eligibilityCriteria: "Verifiez les criteres publies par la DGBC pour votre campagne.", deadline: new Date("2027-02-28"), applicationUrl: "https://www.dgbc.gouv.ga/" },
+    { id: "scholarship-campus-france", title: "Bourse Campus France", provider: "Campus France", country: "France", level: ScholarshipLevel.MASTER, description: "Opportunite de financement pour un projet d'etudes superieures en France, ouverte aux etudiants gabonais.", eligibilityCriteria: "Consultez les conditions et le calendrier de l'appel officiel Campus France.", deadline: new Date("2027-01-31"), applicationUrl: "https://www.campusfrance.org/", sourceName: "Campus France", canonicalUrl: "https://www.campusfrance.org/" },
+    { id: "scholarship-dgbc-excellence", title: "Bourse d'excellence DGBC", provider: "DGBC", country: "Gabon", level: ScholarshipLevel.LICENCE, description: "Aide a la preparation d'un dossier de bourse d'excellence gabonaise.", eligibilityCriteria: "Verifiez les criteres publies par la DGBC pour votre campagne.", deadline: new Date("2027-02-28"), applicationUrl: "https://www.dgbc.gouv.ga/", sourceName: "DGBC - Direction Generale des Bourses du Gabon", canonicalUrl: "https://www.dgbc.gouv.ga/" },
+    { id: "scholarship-anbg-orientation-afrique", title: "Orientation ANBG : priorite aux etablissements africains", provider: "ANBG (Agence Nationale des Bourses du Gabon)", country: "Gabon", level: ScholarshipLevel.LICENCE, description: "Politique d'orientation actuelle de l'ANBG : priorite donnee aux ecoles et universites africaines ainsi qu'au renforcement des etablissements nationaux gabonais dans l'attribution des nouvelles bourses.", eligibilityCriteria: "Reservee aux etudiants gabonais admis dans un etablissement africain reconnu ou un etablissement national partenaire ; verifiez la circulaire d'orientation en vigueur.", deadline: new Date("2027-03-31"), applicationUrl: "https://www.dgbc.gouv.ga/", sourceName: "ANBG - Agence Nationale des Bourses du Gabon", canonicalUrl: null },
+    { id: "scholarship-bilaterale-maroc", title: "Bourse gouvernementale bilaterale Maroc-Gabon", provider: "Cooperation Maroc-Gabon", country: "Maroc", level: ScholarshipLevel.LICENCE, description: "Programme bilateral de bourses d'etudes destine aux etudiants gabonais admis dans un etablissement superieur marocain partenaire.", eligibilityCriteria: "Etudiants gabonais titulaires du baccalaureat, dossier valide par le Ministere des Affaires Etrangeres du Gabon et l'ambassade concernee.", deadline: new Date("2027-04-30"), applicationUrl: "https://www.diplomatie.gouv.ga/", sourceName: "Ministere des Affaires Etrangeres du Gabon", canonicalUrl: "https://www.diplomatie.gouv.ga/" },
+    { id: "scholarship-bilaterale-senegal", title: "Bourse bilaterale Senegal-Gabon", provider: "Cooperation Senegal-Gabon", country: "Senegal", level: ScholarshipLevel.MASTER, description: "Programme bilateral de bourses de master destine aux etudiants gabonais admis dans un etablissement senegalais partenaire.", eligibilityCriteria: "Etudiants gabonais titulaires d'une licence, dossier valide par le Ministere des Affaires Etrangeres du Gabon et l'ambassade a Dakar.", deadline: new Date("2027-05-31"), applicationUrl: "https://www.diplomatie.gouv.ga/", sourceName: "Ministere des Affaires Etrangeres du Gabon", canonicalUrl: "https://www.diplomatie.gouv.ga/" },
   ];
   for (const scholarship of scholarships) {
-    await prisma.scholarship.upsert({ where: { id: scholarship.id }, update: scholarship, create: scholarship });
+    await prisma.scholarship.upsert({ where: { id: scholarship.id }, update: { ...scholarship, moderationStatus: "APPROVED", publishedAt: new Date() }, create: { ...scholarship, moderationStatus: "APPROVED", publishedAt: new Date() } });
+  }
+
+  const housingOffers = [
+    { id: "housing-guide-paris", city: "Paris", country: "France", type: "STUDIO" as const, price: 750, description: "Guide logement etudiant a Paris : dossier CROUS/CAF a deposer des l'admission, colocation via les reseaux de la diaspora, et quartiers proches des campus prises frequentes par les etudiants gabonais. Conseil partage par l'Association des Gabonais de Paris.", contactEmail: "logement.paris@gabonconnect.example", author: "demo.admin@example.com" },
+    { id: "housing-guide-montreal", city: "Montreal", country: "Canada", type: "COLOCATION" as const, price: 650, description: "Guide logement etudiant a Montreal : bail conjoint, garant ou depot de garantie selon le proprietaire, et reseau de colocation entre etudiants gabonais du Reseau Diaspora Montreal.", contactEmail: "logement.montreal@gabonconnect.example", author: "demo.membre2@example.com" },
+    { id: "housing-guide-dakar", city: "Dakar", country: "Senegal", type: "CHAMBRE" as const, price: 120000, description: "Guide logement etudiant a Dakar : quartiers proches des universites (Fann, Point E), demarches aupres du proprietaire et recommandations de l'ambassade du Gabon au Senegal pour les nouveaux arrivants.", contactEmail: "logement.dakar@gabonconnect.example", author: "demo.admin@example.com" },
+    { id: "housing-guide-casablanca", city: "Casablanca", country: "Maroc", type: "SOUS_LOCATION" as const, price: 2500, description: "Guide logement etudiant a Casablanca : sous-location courante entre etudiants internationaux, verification du contrat aupres de l'ambassade du Gabon au Maroc avant signature.", contactEmail: "logement.casablanca@gabonconnect.example", author: "demo.admin@example.com" },
+  ];
+  for (const offer of housingOffers) {
+    const authorId = users[offer.author].id;
+    await prisma.housingOffer.upsert({
+      where: { id: offer.id },
+      update: { city: offer.city, country: offer.country, type: offer.type, price: offer.price, description: offer.description, contactEmail: offer.contactEmail, authorId },
+      create: { id: offer.id, city: offer.city, country: offer.country, type: offer.type, price: offer.price, description: offer.description, contactEmail: offer.contactEmail, authorId },
+    });
+  }
+
+  const opportunities = [
+    { id: "opportunity-ingenieur-petrolier-port-gentil", title: "Ingenieur petrolier - Port-Gentil", description: "Poste d'ingenieur petrolier base a Port-Gentil, au sein d'un operateur actif dans le bassin sedimentaire gabonais. Experience en production offshore appreciee.", type: "JOB" as const, location: "Port-Gentil, Gabon", sourceName: "Gabon Media Time", canonicalUrl: null as string | null },
+    { id: "opportunity-charge-communication-libreville", title: "Charge(e) de communication - Ministere de l'Economie", description: "Mission de communication institutionnelle aupres d'un ministere a Libreville, redaction de contenus et relations presse.", type: "JOB" as const, location: "Libreville, Gabon", sourceName: "L'Union", canonicalUrl: null as string | null },
+    { id: "opportunity-stage-ingenierie-miniere-moanda", title: "Stage ingenierie miniere - Moanda", description: "Stage de fin d'etudes en ingenierie miniere au sein d'un site d'exploitation a Moanda, encadrement par des ingenieurs seniors.", type: "INTERNSHIP" as const, location: "Moanda, Gabon", sourceName: "Gabon Media Time", canonicalUrl: null as string | null },
+    { id: "opportunity-technicien-forestier-franceville", title: "Technicien forestier - Franceville", description: "Poste de technicien pour le suivi et la gestion durable d'exploitations forestieres dans la region de Franceville.", type: "JOB" as const, location: "Franceville, Gabon", sourceName: "L'Union", canonicalUrl: null as string | null },
+    { id: "opportunity-volontariat-diaspora-paris", title: "Programme de volontariat de la diaspora gabonaise", description: "Programme de volontariat coordonne par l'ambassade pour mobiliser la diaspora gabonaise de France autour de projets communautaires et culturels.", type: "VOLUNTEERING" as const, location: "Paris, France", sourceName: "Ambassade du Gabon en France", canonicalUrl: "https://www.ambassadedugabon.fr/" as string | null },
+    { id: "opportunity-appel-projets-jeunes-entrepreneurs", title: "Appel a projets - Jeunes entrepreneurs de la diaspora gabonaise", description: "Appel a projets destine aux jeunes entrepreneurs gabonais de la diaspora souhaitant investir ou lancer une activite au Gabon.", type: "PROJECT_CALL" as const, location: "Remote", sourceName: "ANBG - Agence Nationale des Bourses du Gabon", canonicalUrl: null as string | null },
+  ];
+  for (const opportunity of opportunities) {
+    const slug = `${opportunity.id}`;
+    await prisma.opportunity.upsert({
+      where: { id: opportunity.id },
+      update: { title: opportunity.title, description: opportunity.description, type: opportunity.type, location: opportunity.location, sourceName: opportunity.sourceName, canonicalUrl: opportunity.canonicalUrl ?? null, status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: new Date() },
+      create: { id: opportunity.id, title: opportunity.title, slug, description: opportunity.description, type: opportunity.type, location: opportunity.location, createdById: users["demo.admin@example.com"].id, sourceName: opportunity.sourceName, canonicalUrl: opportunity.canonicalUrl ?? null, status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: new Date() },
+    });
+  }
+
+  const events = [
+    { id: "event-fete-liberation-libreville", title: "Fete de la Liberation du 30 Aout - Commemoration Nationale", description: "Commemoration officielle de la Fete de la Liberation du 30 Aout a Libreville, avec ceremonies institutionnelles et rassemblements populaires.", startDate: new Date("2026-08-30T09:00:00"), location: "Libreville, Gabon", sourceName: "Presidence de la Republique Gabonaise", canonicalUrl: null as string | null },
+    { id: "event-fete-liberation-paris", title: "Rassemblement de la diaspora - Fete de la Liberation", description: "Rassemblement de la diaspora gabonaise de France a l'occasion de la Fete de la Liberation du 30 Aout.", startDate: new Date("2026-08-30T18:00:00"), location: "Paris, France", sourceName: "Ambassade du Gabon en France", canonicalUrl: "https://www.ambassadedugabon.fr/" as string | null },
+    { id: "event-forum-orientation-montreal", title: "Forum d'orientation des etudiants gabonais", description: "Forum d'orientation academique et administrative destine aux nouveaux etudiants gabonais arrivant a Montreal.", startDate: new Date("2026-09-20T10:00:00"), location: "Montreal, Canada", sourceName: "Ambassade du Gabon au Canada", canonicalUrl: "https://ambassadedugabon.ca/" as string | null },
+    { id: "event-salon-emploi-diaspora-paris", title: "Salon de l'emploi de la diaspora gabonaise", description: "Salon de l'emploi reunissant recruteurs et candidats de la diaspora gabonaise en France.", startDate: new Date("2026-10-10T09:30:00"), location: "Paris, France", sourceName: "Association des Gabonais de Paris", canonicalUrl: null as string | null },
+    { id: "event-rencontre-associative-dakar", title: "Rencontre associative de la diaspora gabonaise", description: "Rencontre des associations de la diaspora gabonaise etablies au Senegal, echanges sur l'entraide communautaire.", startDate: new Date("2026-09-27T15:00:00"), location: "Dakar, Senegal", sourceName: "Ambassade du Gabon au Senegal", canonicalUrl: "https://www.diplomatie.gouv.ga/" as string | null },
+  ];
+  for (const event of events) {
+    const slug = event.id;
+    await prisma.event.upsert({
+      where: { id: event.id },
+      update: { title: event.title, description: event.description, startDate: event.startDate, location: event.location, sourceName: event.sourceName, canonicalUrl: event.canonicalUrl ?? null, status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: new Date() },
+      create: { id: event.id, title: event.title, slug, description: event.description, startDate: event.startDate, location: event.location, organizerType: "USER", createdById: users["demo.admin@example.com"].id, sourceName: event.sourceName, canonicalUrl: event.canonicalUrl ?? null, status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: new Date() },
+    });
   }
 
   const sourceRegistry = [
-    { name: "Agence Nationale des Bourses du Gabon", url: "https://www.anbgabon.org/", type: SourceRegistryType.GOVERNMENT, country: "GA", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["CAMPUS"] },
-    { name: "Campus France", url: "https://www.campusfrance.org/", type: SourceRegistryType.UNIVERSITY, country: "FR", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["CAMPUS", "DIASPORA"] },
-    { name: "Diplomatie Gabon", url: "https://www.diplomatie.gouv.ga/", type: SourceRegistryType.DIPLOMATIC, country: "GA", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["DIASPORA", "ADMINISTRATIVE"] },
-    { name: "Ambassade du Gabon en France", url: "https://www.ambassadedugabon.fr/", type: SourceRegistryType.DIPLOMATIC, country: "FR", language: "fr", rssUrl: null, reliability: 5, termsUrl: null, targetAudiences: ["DIASPORA", "ADMINISTRATIVE"] },
-    { name: "Universite Omar Bongo", url: "https://www.uob.ga/", type: SourceRegistryType.UNIVERSITY, country: "GA", language: "fr", rssUrl: null, reliability: 4, termsUrl: null, targetAudiences: ["CAMPUS"] },
-    { name: "Diaspora Gabonaise", url: "https://www.diplomatie.gouv.ga/diaspora", type: SourceRegistryType.DIASPORA, country: "GA", language: "fr", rssUrl: null, reliability: 3, termsUrl: null, targetAudiences: ["DIASPORA"] },
+    { name: "France 24 Afrique", url: "https://www.france24.com/fr/afrique", type: SourceRegistryType.MEDIA, country: "FR", language: "fr", rssUrl: "https://www.france24.com/fr/afrique/rss", reliability: 4, termsUrl: "https://www.france24.com/fr/mentions-legales", targetAudiences: ["DIASPORA", "CAMPUS"] },
+    { name: "RFI Afrique", url: "https://www.rfi.fr/fr/afrique", type: SourceRegistryType.MEDIA, country: "FR", language: "fr", rssUrl: "https://www.rfi.fr/fr/rss", reliability: 4, termsUrl: "https://www.rfi.fr/fr/mentions-legales", targetAudiences: ["DIASPORA", "ADMINISTRATIVE"] },
+    { name: "BBC Afrique", url: "https://www.bbc.com/afrique", type: SourceRegistryType.MEDIA, country: "GB", language: "fr", rssUrl: "https://feeds.bbci.co.uk/news/world/africa/rss.xml", reliability: 4, termsUrl: "https://www.bbc.com/usingthebbc/terms", targetAudiences: ["DIASPORA"] },
+    { name: "Le Monde Afrique", url: "https://www.lemonde.fr/afrique/", type: SourceRegistryType.MEDIA, country: "FR", language: "fr", rssUrl: "https://www.lemonde.fr/afrique/rss_full.xml", reliability: 4, termsUrl: "https://www.lemonde.fr/mentions-legales/", targetAudiences: ["DIASPORA", "CAMPUS"] },
+    { name: "Google News Gabon", url: "https://news.google.com/search?q=Gabon&hl=fr&gl=GA&ceid=GA:fr", type: SourceRegistryType.MEDIA, country: "GA", language: "fr", rssUrl: "https://news.google.com/rss/search?q=Gabon&hl=fr&gl=GA&ceid=GA:fr", reliability: 3, termsUrl: "https://policies.google.com/terms", targetAudiences: ["DIASPORA", "ADMINISTRATIVE"] },
+    { name: "Google News Campus France", url: "https://news.google.com/search?q=Campus%20France&hl=fr&gl=FR&ceid=FR:fr", type: SourceRegistryType.UNIVERSITY, country: "FR", language: "fr", rssUrl: "https://news.google.com/rss/search?q=Campus%20France&hl=fr&gl=FR&ceid=FR:fr", reliability: 3, termsUrl: "https://policies.google.com/terms", targetAudiences: ["CAMPUS"] },
   ];
   for (const source of sourceRegistry) {
     await prisma.sourceRegistry.upsert({ where: { url: source.url }, update: source, create: source });

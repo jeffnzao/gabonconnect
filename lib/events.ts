@@ -40,10 +40,8 @@ const PUBLIC_EVENT_SELECT = {
 function buildEventWhere(filters: EventFilters): Prisma.EventWhereInput {
   const where: Prisma.EventWhereInput = {
     status: EventStatus.PUBLISHED,
-    OR: [
-      { canonicalUrl: null },
-      { moderationStatus: "APPROVED", publishedAt: { not: null } },
-    ],
+    moderationStatus: "APPROVED",
+    publishedAt: { not: null },
   };
   if (filters.upcomingOnly) where.startDate = { gte: new Date() };
   if (filters.location?.trim()) where.location = { contains: filters.location.trim(), mode: "insensitive" };

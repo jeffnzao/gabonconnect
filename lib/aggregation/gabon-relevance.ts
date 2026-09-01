@@ -1,0 +1,87 @@
+import type { SourceRegistryType } from "@/app/generated/prisma";
+
+// Institutions gabonaises officielles : validees d'office quel que soit le contenu.
+const OFFICIAL_SOURCE_TYPES: SourceRegistryType[] = ["GOVERNMENT", "DIPLOMATIC"];
+
+// Mots-cles et entites qui etablissent un lien direct ou indirect avec le Gabon/la diaspora.
+const GABON_KEYWORDS = [
+  "gabon",
+  "gabonais",
+  "gabonaise",
+  "gabonaises",
+  "libreville",
+  "port-gentil",
+  "port gentil",
+  "franceville",
+  "oyem",
+  "lambarene",
+  "moanda",
+  "mouila",
+  "tchibanga",
+  "koulamoutou",
+  "anbg",
+  "dgbc",
+  "ambassade du gabon",
+  "ambassade",
+  "consulat",
+  "consulat general",
+  "diaspora",
+  "diaspora gabonaise",
+  "etudiants gabonais",
+  "communaute gabonaise",
+  "gabonais de",
+  "amicale gabonaise",
+  "estuaire",
+  "haut-ogooue",
+  "moyen-ogooue",
+  "ngounie",
+  "nyanga",
+  "ogooue-ivindo",
+  "ogooue-lolo",
+  "ogooue-maritime",
+  "woleu-ntem",
+] as const;
+
+export interface GabonRelevanceInput {
+  title: string;
+  excerpt: string;
+  content?: string;
+  sourceType: SourceRegistryType;
+  sourceName: string;
+}
+
+export type GabonRelevanceReason = "official_gabon_source" | "keyword_match" | "no_gabon_link";
+
+export interface GabonRelevanceResult {
+  score: number;
+  isRelevant: boolean;
+  matchedKeywords: string[];
+  reason: GabonRelevanceReason;
+}
+
+function normalize(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+/**
+ * Filtre "Ancrage Gabon" : toute source officielle gabonaise est validee d'office ;
+ * toute autre source doit citer au moins un mot-cle/entite lie au Gabon ou a sa diaspora.
+ */
+export function computeGabonRelevance(input: GabonRelevanceInput): GabonRelevanceResult {
+  if (OFFICIAL_SOURCE_TYPES.includes(input.sourceType)) {
+    return { score: 1, isRelevant: true, matchedKeywords: [], reason: "official_gabon_source" };
+  }
+
+  const text = normalize(`${input.title} ${input.excerpt} ${input.content ?? ""} ${input.sourceName}`);
+  const matchedKeywords = GABON_KEYWORDS.filter((keyword) => text.includes(keyword));
+
+  if (matchedKeywords.length > 0) {
+    const score = Math.min(1, matchedKeywords.length * 0.34);
+    return { score, isRelevant: true, matchedKeywords, reason: "keyword_match" };
+  }
+
+  return { score: 0, isRelevant: false, matchedKeywords: [], reason: "no_gabon_link" };
+}

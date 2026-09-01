@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { isMissingTableError } from "@/lib/prisma";
 import { ArticleCategory, ArticleStatus } from "@/app/generated/prisma";
 
-const PUBLIC_ARTICLE = { status: ArticleStatus.PUBLISHED, publishedAt: { not: null } } as const;
+const PUBLIC_ARTICLE = { status: ArticleStatus.PUBLISHED, publishedAt: { not: null }, moderationStatus: "APPROVED" } as const;
 
 export const getPublishedArticles = cache(async (options?: { query?: string; category?: ArticleCategory; sort?: "recent" | "popular"; page?: number; pageSize?: number }) => {
   try {
@@ -17,7 +17,7 @@ export const getPublishedArticles = cache(async (options?: { query?: string; cat
       orderBy: options?.sort === "popular" ? { viewCount: "desc" } : { publishedAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      select: { id: true, slug: true, title: true, summary: true, content: true, imageUrl: true, category: true, viewCount: true, publishedAt: true },
+      select: { id: true, slug: true, title: true, summary: true, content: true, imageUrl: true, category: true, viewCount: true, publishedAt: true, sourceName: true, canonicalUrl: true },
     });
   } catch (error) {
     if (isMissingTableError(error)) return [];
@@ -29,7 +29,7 @@ export const getPublishedArticleBySlug = cache(async (slug: string) => {
   try {
     return await prisma.article.findFirst({
       where: { ...PUBLIC_ARTICLE, slug },
-      select: { id: true, slug: true, title: true, summary: true, content: true, imageUrl: true, publishedAt: true },
+      select: { id: true, slug: true, title: true, summary: true, content: true, imageUrl: true, publishedAt: true, sourceName: true, canonicalUrl: true },
     });
   } catch (error) {
     if (isMissingTableError(error)) return null;

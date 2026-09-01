@@ -15,6 +15,8 @@ export interface NewsHubArticle {
   imageUrl: string | null;
   category: ArticleCategory;
   publishedAt: Date | null;
+  sourceName: string | null;
+  canonicalUrl: string | null;
 }
 
 const categories: ArticleCategory[] = ["GABON", "INTERNATIONAL", "DIASPORA", "STUDENTS", "CAMPUS", "OPPORTUNITIES", "POLITICS", "ECONOMY", "CULTURE", "SPORTS"];
@@ -75,6 +77,7 @@ function NewsCard({ article, messages, locale, featured = false }: { article: Ne
         </div>
         <h3 className={`${featured ? "text-2xl sm:text-3xl" : "text-xl"} mt-3 font-semibold tracking-tight text-slate-900`}><Link href={`/news/${article.slug}`} className="hover:text-emerald-700">{article.title}</Link></h3>
         {article.summary && <p className="mt-3 text-sm leading-6 text-slate-600">{article.summary}</p>}
+        {article.sourceName && <p className="mt-4 text-xs font-semibold text-sky-700">Source : {article.sourceName}</p>}
         <p className="mt-5 text-xs text-slate-500">{readTime(article)} {messages.newsHub.readTime}</p>
       </div>
     </article>

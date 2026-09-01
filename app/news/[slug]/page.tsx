@@ -22,8 +22,10 @@ export default async function NewsDetailPage({ params }: NewsDetailProps) {
       <p className="mt-10 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-600">{messages.navigation.news}</p>
       <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900">{article.title}</h1>
       {article.publishedAt && <p className="mt-3 text-sm text-slate-500">{article.publishedAt.toLocaleDateString("en-US")}</p>}
+      {article.sourceName && <p className="mt-3 text-sm font-semibold text-sky-700">Source : {article.sourceName}</p>}
       {article.summary && <p className="mt-8 text-lg leading-8 text-slate-600">{article.summary}</p>}
       <div className="mt-8 whitespace-pre-wrap text-base leading-8 text-slate-700">{article.content}</div>
+      {article.canonicalUrl && <a href={article.canonicalUrl} target="_blank" rel="noreferrer" className="mt-6 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-800">Source originale</a>}
     </article>
   );
 }

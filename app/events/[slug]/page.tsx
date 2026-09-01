@@ -42,6 +42,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
       </div>
 
       <p className="mt-6 whitespace-pre-wrap text-base leading-8 text-slate-700">{event.description}</p>
+      {event.sourceName && <p className="mt-4 text-sm font-semibold text-sky-700">{messages.events.externalSource}: {event.sourceName}</p>}
+      {event.canonicalUrl && <a href={event.canonicalUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-800">{messages.events.officialRegistration}</a>}
 
       <dl className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
         <div>

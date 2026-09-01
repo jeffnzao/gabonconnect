@@ -681,6 +681,23 @@
     "dislikesLabel": "Could be improved",
     "bugsLabel": "Reported bug"
   },
+  "assistant": {
+    "launcherLabel": "GabonConnect Assistant",
+    "title": "GabonConnect Assistant",
+    "subtitle": "Sourced answers based on published procedures, scholarships, news, events and opportunities.",
+    "placeholder": "Ask your question...",
+    "send": "Send",
+    "sending": "Searching...",
+    "close": "Close assistant",
+    "suggestionsTitle": "Frequent questions",
+    "suggestion1": "How do I renew my passport?",
+    "suggestion2": "What ANBG scholarships are available for Africa?",
+    "suggestion3": "Events on August 30",
+    "sourcesLabel": "Sources",
+    "noData": "I do not have this information in GabonConnect's published content right now.",
+    "error": "The assistant could not answer. Please try again.",
+    "empty": "Hello, ask me a question about procedures, scholarships, news, events or opportunities for Gabon and its diaspora."
+  },
   "adminFeedback": {
     "eyebrow": "Administration",
     "title": "Feedback moderation",
