@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Globe2, Menu, Search, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { signOutAction } from "@/lib/auth-actions";
 import LanguageSwitcher from "@/components/language-switcher";
 import NotificationCenter from "@/components/notifications/notification-center";
 import GlobalSearch from "@/components/global-search";
 import type { Locale, Messages } from "@/lib/i18n";
+import gabonConnectLogo from "@/app/gabonconnect360.svg";
 
 export interface HeaderNavLink {
   label: string;
@@ -43,7 +45,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           className="flex items-center gap-2 text-slate-900"
           onClick={() => setIsMenuOpen(false)}
         >
-          <Globe2 className="h-5 w-5 text-emerald-600" aria-hidden />
+          <Image src={gabonConnectLogo} alt="" width={28} height={28} className="h-7 w-7" priority />
           <span className="text-sm font-semibold">GabonConnect</span>
         </Link>
 

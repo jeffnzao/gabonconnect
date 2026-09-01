@@ -1263,9 +1263,11 @@ model Message {
   sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
   content        String       @db.Text
   isRead         Boolean      @default(false)
+  readAt         DateTime?
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])
   @@index([senderId, isRead])
+  @@index([conversationId, readAt])
   @@map("messages")
 }

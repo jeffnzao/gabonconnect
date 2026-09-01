@@ -29,6 +29,7 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps) 
   const params = await searchParams;
   const requestedId = first(params.conversationId);
   const targetUserId = first(params.userId) ?? first(params.recipientId);
+  let initializationError: string | null = null;
 
   // Redirection propre si un targetUserId est passé dans la query string
   if (!requestedId && targetUserId) {
@@ -38,7 +39,7 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps) 
         redirect(`/messages?conversationId=${newConversation.id}`);
       }
     } catch {
-      // Évite le crash Server Component si la création échoue
+      initializationError = messages.messaging.conversationUnavailable;
     }
   }
 
@@ -70,6 +71,7 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps) 
       <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
         {messages.messaging.messages}
       </h1>
+      {initializationError && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{initializationError}</p>}
       <div className="mt-8 grid flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid-cols-[280px_1fr]">
         <ConversationList conversations={conversations} activeId={active?.id} />
         {thread && active ? (
