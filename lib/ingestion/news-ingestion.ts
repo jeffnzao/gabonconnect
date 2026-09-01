@@ -103,19 +103,23 @@ export async function runNewsIngestion(): Promise<NewsIngestionResult> {
   const result: NewsIngestionResult = { sources: sources.length, fetched: 0, created: 0, duplicates: 0, failed: 0, autoPublished: 0, queuedForReview: 0, quarantined: 0 };
 
   for (const fetchedSource of sources) {
+    const startedAt = Date.now();
     if (fetchedSource.error) {
       result.failed += 1;
+      await prisma.ingestionLog.create({ data: { sourceId: fetchedSource.source.id, failed: true, durationMs: Date.now() - startedAt } });
       continue;
     }
     const items = normalizeFeedItems(fetchedSource.items, fetchedSource.source);
+    const sourceResult = { fetched: items.length, created: 0, duplicates: 0, autoPublished: 0, humanReview: 0, quarantined: 0 };
     result.fetched += items.length;
     for (const item of items) {
       const persisted = await ingestNormalizedNewsItem(item, fetchedSource.source, author.id);
-      if (persisted.outcome === "duplicate") result.duplicates += 1;
-      else if (persisted.outcome === "AUTO_PUBLISH") { result.created += 1; result.autoPublished += 1; }
-      else if (persisted.outcome === "HUMAN_REVIEW") { result.created += 1; result.queuedForReview += 1; }
-      else { result.created += 1; result.quarantined += 1; }
+      if (persisted.outcome === "duplicate") { result.duplicates += 1; sourceResult.duplicates += 1; }
+      else if (persisted.outcome === "AUTO_PUBLISH") { result.created += 1; result.autoPublished += 1; sourceResult.created += 1; sourceResult.autoPublished += 1; }
+      else if (persisted.outcome === "HUMAN_REVIEW") { result.created += 1; result.queuedForReview += 1; sourceResult.created += 1; sourceResult.humanReview += 1; }
+      else { result.created += 1; result.quarantined += 1; sourceResult.created += 1; sourceResult.quarantined += 1; }
     }
+    await prisma.ingestionLog.create({ data: { sourceId: fetchedSource.source.id, ...sourceResult, durationMs: Date.now() - startedAt } });
   }
   return result;
 }
