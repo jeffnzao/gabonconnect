@@ -1,4 +1,5 @@
 import type { SourceRegistryType } from "@/app/generated/prisma";
+import { evaluateGabonRelevance } from "@/lib/relevance/gabon-relevance-engine";
 
 // Institutions gabonaises officielles : validees d'office quel que soit le contenu.
 const OFFICIAL_SOURCE_TYPES: SourceRegistryType[] = ["GOVERNMENT", "DIPLOMATIC"];
@@ -71,17 +72,20 @@ function normalize(value: string): string {
  * toute autre source doit citer au moins un mot-cle/entite lie au Gabon ou a sa diaspora.
  */
 export function computeGabonRelevance(input: GabonRelevanceInput): GabonRelevanceResult {
-  if (OFFICIAL_SOURCE_TYPES.includes(input.sourceType)) {
-    return { score: 1, isRelevant: true, matchedKeywords: [], reason: "official_gabon_source" };
-  }
-
-  const text = normalize(`${input.title} ${input.excerpt} ${input.content ?? ""} ${input.sourceName}`);
-  const matchedKeywords = GABON_KEYWORDS.filter((keyword) => text.includes(keyword));
-
-  if (matchedKeywords.length > 0) {
-    const score = Math.min(1, matchedKeywords.length * 0.34);
-    return { score, isRelevant: true, matchedKeywords, reason: "keyword_match" };
-  }
-
-  return { score: 0, isRelevant: false, matchedKeywords: [], reason: "no_gabon_link" };
+  const decision = evaluateGabonRelevance({
+    contentId: "legacy-relevance-check",
+    domain: "articles",
+    title: input.title,
+    excerpt: input.excerpt,
+    content: input.content,
+    sourceType: input.sourceType,
+    sourceName: input.sourceName,
+  });
+  const matchedKeywords = decision.score_breakdown.flatMap((entry) => entry.matchedTerms).filter((term) => !term.startsWith("sensitive:") && term !== "no_gabon_signal");
+  return {
+    score: Math.max(0, Math.min(1, decision.score / 100)),
+    isRelevant: decision.routing.primary_target !== "QUARANTINE",
+    matchedKeywords,
+    reason: decision.routing.primary_target === "QUARANTINE" ? "no_gabon_link" : (OFFICIAL_SOURCE_TYPES.includes(input.sourceType) ? "official_gabon_source" : "keyword_match"),
+  };
 }

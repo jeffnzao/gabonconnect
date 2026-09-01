@@ -12,12 +12,31 @@ import { extractEvent } from "@/lib/aggregation/event-extractor";
 import { isDuplicateEvent } from "@/lib/aggregation/deduplicator";
 import { extractOpportunity } from "@/lib/aggregation/opportunity-extractor";
 import { isDuplicateOpportunity } from "@/lib/aggregation/deduplicator";
-import { computeGabonRelevance } from "@/lib/aggregation/gabon-relevance";
+import { evaluateGabonRelevance } from "@/lib/relevance/gabon-relevance-engine";
+import type { GabonRelevanceDecision, RelevanceContentDomain } from "@/lib/relevance/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 const SYSTEM_AGGREGATION_USER_ID = "system-aggregation";
 const SYSTEM_AGGREGATION_USER_EMAIL = "aggregation-system@gabonconnect.internal";
+
+function routingState(decision: GabonRelevanceDecision) {
+  if (decision.routing.primary_target === "AUTO_PUBLISH") {
+    return { moderationStatus: ContentModerationStatus.APPROVED, publishedAt: new Date() };
+  }
+  if (decision.routing.primary_target === "HUMAN_REVIEW") {
+    return { moderationStatus: ContentModerationStatus.PENDING, publishedAt: null };
+  }
+  return { moderationStatus: ContentModerationStatus.REJECTED, publishedAt: null };
+}
+
+function articleStatusFor(decision: GabonRelevanceDecision): ArticleStatus {
+  return decision.routing.primary_target === "AUTO_PUBLISH" ? ArticleStatus.PUBLISHED : ArticleStatus.DRAFT;
+}
+
+function statusFor(decision: GabonRelevanceDecision) {
+  return decision.routing.primary_target === "AUTO_PUBLISH" ? "PUBLISHED" : "DRAFT";
+}
 
 // Used by the cron endpoint (Bearer secret already verified) and by the internal
 // CLI ingestion script, neither of which carries a Supabase session cookie.
@@ -48,6 +67,8 @@ export async function runAggregationPipeline(options?: { bypassSessionAuth?: boo
   let eventsCreated = 0;
   let opportunitiesCreated = 0;
   let rejectedByRelevance = 0;
+  let autoPublishedByRelevance = 0;
+  let queuedForHumanReview = 0;
 
   for (const result of sources) {
     if (result.error) {
@@ -57,14 +78,19 @@ export async function runAggregationPipeline(options?: { bypassSessionAuth?: boo
     const items = normalizeFeedItems(result.items, result.source);
     fetched += items.length;
     for (const item of items) {
-      const relevance = computeGabonRelevance({
+      const domain: RelevanceContentDomain = extractEvent(item) ? "events" : extractOpportunity(item) ? "opportunities" : "articles";
+      const decision = evaluateGabonRelevance({
+        contentId: item.externalId,
+        domain,
         title: item.title,
         excerpt: item.excerpt,
+        content: item.excerpt,
         sourceType: result.source.type,
         sourceName: result.source.name,
+        canonicalUrl: item.canonicalUrl,
       });
-      const moderationStatus = relevance.isRelevant ? ContentModerationStatus.PENDING : ContentModerationStatus.REJECTED;
-      if (!relevance.isRelevant) rejectedByRelevance += 1;
+      const relevanceState = routingState(decision);
+      const relevanceDecision = JSON.parse(JSON.stringify(decision));
       const event = extractEvent(item);
       if (event) {
         if (await isDuplicateEvent(event)) continue;
@@ -81,13 +107,17 @@ export async function runAggregationPipeline(options?: { bypassSessionAuth?: boo
             registrationUrl: event.registrationUrl,
             organizerType: "USER",
             createdById: admin.id,
-            status: "DRAFT",
-            moderationStatus,
+            status: statusFor(decision),
+            ...relevanceState,
+            relevanceDecision,
             canonicalUrl: event.canonicalUrl,
             sourceName: event.sourceName,
             copyrightFlag: true,
           },
         });
+        if (decision.routing.primary_target === "AUTO_PUBLISH") autoPublishedByRelevance += 1;
+        else if (decision.routing.primary_target === "HUMAN_REVIEW") queuedForHumanReview += 1;
+        else rejectedByRelevance += 1;
         eventsCreated += 1;
         continue;
       }
@@ -98,10 +128,13 @@ export async function runAggregationPipeline(options?: { bypassSessionAuth?: boo
           continue;
         }
         if (opportunity.scholarshipLevel) {
-          await prisma.scholarship.create({ data: { title: opportunity.title, provider: opportunity.sourceName, country: "GA", level: opportunity.scholarshipLevel, description: opportunity.description, eligibilityCriteria: "See the official announcement.", deadline: opportunity.deadline ?? new Date(Date.now() + 86400000 * 30), applicationUrl: opportunity.applicationUrl, moderationStatus, canonicalUrl: opportunity.canonicalUrl, sourceName: opportunity.sourceName, copyrightFlag: true } });
+          await prisma.scholarship.create({ data: { title: opportunity.title, provider: opportunity.sourceName, country: "GA", level: opportunity.scholarshipLevel, description: opportunity.description, eligibilityCriteria: "See the official announcement.", deadline: opportunity.deadline ?? new Date(Date.now() + 86400000 * 30), applicationUrl: opportunity.applicationUrl, ...relevanceState, relevanceDecision, canonicalUrl: opportunity.canonicalUrl, sourceName: opportunity.sourceName, copyrightFlag: true } });
         } else {
-          await prisma.opportunity.create({ data: { title: opportunity.title, slug: `${item.externalId.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase().slice(0, 120) || "aggregated-opportunity"}-${Date.now()}`, description: opportunity.description, type: opportunity.type, location: opportunity.location, applicationUrl: opportunity.applicationUrl, createdById: admin.id, status: "DRAFT", moderationStatus, canonicalUrl: opportunity.canonicalUrl, sourceName: opportunity.sourceName, copyrightFlag: true } });
+          await prisma.opportunity.create({ data: { title: opportunity.title, slug: `${item.externalId.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase().slice(0, 120) || "aggregated-opportunity"}-${Date.now()}`, description: opportunity.description, type: opportunity.type, location: opportunity.location, applicationUrl: opportunity.applicationUrl, createdById: admin.id, status: statusFor(decision), ...relevanceState, relevanceDecision, canonicalUrl: opportunity.canonicalUrl, sourceName: opportunity.sourceName, copyrightFlag: true } });
         }
+        if (decision.routing.primary_target === "AUTO_PUBLISH") autoPublishedByRelevance += 1;
+        else if (decision.routing.primary_target === "HUMAN_REVIEW") queuedForHumanReview += 1;
+        else rejectedByRelevance += 1;
         opportunitiesCreated += 1;
         continue;
       }
@@ -119,19 +152,23 @@ export async function runAggregationPipeline(options?: { bypassSessionAuth?: boo
           content: item.excerpt,
           imageUrl: item.imageUrl,
           category: classifyArticle(item.title, item.excerpt),
-          status: ArticleStatus.DRAFT,
-          moderationStatus,
+          status: articleStatusFor(decision),
+          ...relevanceState,
+          relevanceDecision,
           canonicalUrl: item.canonicalUrl,
           sourceName: item.sourceName,
           copyrightFlag: true,
           publishedAt: null,
         },
       });
+      if (decision.routing.primary_target === "AUTO_PUBLISH") autoPublishedByRelevance += 1;
+      else if (decision.routing.primary_target === "HUMAN_REVIEW") queuedForHumanReview += 1;
+      else rejectedByRelevance += 1;
       created += 1;
     }
   }
 
-  return { sources: sources.length, fetched, created, eventsCreated, opportunitiesCreated, duplicates, failed, rejectedByRelevance };
+  return { sources: sources.length, fetched, created, eventsCreated, opportunitiesCreated, duplicates, failed, rejectedByRelevance, autoPublishedByRelevance, queuedForHumanReview };
 }
 
 export async function runAggregationFromForm(): Promise<void> {

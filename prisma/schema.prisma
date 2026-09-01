@@ -608,6 +608,7 @@ model Article {
   canonicalUrl String?
   sourceName String?
   copyrightFlag Boolean @default(false)
+  relevanceDecision Json?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -843,6 +844,7 @@ model AdministrativeProcedure {
   canonicalUrl  String?
   sourceName    String?
   copyrightFlag Boolean                        @default(false)
+  relevanceDecision Json?
 
   @@index([category])
   @@map("administrative_procedures")
@@ -893,6 +895,7 @@ model Scholarship {
   canonicalUrl       String?
   sourceName         String?
   copyrightFlag      Boolean          @default(false)
+  relevanceDecision  Json?
 
   @@index([country, level, deadline])
   @@index([provider, deadline])
@@ -942,6 +945,7 @@ model Event {
   canonicalUrl    String?
   sourceName      String?
   copyrightFlag   Boolean             @default(false)
+  relevanceDecision Json?
   registrationUrl String?
 
   participants EventParticipant[]
@@ -991,6 +995,7 @@ model Opportunity {
   canonicalUrl   String?
   sourceName     String?
   copyrightFlag  Boolean           @default(false)
+  relevanceDecision Json?
 
   applications OpportunityApplication[]
   savedBy       SavedOpportunity[]
