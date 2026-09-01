@@ -47,7 +47,7 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           onClick={() => setIsMenuOpen(false)}
         >
             <Image
-              src="/gabonconnect360.svg"
+              src="/gabonconnect360.svg.png"
               alt="GabonConnect 360"
               width={160}
               height={40}

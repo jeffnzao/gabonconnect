@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMessages } from "@/components/i18n-provider";
 import Image from "next/image";
-import gabonConnectLogo from "@/app/gabonconnect360.svg";
+import gabonConnectLogo from "@/app/gabonconnect360.svg.png";
 
 interface ConversationThreadProps {
   conversationId: string;
