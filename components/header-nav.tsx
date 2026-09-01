@@ -10,7 +10,8 @@ import LanguageSwitcher from "@/components/language-switcher";
 import NotificationCenter from "@/components/notifications/notification-center";
 import GlobalSearch from "@/components/global-search";
 import type { Locale, Messages } from "@/lib/i18n";
-import gabonConnectLogo from "@/app/gabonconnect360.svg";
+
+//import gabonConnectLogo from "@/app/gabonconnect360.svg";
 
 export interface HeaderNavLink {
   label: string;
@@ -45,8 +46,17 @@ export default function HeaderNav({ isAuthenticated, navLinks, locale, labels }:
           className="flex items-center gap-2 text-slate-900"
           onClick={() => setIsMenuOpen(false)}
         >
-          <Image src={gabonConnectLogo} alt="" width={28} height={28} className="h-7 w-7" priority />
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/gabonconnect360.svg"
+              alt="GabonConnect 360"
+              width={160}
+              height={40}
+              priority
+            />
+          </Link>
           <span className="text-sm font-semibold">GabonConnect</span>
+          
         </Link>
 
         <GlobalSearch />
