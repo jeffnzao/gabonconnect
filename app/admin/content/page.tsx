@@ -5,11 +5,12 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { listContentItems, moderateContent } from "@/lib/actions/content";
 import { contentDomains, type ContentAction, type ContentDomain } from "@/lib/content-types";
 import { ContentModerationStatus } from "@/app/generated/prisma";
+import { EditorialModerationConsole } from "@/components/admin/editorial-moderation-console";
 
 export const dynamic = "force-dynamic";
 type Props = { searchParams: Promise<{ domain?: string; status?: string; q?: string; page?: string }> };
 
-export default async function ContentAdminPage({ searchParams }: Props) {
+export async function LegacyContentAdminPage({ searchParams }: Props) {
   const user = await getCurrentUser();
   if (!user) redirect("/login?redirectTo=/admin/content");
   const messages = getMessages(await getLocale());
@@ -26,3 +27,9 @@ export default async function ContentAdminPage({ searchParams }: Props) {
 }
 
 function ActionForm({ domain, id, action, label }: { domain: ContentDomain; id: string; action: ContentAction; label: string }) { return <form action={moderateContent.bind(null, domain, id, action)}><button type="submit" className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-700">{label}</button></form>; }
+
+export default async function ContentAdminPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const status = Object.values(ContentModerationStatus).includes(params.status as ContentModerationStatus) ? params.status as ContentModerationStatus : undefined;
+  return <EditorialModerationConsole status={status} query={params.q} />;
+}
