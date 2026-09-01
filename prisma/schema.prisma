@@ -155,6 +155,27 @@ enum CommunityFeedbackStatus {
   ARCHIVED
 }
 
+enum HistoricalScope {
+  GABON_INTERIOR
+  DIASPORA
+  BOTH
+}
+
+enum HistoricalStatus {
+  FACT
+  OFFICIAL_POSITION
+  ACADEMIC_ANALYSIS
+  TESTIMONY
+  CONTROVERSIAL
+}
+
+enum SourceLevel {
+  LEVEL_A
+  LEVEL_B
+  LEVEL_C
+  LEVEL_D
+}
+
 model Continent {
   id   String @id @default(uuid())
   name String
@@ -823,6 +844,79 @@ model CommunityFeedbackVote {
   @@unique([feedbackId, userId])
   @@index([feedbackId])
   @@map("community_feedback_votes")
+}
+
+model HistoricalEvent {
+  id                String           @id @default(cuid())
+  title             String
+  period            String
+  exactDate         DateTime?
+  description       String           @db.Text
+  historicalStatus  HistoricalStatus
+  sourceLevel       SourceLevel
+  scope             HistoricalScope
+  relevanceDecision Json?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([scope, exactDate])
+  @@index([historicalStatus, sourceLevel])
+  @@map("historical_events")
+}
+
+model HistoricalFigure {
+  id                String           @id @default(cuid())
+  fullName          String
+  category          String
+  biography         String           @db.Text
+  mainImpact        String           @db.Text
+  historicalStatus  HistoricalStatus
+  sourceLevel       SourceLevel
+  scope             HistoricalScope
+  relevanceDecision Json?
+  diasporaImpacts   DiasporaImpact[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([scope, category])
+  @@index([historicalStatus, sourceLevel])
+  @@map("historical_figures")
+}
+
+model HistoricalArchive {
+  id                String      @id @default(cuid())
+  title             String
+  actDate           DateTime?
+  legalNature       String
+  sourceLevel       SourceLevel
+  documentUrl       String?
+  relevanceDecision Json?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([actDate])
+  @@index([sourceLevel])
+  @@map("historical_archives")
+}
+
+model DiasporaImpact {
+  id                String            @id @default(cuid())
+  figureId          String?
+  figure            HistoricalFigure? @relation(fields: [figureId], references: [id], onDelete: Cascade)
+  country           String
+  city              String?
+  period            String
+  domain            String
+  contribution      String            @db.Text
+  sourceLevel       SourceLevel
+  relevanceDecision Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([figureId])
+  @@index([country, city])
+  @@index([domain])
+  @@map("diaspora_impacts")
 }
 
 model AdministrativeProcedure {
