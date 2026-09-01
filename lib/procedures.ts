@@ -7,6 +7,9 @@ export const procedureCategories = Object.values(AdministrativeProcedureCategory
 export const getProcedures = cache(async (filters: { query?: string; category?: AdministrativeProcedureCategory } = {}) => {
   const query = filters.query?.trim();
   const where: Prisma.AdministrativeProcedureWhereInput = {
+    moderationStatus: "APPROVED",
+    publishedAt: { not: null },
+    archivedAt: null,
     ...(filters.category ? { category: filters.category } : {}),
     ...(query ? { OR: [{ title: { contains: query, mode: "insensitive" } }, { description: { contains: query, mode: "insensitive" } }] } : {}),
   };
@@ -20,7 +23,7 @@ export const getProcedures = cache(async (filters: { query?: string; category?: 
 
 export const getProcedureBySlug = cache(async (slug: string, userId?: string) => {
   const procedure = await prisma.administrativeProcedure.findUnique({
-    where: { slug },
+    where: { slug, moderationStatus: "APPROVED", publishedAt: { not: null }, archivedAt: null },
     include: { steps: { orderBy: { order: "asc" } } },
   });
   if (!procedure) return null;

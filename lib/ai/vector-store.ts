@@ -169,9 +169,10 @@ async function loadIndexableContent(sourceType: EmbeddingSourceType, sourceId: s
     return { title: row.title, excerpt: row.description, sourceName: row.sourceName, canonicalUrl: row.canonicalUrl, locale: "fr", isApproved: row.moderationStatus === "APPROVED" && row.publishedAt !== null };
   }
   if (sourceType === EmbeddingSourceType.ADMINISTRATIVE_PROCEDURE) {
-    const row = await prisma.administrativeProcedure.findUnique({ where: { id: sourceId }, select: { title: true, description: true, sourceName: true, canonicalUrl: true, moderationStatus: true, publishedAt: true } });
+    const row = await prisma.administrativeProcedure.findUnique({ where: { id: sourceId }, select: { title: true, description: true, targetAudience: true, conditions: true, requiredDocuments: true, competentAuthority: true, verifiedAt: true, sourceName: true, canonicalUrl: true, moderationStatus: true, publishedAt: true, archivedAt: true } });
     if (!row) return null;
-    return { title: row.title, excerpt: row.description, sourceName: row.sourceName, canonicalUrl: row.canonicalUrl, locale: "fr", isApproved: row.moderationStatus === "APPROVED" && row.publishedAt !== null };
+    const details = [row.description, row.targetAudience && `Public cible : ${row.targetAudience}`, row.conditions && `Conditions : ${row.conditions}`, row.requiredDocuments.length && `Pieces a fournir : ${row.requiredDocuments.join(", ")}`, row.competentAuthority && `Organisme competent : ${row.competentAuthority}`, row.verifiedAt && `Date de verification : ${row.verifiedAt.toLocaleDateString("fr-FR")}`].filter(Boolean).join("\n\n");
+    return { title: row.title, excerpt: row.description, content: details, sourceName: row.sourceName, canonicalUrl: row.canonicalUrl, locale: "fr", isApproved: row.moderationStatus === "APPROVED" && row.publishedAt !== null && row.archivedAt === null };
   }
   if (sourceType === EmbeddingSourceType.HISTORICAL_EVENT) {
     const row = await prisma.historicalEvent.findUnique({ where: { id: sourceId }, select: { title: true, period: true, description: true, sourceLevel: true, relevanceDecision: true } });

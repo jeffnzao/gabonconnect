@@ -92,6 +92,11 @@ enum AdministrativeProcedureCategory {
   RETURN
 }
 
+enum ProcedureContentType {
+  OFFICIAL_DOCUMENTED
+  GABONCONNECT_EXPLANATORY
+}
+
 enum UserProcedureStatus {
   NOT_STARTED
   IN_PROGRESS
@@ -657,6 +662,11 @@ model Article {
   sourceName String?
   copyrightFlag Boolean @default(false)
   relevanceDecision Json?
+  relevanceScore Float?
+  relevanceLevel String?
+  sourceLevel SourceLevel?
+  reviewReason String?
+  reviewedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -664,6 +674,8 @@ model Article {
   @@index([category, publishedAt])
   @@index([authorId])
   @@index([moderationStatus, publishedAt])
+  @@index([moderationStatus, reviewedAt])
+  @@index([relevanceLevel])
   @@index([contentHash])
   @@map("articles")
 }
@@ -956,6 +968,12 @@ model AdministrativeProcedure {
   estimatedDays Int
   cost          String
   officialUrl   String
+  contentType   ProcedureContentType @default(GABONCONNECT_EXPLANATORY)
+  targetAudience String?
+  conditions    String?
+  requiredDocuments String[] @default([])
+  competentAuthority String?
+  verifiedAt    DateTime?
   steps         ProcedureStep[]
   progress      UserProcedureProgress[]
   createdAt     DateTime                       @default(now())
@@ -969,6 +987,7 @@ model AdministrativeProcedure {
   relevanceDecision Json?
 
   @@index([category])
+  @@index([contentType, verifiedAt])
   @@map("administrative_procedures")
 }
 

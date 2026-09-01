@@ -11,7 +11,7 @@ async function main() {
     prisma.event.findMany({ where: { status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
     prisma.opportunity.findMany({ where: { status: "PUBLISHED", moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
     prisma.scholarship.findMany({ where: { moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
-    prisma.administrativeProcedure.findMany({ where: { moderationStatus: "APPROVED", publishedAt: { not: null } }, select: { id: true } }),
+    prisma.administrativeProcedure.findMany({ select: { id: true } }),
     prisma.historicalEvent.findMany({ select: { id: true } }),
     prisma.historicalFigure.findMany({ select: { id: true } }),
     prisma.historicalArchive.findMany({ select: { id: true } }),

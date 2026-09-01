@@ -8,7 +8,7 @@ import { EmbeddingSourceType } from "@/app/generated/prisma";
 import { searchSimilarContent, type SimilarContentMatch } from "@/lib/ai/vector-store";
 
 const CHAT_MODEL = process.env.RAG_CHAT_MODEL ?? "gpt-4o-mini";
-const MAX_CONTEXT_MATCHES = 5;
+const MAX_CONTEXT_MATCHES = 8;
 const UNIFIED_ASSISTANT_SOURCE_TYPES = [EmbeddingSourceType.ARTICLE, EmbeddingSourceType.EVENT, EmbeddingSourceType.OPPORTUNITY, EmbeddingSourceType.ADMINISTRATIVE_PROCEDURE, EmbeddingSourceType.SCHOLARSHIP, EmbeddingSourceType.HISTORICAL_EVENT, EmbeddingSourceType.HISTORICAL_FIGURE, EmbeddingSourceType.HISTORICAL_ARCHIVE, EmbeddingSourceType.DIASPORA_IMPACT];
 
 export interface AssistantSource {
