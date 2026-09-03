@@ -12,7 +12,7 @@ import { LOCATION_SELECT, type MemberListItem } from "@/lib/members";
 import { updateProfileAction } from "./actions";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { PreferencesForm } from "@/components/profile/preferences-form";
-
+import AvatarUpload from "@/components/profile/avatar-upload";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
     validation: messages.auth.checkForm,
     save_failed: messages.status.error,
   };
-  // Route protégée : pas de session Supabase → connexion.
+
   const user = await getCurrentUser();
 
   if (!user) {
@@ -60,14 +60,18 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
     },
   });
 
-  // Compte authentifié, mais pas encore de profil (inscription interrompue
-  // en cours de route) : on l'envoie finir /join/profile plutôt que de
-  // montrer une page vide.
   if (!profile) {
     redirect("/join/profile");
   }
 
-  const preferenceLocations = await prisma.country.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, cities: { orderBy: { name: "asc" }, select: { id: true, name: true } } } });
+  const preferenceLocations = await prisma.country.findMany({
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      cities: { orderBy: { name: "asc" }, select: { id: true, name: true } },
+    },
+  });
 
   const sp = await searchParams;
   const errorCode = first(sp.error);
@@ -76,9 +80,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
   const fullName = `${profile.firstName} ${profile.lastName}`;
   const isPublic = profile.visibility === ProfileVisibility.PUBLIC;
 
-  // Réutilise le composant existant de l'annuaire pour "How others see
-  // you" — MemberCard attend exactement la forme MemberListItem, donc
-  // aucune duplication de composant n'est nécessaire ici.
+  // Réactivation de la variable previewMember demandée par MemberCard
   const previewMember: MemberListItem = {
     id: profile.id,
     firstName: profile.firstName,
@@ -96,18 +98,12 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
           <Breadcrumb items={[{ label: messages.common.home, href: "/" }, { label: messages.profile.title }]} />
 
           <div className="mt-6 flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
-            {profile.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={profile.photo}
-                alt={fullName}
-                className="h-20 w-20 shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-xl font-semibold text-emerald-600">
-                {initialsOf(profile.firstName, profile.lastName)}
-              </span>
-            )}
+            {/* Composant interactif d'upload d'avatar branché ici */}
+            <AvatarUpload
+              userId={user.id}
+              currentPhoto={profile.photo}
+              initials={initialsOf(profile.firstName, profile.lastName)}
+            />
 
             <div className="flex-1">
               <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
@@ -365,6 +361,7 @@ export default async function MyProfilePage({ searchParams }: MyProfilePageProps
               </button>
             </form>
           </section>
+
           <PreferencesForm locations={preferenceLocations} />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6">

@@ -3,14 +3,88 @@
 // (statut, ville/pays, centres d'interet) et attribue toujours la source d'origine.
 // Module server-only (Prisma) : ne pas importer depuis un composant client.
 
-import type { MemberStatus } from "@/app/generated/prisma";
+//import type { MemberStatus } from "@/app/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { createNotificationForUser } from "@/lib/services/notification-service";
+import type { MemberStatus } from "@/app/generated/prisma";
+//import { NotificationType } from "@prisma/client";
+//import { NotificationType, type MemberStatus } from "@/app/generated/prisma/client";
 
-import { prisma } from "@/lib/prisma";
-import { NotificationType } from "@prisma/client";
 
+// Type explicite pour éviter l'erreur d'import sur le client Prisma
+export type NotificationType =
+  | "NEW_PUBLICATION"
+  | "NEW_MESSAGE"
+  | "CONNECTION_REQUEST";
+
+export interface CreateNotificationParams {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+}
+
+/**
+  Créer une notification pour un utilisateur spécifique
+ */
 export async function createNotification({
+  userId,
+  type,
+  title,
+  message,
+  link,
+}: CreateNotificationParams) {
+  try {
+    return await prisma.notification.create({
+      data: {
+        userId,
+        type: type as any,
+        title,
+        message,
+        link,
+      },
+    });
+  } catch (error) {
+    console.error("Erreur lors de la création de la notification:", error);
+    throw error;
+  }
+}
+
+/**
+  Notifier tous les utilisateurs lors d'une nouvelle publication
+ */
+export async function notifyAllUsersAboutPublication(
+  pubTitle: string,
+  pubLink: string,
+  authorId: string
+) {
+  try {
+    const users = await prisma.user.findMany({
+      where: { id: { not: authorId } },
+      select: { id: true },
+    });
+
+    const notifications = users.map((u) => ({
+      userId: u.id,
+      type: "NEW_PUBLICATION" as any,
+      title: "Nouvelle publication",
+      message: `Un nouveau contenu a été publié : "${pubTitle}"`,
+      link: pubLink,
+    }));
+
+    if (notifications.length > 0) {
+      await prisma.notification.createMany({
+        data: notifications,
+      });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la diffusion des notifications:", error);
+  }
+}
+
+
+/* export async function createNotification({
   userId,
   type,
   title,
@@ -44,7 +118,7 @@ export async function notifyAllUsersAboutPublication(pubTitle: string, pubLink: 
   }));
 
   await prisma.notification.createMany({ data: notifications });
-}
+}*/
 
 export type NotifiableContentType = "articles" | "events" | "opportunities";
 

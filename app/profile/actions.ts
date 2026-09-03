@@ -12,6 +12,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { ensureUser } from "@/lib/auth";
 import { ProfileVisibility } from "@/app/generated/prisma";
+import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 function emptyToUndefined(value: FormDataEntryValue | null): string | undefined {
   const str = String(value ?? "").trim();
@@ -27,6 +29,24 @@ const updateSchema = z.object({
     message: "Please choose a visibility.",
   }),
 });
+
+export async function updateAvatarAction(photoUrl: string) {
+  const user = await getCurrentUser();
+  if (!user) return { success: false, error: "Non autorisé" };
+
+  try {
+    await prisma.profile.update({
+      where: { userId: user.id },
+      data: { photo: photoUrl },
+    });
+
+    revalidatePath("/profile");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur mise à jour photo:", error);
+    return { success: false, error: "Échec de la sauvegarde" };
+  }
+}
 
 export async function updateProfileAction(formData: FormData) {
   // Utilisateur exclusivement dérivé de la session serveur — jamais d'un
