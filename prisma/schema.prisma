@@ -56,6 +56,9 @@ enum NotificationType {
   CAMPUS
   SYSTEM
   MESSAGE
+  NEW_PUBLICATION
+  NEW_MESSAGE
+  CONNECTION_REQUEST
 }
 
 enum AssociationCategory {
@@ -245,6 +248,8 @@ model City {
 model User {
   id    String @id
   email String @unique
+  name  String?
+  image String? // URL de la photo de profil
   role  Role   @default(USER)
 
   profile Profile?
