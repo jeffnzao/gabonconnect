@@ -26,6 +26,9 @@ const icons = {
   CAMPUS: GraduationCap,
   SYSTEM: Info,
   MESSAGE: MessageSquare,
+  NEW_PUBLICATION: BookOpen,
+  NEW_MESSAGE: MessageSquare,
+  CONNECTION_REQUEST: Bell,
 } satisfies Record<NotificationType, typeof Bell>;
 
 function typeLabel(labels: NotificationLabels, type: NotificationType) {
