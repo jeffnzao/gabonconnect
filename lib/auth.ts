@@ -1,7 +1,7 @@
 import type { CookieMethodsServer } from "@supabase/ssr";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { prisma } from "./prisma";
-import { createServerSupabaseClient } from "./supabase";
+import { createServerSupabaseClient, isSupabaseConfigured } from "./supabase";
 
 export type SupabaseUser = User;
 
@@ -11,6 +11,8 @@ export async function getCurrentUser(
     supabaseClient?: SupabaseClient;
   }
 ): Promise<SupabaseUser | null> {
+  if (!isSupabaseConfigured()) return null;
+
   const client =
     options?.supabaseClient ??
     createServerSupabaseClient(options?.cookieMethods);
