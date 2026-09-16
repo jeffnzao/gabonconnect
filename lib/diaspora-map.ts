@@ -14,12 +14,8 @@ export interface DiasporaMapMarker {
 }
 
 export const getDiasporaMapMarkers = cache(async (): Promise<DiasporaMapMarker[]> => {
-  let profiles: Awaited<ReturnType<typeof prisma.profile.findMany>> = [];
-  let associations: Awaited<ReturnType<typeof prisma.association.findMany>> = [];
-  let events: Awaited<ReturnType<typeof prisma.event.findMany>> = [];
-
   try {
-    [profiles, associations, events] = await Promise.all([
+    const [profiles, associations, events] = await Promise.all([
       prisma.profile.findMany({
         where: { visibility: ProfileVisibility.PUBLIC, city: { isNot: null } },
         select: { id: true, firstName: true, lastName: true, city: { select: { name: true, latitude: true, longitude: true, country: { select: { name: true } } } } },
@@ -36,13 +32,13 @@ export const getDiasporaMapMarkers = cache(async (): Promise<DiasporaMapMarker[]
         take: 200,
       }),
     ]);
+
+    return [
+      ...profiles.filter((item) => item.city).map((item) => ({ id: item.id, kind: "member" as const, name: `${item.firstName} ${item.lastName}`, city: item.city!.name, country: item.city!.country.name, latitude: item.city!.latitude, longitude: item.city!.longitude, href: `/members/${item.id}` })),
+      ...associations.filter((item) => item.city).map((item) => ({ id: item.id, kind: "association" as const, name: item.name, city: item.city!.name, country: item.city!.country.name, latitude: item.city!.latitude, longitude: item.city!.longitude, href: `/associations/${item.slug}` })),
+      ...events.filter((item) => item.association?.city).map((item) => ({ id: item.id, kind: "event" as const, name: item.title, city: item.association!.city!.name, country: item.association!.city!.country.name, latitude: item.association!.city!.latitude, longitude: item.association!.city!.longitude, href: `/events/${item.slug}` })),
+    ];
   } catch {
     return [];
   }
-
-  return [
-    ...profiles.filter((item) => item.city).map((item) => ({ id: item.id, kind: "member" as const, name: `${item.firstName} ${item.lastName}`, city: item.city!.name, country: item.city!.country.name, latitude: item.city!.latitude, longitude: item.city!.longitude, href: `/members/${item.id}` })),
-    ...associations.filter((item) => item.city).map((item) => ({ id: item.id, kind: "association" as const, name: item.name, city: item.city!.name, country: item.city!.country.name, latitude: item.city!.latitude, longitude: item.city!.longitude, href: `/associations/${item.slug}` })),
-    ...events.filter((item) => item.association?.city).map((item) => ({ id: item.id, kind: "event" as const, name: item.title, city: item.association!.city!.name, country: item.association!.city!.country.name, latitude: item.association!.city!.latitude, longitude: item.association!.city!.longitude, href: `/events/${item.slug}` })),
-  ];
 });
