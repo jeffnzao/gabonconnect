@@ -35,11 +35,11 @@ export async function getEditorialModerationDashboard(filters: { moderationStatu
   const rows = await prisma.article.findMany({
     where: { ...(filters.moderationStatus ? { moderationStatus: filters.moderationStatus } : {}), ...(query ? { OR: [{ title: { contains: query, mode: "insensitive" } }, { summary: { contains: query, mode: "insensitive" } }] } : {}) },
     orderBy: { createdAt: "desc" }, take: 100,
-    select: { id: true, title: true, summary: true, sourceName: true, canonicalUrl: true, moderationStatus: true, relevanceDecision: true },
+    select: { id: true, title: true, summary: true, sourceName: true, sourceLevel: true, canonicalUrl: true, moderationStatus: true, relevanceDecision: true, relevanceScore: true, relevanceLevel: true, reviewReason: true },
   });
   return rows.map((row) => {
     const decision = isGreDecision(row.relevanceDecision) ? row.relevanceDecision : null;
-    return { ...row, gre: decision ? { score: decision.score, level: decision.level, reviewReason: decision.flags.requires_human_review ? "Signal sensible ou score necessitant une validation editoriale." : decision.routing.primary_target === "HUMAN_REVIEW" ? "Le routage GRE requiert une validation editoriale." : null } : null };
+    return { ...row, gre: { score: row.relevanceScore ?? decision?.score ?? 0, level: row.relevanceLevel ?? decision?.level ?? "L5_HORS_PERIMETRE", reviewReason: row.reviewReason ?? (decision?.flags.requires_human_review ? "Signal sensible ou score nécessitant une validation éditoriale." : decision?.routing.primary_target === "HUMAN_REVIEW" ? "Le routage GRE nécessite une validation éditoriale." : null) } };
   });
 }
 
@@ -54,7 +54,7 @@ export async function moderateArticle(id: string, action: ArticleModerationActio
     : decision === "reject"
       ? { status: ArticleStatus.DRAFT, moderationStatus: ContentModerationStatus.REJECTED, publishedAt: null }
       : { status: ArticleStatus.DRAFT, moderationStatus: ContentModerationStatus.PENDING, publishedAt: null };
-  await prisma.article.update({ where: { id: article.id }, data });
+  await prisma.article.update({ where: { id: article.id }, data: { ...data, reviewedAt: new Date(), reviewReason: decision === "approve" ? null : decision === "reject" ? "Rejeté depuis la file de modération." : "Modifications demandées par la modération." } });
   revalidatePath("/admin/content");
   revalidatePath("/admin/sources");
 }

@@ -67,7 +67,9 @@ export function evaluateGabonRelevance(input: GabonRelevanceInput): GabonRelevan
   if (!hasPositiveSignal) addScore(breakdown, "unrelated", RELEVANCE_WEIGHTS.unrelated, ["no_gabon_signal"]);
   if (spamTerms.length > 0) addScore(breakdown, "spam_off_topic", RELEVANCE_WEIGHTS.spam_off_topic, spamTerms);
 
-  const score = breakdown.reduce((total, entry) => total + entry.points, 0);
+  const rawScore = breakdown.reduce((total, entry) => total + entry.points, 0);
+  // Keep the public contract stable: relevance is always expressed on a 0–100 scale.
+  const score = Math.max(0, Math.min(100, rawScore));
   const signals = new Set(breakdown.map((entry) => entry.signal));
   const level = determineLevel(signals);
   const isSensitive = sensitiveTerms.length > 0;

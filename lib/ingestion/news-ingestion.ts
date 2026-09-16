@@ -52,8 +52,15 @@ async function isDuplicate(item: NormalizedFeedItem, contentHash: string): Promi
   }));
 }
 
-function routingState(target: "AUTO_PUBLISH" | "HUMAN_REVIEW" | "QUARANTINE") {
-  if (target === "AUTO_PUBLISH") return { status: ArticleStatus.PUBLISHED, moderationStatus: ContentModerationStatus.APPROVED, publishedAt: new Date() };
+function sourceLevel(type: SourceRegistryType) {
+  if (type === "GOVERNMENT" || type === "DIPLOMATIC") return "LEVEL_A" as const;
+  if (type === "UNIVERSITY" || type === "MEDIA") return "LEVEL_B" as const;
+  if (type === "DIASPORA") return "LEVEL_C" as const;
+  return "LEVEL_D" as const;
+}
+
+function routingState(target: "AUTO_PUBLISH" | "HUMAN_REVIEW" | "QUARANTINE", publishedAt: Date) {
+  if (target === "AUTO_PUBLISH") return { status: ArticleStatus.PUBLISHED, moderationStatus: ContentModerationStatus.APPROVED, publishedAt };
   if (target === "HUMAN_REVIEW") return { status: ArticleStatus.DRAFT, moderationStatus: ContentModerationStatus.PENDING, publishedAt: null };
   return { status: ArticleStatus.DRAFT, moderationStatus: ContentModerationStatus.REJECTED, publishedAt: null };
 }
@@ -72,8 +79,8 @@ export async function ingestNormalizedNewsItem(item: NormalizedFeedItem, source:
     sourceName: source.name,
     canonicalUrl: item.canonicalUrl,
   });
-  const relevanceDecision = JSON.parse(JSON.stringify({ ...decision, content_hash: contentHash }));
-  const state = routingState(decision.routing.primary_target);
+  const relevanceDecision = JSON.parse(JSON.stringify({ ...decision, content_hash: contentHash, source: { name: source.name, url: source.url, type: source.type, published_at: item.publishedAt.toISOString(), level: sourceLevel(source.type) } }));
+  const state = routingState(decision.routing.primary_target, item.publishedAt);
   const slugBase = item.externalId.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase().slice(0, 110) || "ingested-news";
 
   await prisma.article.create({
@@ -88,8 +95,12 @@ export async function ingestNormalizedNewsItem(item: NormalizedFeedItem, source:
       canonicalUrl: item.canonicalUrl,
       contentHash,
       sourceName: source.name,
+      sourceLevel: sourceLevel(source.type),
       copyrightFlag: true,
       relevanceDecision,
+      relevanceScore: decision.score,
+      relevanceLevel: decision.level,
+      reviewReason: decision.flags.requires_human_review ? "Signal sensible ou score nécessitant une validation éditoriale." : decision.routing.primary_target === "HUMAN_REVIEW" ? "Le routage GRE nécessite une validation éditoriale." : null,
       ...state,
     },
   });
