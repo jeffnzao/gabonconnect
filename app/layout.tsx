@@ -59,6 +59,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning={true}
     >
       <body className="min-h-full flex flex-col">
         <I18nProvider locale={locale} messages={getMessages(locale)}>
