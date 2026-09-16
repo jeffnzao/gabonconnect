@@ -2,21 +2,36 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-function getSupabaseUrl(): string {
-  const value = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!value) throw new Error("NEXT_PUBLIC_SUPABASE_URL must be defined in the environment.");
-  return value;
-}
+function getSupabaseConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-function getSupabaseAnonKey(): string {
-  const value = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!value) throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY must be defined in the environment.");
-  return value;
+  return url && key ? { url, key } : null;
 }
 
 export async function proxy(request: NextRequest) {
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  if (process.env.NODE_ENV === "production" && forwardedProto === "http") {
+    const secureUrl = request.nextUrl.clone();
+    secureUrl.protocol = "https:";
+    return NextResponse.redirect(secureUrl, 308);
+  }
+
   let response = NextResponse.next({ request });
-  const supabase = createServerClient(getSupabaseUrl(), getSupabaseAnonKey(), {
+  const config = getSupabaseConfig();
+  const securityHeaders = {
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+  };
+
+  Object.entries(securityHeaders).forEach(([name, value]) => response.headers.set(name, value));
+
+  if (!config) return response;
+
+  const supabase = createServerClient(config.url, config.key, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

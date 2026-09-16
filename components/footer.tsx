@@ -10,12 +10,12 @@ interface FooterProps {
 export default function Footer({ locale }: FooterProps) {
   const messages = getMessages(locale);
   const links = [
-    { label: messages.common.about, href: "#" },
-    { label: messages.common.privacy, href: "#" },
-    { label: messages.common.contact, href: "#" },
+    { label: messages.common.about, href: "/cgu" },
+    { label: messages.common.privacy, href: "/rgpd" },
+    { label: messages.common.contact, href: "/contact" },
   ];
   return (
-    <footer className="border-t border-slate-800 bg-slate-950">
+    <footer className="border-t border-slate-800 bg-slate-950 pb-24">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-10 sm:flex-row sm:justify-between">
         <div className="flex items-center gap-2 text-white">
           <Globe2 className="h-5 w-5 text-emerald-400" aria-hidden />

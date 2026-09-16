@@ -1,20 +1,31 @@
 import "dotenv/config";
-import { PrismaClient } from "../app/generated/prisma";
+import { PrismaClient } from "@/app/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const connectionString = process.env.DATABASE_URL;
+let prismaClient: PrismaClient | undefined;
 
-if (!connectionString) {
-  throw new Error("DATABASE_URL must be defined in the environment before Prisma can connect.");
+function getPrismaClient(): PrismaClient {
+  if (prismaClient) return prismaClient;
+
+  const connectionString = process.env.DATABASE_URL ?? process.env.DIRECT_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL must be defined in the environment before Prisma can connect.");
+  }
+
+  prismaClient = new PrismaClient({
+    adapter: new PrismaPg({ connectionString }),
+  });
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = prismaClient;
+  }
+
+  return prismaClient;
 }
-
-const adapter = new PrismaPg({
-  connectionString,
-});
 
 export function isMissingTableError(error: unknown): boolean {
   return (
@@ -25,8 +36,8 @@ export function isMissingTableError(error: unknown): boolean {
   );
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, property, receiver) {
+    return Reflect.get(getPrismaClient(), property, receiver);
+  },
+});
