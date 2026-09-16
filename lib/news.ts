@@ -20,7 +20,12 @@ export const getPublishedArticles = cache(async (options?: { query?: string; cat
       select: { id: true, slug: true, title: true, summary: true, content: true, imageUrl: true, category: true, viewCount: true, publishedAt: true, sourceName: true, canonicalUrl: true },
     });
   } catch (error) {
-    if (isMissingTableError(error)) return [];
+    if (
+      isMissingTableError(error) ||
+      (error instanceof Error && error.message.includes("DATABASE_URL"))
+    ) {
+      return [];
+    }
     throw error;
   }
 });

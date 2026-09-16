@@ -56,21 +56,31 @@ function buildEventWhere(filters: EventFilters): Prisma.EventWhereInput {
 }
 
 export const getEvents = cache(async (filters: EventFilters = {}) => {
-  return prisma.event.findMany({
-    where: buildEventWhere(filters),
-    orderBy: { startDate: "asc" },
-    select: PUBLIC_EVENT_SELECT,
-  });
+  try {
+    return await prisma.event.findMany({
+      where: buildEventWhere(filters),
+      orderBy: { startDate: "asc" },
+      select: PUBLIC_EVENT_SELECT,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("DATABASE_URL")) return [];
+    throw error;
+  }
 });
 
 export const getEventBySlug = cache(async (slug: string) => {
-  return prisma.event.findFirst({
-    where: { slug, status: EventStatus.PUBLISHED },
-    select: {
-      ...PUBLIC_EVENT_SELECT,
-      virtualUrl: true,
-      maxParticipants: true,
-      participants: { where: { status: { not: EventParticipantStatus.DECLINED } }, select: { userId: true, status: true } },
-    },
-  });
+  try {
+    return await prisma.event.findFirst({
+      where: { slug, status: EventStatus.PUBLISHED },
+      select: {
+        ...PUBLIC_EVENT_SELECT,
+        virtualUrl: true,
+        maxParticipants: true,
+        participants: { where: { status: { not: EventParticipantStatus.DECLINED } }, select: { userId: true, status: true } },
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("DATABASE_URL")) return null;
+    throw error;
+  }
 });

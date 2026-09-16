@@ -63,7 +63,12 @@ export const getOpportunities = cache(async (filters: OpportunityFilters = {}) =
       select: PUBLIC_OPPORTUNITY_SELECT,
     });
   } catch (error) {
-    if (isMissingTableError(error)) return [];
+    if (
+      isMissingTableError(error) ||
+      (error instanceof Error && error.message.includes("DATABASE_URL"))
+    ) {
+      return [];
+    }
     throw error;
   }
 });
@@ -75,7 +80,12 @@ export const getOpportunityBySlug = cache(async (slug: string) => {
       select: PUBLIC_OPPORTUNITY_SELECT,
     });
   } catch (error) {
-    if (isMissingTableError(error)) return null;
+    if (
+      isMissingTableError(error) ||
+      (error instanceof Error && error.message.includes("DATABASE_URL"))
+    ) {
+      return null;
+    }
     throw error;
   }
 });

@@ -10,9 +10,9 @@ interface FooterProps {
 export default function Footer({ locale }: FooterProps) {
   const messages = getMessages(locale);
   const links = [
-    { label: messages.common.about, href: "#" },
-    { label: messages.common.privacy, href: "#" },
-    { label: messages.common.contact, href: "#" },
+    { label: messages.common.about, href: "/cgu" },
+    { label: messages.common.privacy, href: "/rgpd" },
+    { label: messages.common.contact, href: "/contact" },
   ];
   return (
     <footer className="border-t border-slate-800 bg-slate-950">
