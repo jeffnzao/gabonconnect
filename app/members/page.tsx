@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Users } from "lucide-react";
+import { Compass, Globe2, MapPin, Sparkles, Users } from "lucide-react";
+import { PROFILE_STATUS_LABELS, PROFILE_STATUSES } from "@/types/profile";
 import MemberSearch from "@/components/members/member-search";
 import MemberFilters from "@/components/members/member-filters";
 import MemberCard from "@/components/members/member-card";
@@ -78,6 +79,38 @@ export default async function MembersPage(props: PageProps<"/members">) {
               citySlug={citySlug}
               profession={profession}
             />
+          </div>
+
+          <div className="mx-auto mt-10 grid max-w-4xl gap-4 text-left sm:grid-cols-3">
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
+              <Globe2 className="h-5 w-5 text-emerald-700" aria-hidden />
+              <p className="mt-3 text-sm font-semibold text-slate-900">Continent et pays</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">Retrouvez les communautés gabonaises par zone de résidence.</p>
+            </div>
+            <div className="rounded-2xl border border-sky-100 bg-sky-50/70 p-4">
+              <MapPin className="h-5 w-5 text-sky-700" aria-hidden />
+              <p className="mt-3 text-sm font-semibold text-slate-900">Ville de résidence</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">Affinez votre recherche jusqu’à la ville pour créer des liens locaux.</p>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-amber-50/70 p-4">
+              <Compass className="h-5 w-5 text-amber-700" aria-hidden />
+              <p className="mt-3 text-sm font-semibold text-slate-900">Origines au Gabon</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">La notion de 10e province relie la diaspora à ses provinces d’origine.</p>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-slate-200 bg-slate-50 p-5 text-left">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-emerald-600" aria-hidden />
+              <p className="text-sm font-semibold text-slate-900">Profils de la communauté</p>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2" aria-label="Statuts des profils">
+              {PROFILE_STATUSES.map((status) => (
+                <span key={status} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
+                  {PROFILE_STATUS_LABELS[status]}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
