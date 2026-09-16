@@ -7,6 +7,7 @@ import FeedbackBanner from "@/components/feedback-banner";
 import AssistantChat from "@/components/ai/assistant-chat";
 import { getLocale, getMessages } from "@/lib/i18n";
 import OfflineBanner from "@/components/offline-banner";
+import CookieBanner from "@/components/cookie-banner";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -21,14 +22,44 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
+export const metadata: Metadata = {
+    metadataBase: new URL(siteUrl),
+    title: { default: "GabonConnect360", template: "%s | GabonConnect360" },
+    description: "La plateforme de connexion, d'information et d'entraide de la communauté gabonaise et de sa diaspora.",
+    applicationName: "GabonConnect360",
+    keywords: ["Gabon", "GabonConnect360", "diaspora", "associations", "community", "networking"],
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      locale: "fr_FR",
+      url: siteUrl,
+      siteName: "GabonConnect360",
+      title: "GabonConnect360",
+      description: "La plateforme de connexion, d'information et d'entraide de la communauté gabonaise et de sa diaspora.",
+      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "GabonConnect360" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "GabonConnect360",
+      description: "La plateforme de connexion, d'information et d'entraide de la communauté gabonaise et de sa diaspora.",
+      images: ["/og-image.png"],
+    },
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon.ico",
+      apple: "/apple-icon.png",
+    },
+  };
+
+/* Localized copy is provided by I18nProvider; document metadata remains stable for crawlers. */
+/*
   const locale = await getLocale();
   const messages = getMessages(locale);
   const seoLocale = locale === "fr" ? "fr_FR" : "en_US";
 
   return {
     metadataBase: new URL(siteUrl),
-    title: { default: messages.seo.title, template: `%s | GabonConnect` },
+    title: { default: messages.seo.title, template: `%s | GabonConnect360` },
     description: messages.seo.description,
     applicationName: "GabonConnect",
     keywords: ["Gabon", "GabonConnect", "diaspora", "associations", "community", "networking", "profiles", "Gabonese"],
@@ -50,7 +81,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: { icon: [{ url: "/globe.svg", type: "image/svg+xml" }], shortcut: "/globe.svg", apple: "/globe.svg" },
   };
-}
+} */
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
@@ -68,6 +99,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <FeedbackBanner locale={locale} />
           <AssistantChat locale={locale} />
           <OfflineBanner labels={getMessages(locale).offline} />
+          <CookieBanner />
         </I18nProvider>
       </body>
     </html>

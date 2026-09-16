@@ -11,8 +11,23 @@ function getSupabaseConfig() {
 }
 
 export async function proxy(request: NextRequest) {
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  if (process.env.NODE_ENV === "production" && forwardedProto === "http") {
+    const secureUrl = request.nextUrl.clone();
+    secureUrl.protocol = "https:";
+    return NextResponse.redirect(secureUrl, 308);
+  }
+
   let response = NextResponse.next({ request });
   const config = getSupabaseConfig();
+  const securityHeaders = {
+    "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+  };
+
+  Object.entries(securityHeaders).forEach(([name, value]) => response.headers.set(name, value));
 
   if (!config) return response;
 
