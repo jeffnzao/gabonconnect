@@ -31,7 +31,7 @@ export const RADIO_STATIONS: RadioStation[] = [
       "La voix de l'espérance : programmes chrétiens, enseignements, musique gospel et émissions communautaires.",
     streamUrl:
       process.env.NEXT_PUBLIC_RADIO_RBN_STREAM ??
-      "https://stream.zeno.fm/gtjojpzyn8ouv",
+      "https://stream.zeno.fm/f3wvbb332zuv",
     genre: "GOSPEL",
     isLive: true,
   },
