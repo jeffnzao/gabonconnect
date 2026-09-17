@@ -8,6 +8,8 @@ import AssistantChat from "@/components/ai/assistant-chat";
 import { getLocale, getMessages } from "@/lib/i18n";
 import OfflineBanner from "@/components/offline-banner";
 import CookieBanner from "@/components/cookie-banner";
+import { AudioPlayerProvider } from "@/components/audio/audio-player-context";
+import GlobalPlayer from "@/components/audio/global-player";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -44,11 +46,8 @@ export const metadata: Metadata = {
       description: "La plateforme de connexion, d'information et d'entraide de la communauté gabonaise et de sa diaspora.",
       images: ["/og-image.png"],
     },
-    icons: {
-      icon: "/favicon.ico",
-      shortcut: "/favicon.ico",
-      apple: "/apple-icon.png",
-    },
+    // Les favicons sont fournis via les conventions de fichiers Next.js App Router
+    // (app/icon.png et app/apple-icon.png), garantissant un PNG RGBA valide.
   };
 
 /* Localized copy is provided by I18nProvider; document metadata remains stable for crawlers. */
@@ -94,13 +93,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <I18nProvider locale={locale} messages={getMessages(locale)}>
-          <Header locale={locale} />
-          <main className="flex flex-1 flex-col">{children}</main>
-          <Footer locale={locale} />
-          <FeedbackBanner locale={locale} />
-          <AssistantChat locale={locale} />
-          <OfflineBanner labels={getMessages(locale).offline} />
-          <CookieBanner />
+          <AudioPlayerProvider>
+            <Header locale={locale} />
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Footer locale={locale} />
+            <FeedbackBanner locale={locale} />
+            <AssistantChat locale={locale} />
+            <OfflineBanner labels={getMessages(locale).offline} />
+            <CookieBanner />
+            <GlobalPlayer />
+          </AudioPlayerProvider>
         </I18nProvider>
       </body>
     </html>
