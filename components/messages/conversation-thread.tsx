@@ -4,8 +4,13 @@ import MessageComposer from "@/components/messages/message-composer";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMessages } from "@/components/i18n-provider";
+import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import gabonConnectLogo from "@/app/gabonconnect360.svg.png";
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 interface ConversationThreadProps {
   conversationId: string;
@@ -18,6 +23,24 @@ export default function ConversationThread({ conversationId, otherName, messages
   const labels = useMessages();
   const router = useRouter();
 
+  // Abonnement Realtime Supabase : reception instantanee des nouveaux messages.
+  useEffect(() => {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+    const client = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY, { isSingleton: true });
+    const channel = client
+      .channel(`messages:${conversationId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages", filter: `conversationId=eq.${conversationId}` },
+        () => router.refresh(),
+      )
+      .subscribe();
+    return () => {
+      void client.removeChannel(channel);
+    };
+  }, [conversationId, router]);
+
+  // Filet de securite : rafraichissement periodique si Realtime est indisponible.
   useEffect(() => {
     const refresh = () => {
       if (document.visibilityState === "visible") router.refresh();
