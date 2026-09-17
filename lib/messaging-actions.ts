@@ -4,8 +4,19 @@ import { ProfileVisibility, UserStatus } from "@/app/generated/prisma";
 import { ensureUser } from "@/lib/auth";
 import { canAccessConversation, normalizeParticipantPair } from "@/lib/messaging";
 import { prisma } from "@/lib/prisma";
+import { NotificationType } from "@/app/generated/prisma";
+import { createNotificationForUser } from "@/lib/services/notification-service";
 import { z } from "zod";
 import { redirect } from "next/navigation";
+
+async function actorDisplayName(userId: string): Promise<string> {
+  const profile = await prisma.profile.findUnique({
+    where: { userId },
+    select: { firstName: true, lastName: true },
+  });
+  const name = [profile?.firstName, profile?.lastName].filter(Boolean).join(" ").trim();
+  return name || "Un membre GabonConnect";
+}
 
 async function requireUser() {
   const user = await ensureUser();
@@ -41,10 +52,24 @@ export async function openConversationForUser(targetUserId: string): Promise<voi
 export async function sendMessage(conversationId: string, content: string): Promise<{ success: true; message: { id: string; conversationId: string; senderId: string; content: string; createdAt: Date } } | { success: false; error: string }> {
   try {
     const user = await requireUser();
-    await requireConversation(conversationId, user.id);
+    const conversation = await requireConversation(conversationId, user.id);
     const value = z.string().trim().min(1).max(5000).parse(content);
     const message = await prisma.message.create({ data: { conversationId, senderId: user.id, content: value } });
     await prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } });
+
+    const recipientId = conversation.participant1Id === user.id ? conversation.participant2Id : conversation.participant1Id;
+    try {
+      const senderName = await actorDisplayName(user.id);
+      await createNotificationForUser(recipientId, {
+        type: NotificationType.NEW_MESSAGE,
+        title: `Nouveau message de ${senderName}`,
+        message: value.length > 140 ? `${value.slice(0, 139)}…` : value,
+        link: `/messages?conversationId=${conversationId}`,
+      });
+    } catch (notificationError) {
+      console.error("[messaging] failed to create message notification:", notificationError);
+    }
+
     return { success: true, message };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : "Unable to send message." };

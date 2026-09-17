@@ -71,6 +71,17 @@ export default function NotificationCenter({ isAuthenticated, labels, locale }: 
     };
   }, [isAuthenticated]);
 
+  // Badge en temps quasi reel : rafraichissement periodique du compteur non-lu.
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const refreshCount = () => {
+      if (document.visibilityState !== "visible") return;
+      getUnreadNotificationCount().then((unreadCount) => setCount(unreadCount)).catch(() => undefined);
+    };
+    const intervalId = window.setInterval(refreshCount, 15000);
+    return () => window.clearInterval(intervalId);
+  }, [isAuthenticated]);
+
   async function openNotification(item: NotificationItem) {
     if (!item.isRead) {
       await markNotificationAsRead(item.id);
