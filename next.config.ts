@@ -16,6 +16,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/memoire",
+        destination: "/histoire",
+        permanent: true,
+      },
+      {
+        source: "/memoire/:path*",
+        destination: "/histoire",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

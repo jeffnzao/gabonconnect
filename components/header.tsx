@@ -19,7 +19,8 @@ export default async function Header({ locale }: HeaderProps) {
     { label: messages.navigation.campus, href: "/explore" },
     { label: messages.navigation.opportunities, href: "/opportunities" },
     { label: messages.navigation.events, href: "/events" },
-    { label: messages.navigation.memory, href: "/memoire" },
+    { label: messages.navigation.memory, href: "/histoire" },
+    { label: messages.navigation.radio, href: "/radio" },
     { label: messages.navigation.assistant, href: "/assistant" },
     { label: messages.navigation.map, href: "/#world-map" },
   ];
