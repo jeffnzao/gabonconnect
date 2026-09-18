@@ -1,13 +1,14 @@
 import type { SourceRegistryType } from "@/app/generated/prisma";
+import { cleanExcerpt, cleanHtmlText } from "@/lib/html-clean";
 
 export interface RawFeedItem { title?: string; description?: string; link?: string; guid?: string; pubDate?: string; publishedAt?: string; imageUrl?: string; }
 export interface NormalizedFeedItem { title: string; excerpt: string; canonicalUrl: string; sourceName: string; publishedAt: Date; imageUrl?: string; domain: "articles"; category?: string; externalId: string; }
 
-const html = (value: string) => value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+const html = (value: string) => cleanHtmlText(value);
 export function normalizeFeedItems(items: RawFeedItem[], source: { id: string; name: string; type: SourceRegistryType; url: string }): NormalizedFeedItem[] {
   return items.flatMap((item) => {
-    const title = html(item.title ?? "").slice(0, 240);
-    const excerpt = html(item.description ?? "").slice(0, 500);
+    const title = cleanHtmlText(item.title).slice(0, 240);
+    const excerpt = cleanExcerpt(item.description, title, 500);
     const canonicalUrl = (item.link ?? "").trim();
     if (!title || !canonicalUrl || !/^https?:\/\//i.test(canonicalUrl)) return [];
     const parsedDate = new Date(item.pubDate ?? item.publishedAt ?? Date.now());

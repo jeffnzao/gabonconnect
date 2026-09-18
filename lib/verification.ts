@@ -13,7 +13,7 @@ export function isVerificationApproved(value: VerificationState): boolean {
 }
 
 export function canModerateVerificationStatus(role: string | null | undefined): boolean {
-  return role === "ADMIN";
+  return role === "ADMIN" || role === "SUPERADMIN";
 }
 
 export function getVerificationBadgeText(value: VerificationBadgeState): string {

@@ -63,5 +63,5 @@ export function validateAnnouncementTargets(targets: AnnouncementTargetDraft[]):
 }
 
 export function canManageResource(ownerId: string, userId: string, role: string): boolean {
-  return ownerId === userId || role === "ADMIN";
+  return ownerId === userId || role === "ADMIN" || role === "SUPERADMIN";
 }

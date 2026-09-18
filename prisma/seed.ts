@@ -115,7 +115,7 @@ async function main() {
       bio: "Membre de la diaspora gabonaise à Paris, passionnée de tech.",
       city: "paris",
       visibility: ProfileVisibility.PUBLIC,
-      role: Role.USER,
+      role: Role.MEMBER,
     },
     {
       email: "demo.membre2@example.com",
@@ -125,7 +125,7 @@ async function main() {
       bio: "Basé à Montréal, engagé dans le développement de Gamba.",
       city: "montreal",
       visibility: ProfileVisibility.PUBLIC,
-      role: Role.USER,
+      role: Role.MEMBER,
     },
     {
       email: "demo.membre3@example.com",
@@ -135,7 +135,7 @@ async function main() {
       bio: "Profil privé de démonstration.",
       city: "libreville",
       visibility: ProfileVisibility.PRIVATE,
-      role: Role.USER,
+      role: Role.MEMBER,
     },
     {
       email: "demo.admin@example.com",

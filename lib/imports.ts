@@ -93,8 +93,12 @@ export function canReviewImportRecord(status: ImportRecordStatus): boolean {
   return status === "IMPORTED";
 }
 
-export function isAdminRole(role: string): role is "ADMIN" {
-  return role === "ADMIN";
+export function isAdminRole(role: string | null | undefined): boolean {
+  return role === "ADMIN" || role === "SUPERADMIN";
+}
+
+export function isSuperAdminRole(role: string | null | undefined): boolean {
+  return role === "SUPERADMIN";
 }
 
 export function isSupportedPublicationEntity(entityType: ImportEntityType): boolean {

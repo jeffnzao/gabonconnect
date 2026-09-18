@@ -11,8 +11,10 @@ generator client {
 
 
 enum Role {
-  USER
+  GUEST
+  MEMBER
   ADMIN
+  SUPERADMIN
 }
 
 enum ProfileVisibility {
@@ -249,7 +251,7 @@ model User {
   email String @unique
   name  String?
   image String? // URL de la photo de profil
-  role  Role   @default(USER)
+  role  Role   @default(MEMBER)
 
   profile Profile?
 
