@@ -50,6 +50,7 @@ export async function ensureUser(
     create: {
       id: user.id,
       email: user.email,
+      role: "MEMBER", // Spécifié explicitement pour remplacer l'ancienne valeur "USER"
     },
     update: {
       email: user.email,

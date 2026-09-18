@@ -20,6 +20,9 @@ const METRIC_LABELS: Record<string, string> = {
 
 export default async function AdminDashboardPage({ searchParams }: Props) {
   const user = await ensureUser();
+  
+  console.log("ROLE EN BASE DE DONNÉES :", user?.role);
+
   if (!user) redirect("/login?redirectTo=/admin");
   if (!isSuperAdminRole(user.role)) redirect("/");
 
